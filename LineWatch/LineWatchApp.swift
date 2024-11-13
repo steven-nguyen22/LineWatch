@@ -11,7 +11,7 @@ import SwiftUI
 struct LineWatchApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
         }
     }
 }
