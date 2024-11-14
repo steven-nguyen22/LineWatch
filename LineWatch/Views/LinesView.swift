@@ -22,7 +22,9 @@ struct LinesView: View {
                 VStack(spacing: 20) {
                     ForEach(0..<10) {
                         Text("Item \($0)")
+                        Divider()
                     }
+                    
                 }
                 .padding(.top, 10)
                 
