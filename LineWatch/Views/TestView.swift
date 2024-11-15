@@ -18,19 +18,19 @@ struct TestView: View {
                 Divider()
             }
         }
-        .task {
-            do {
-                yer = try await getLine()
-            } catch GHError.invalidURL {
-                print("invalid URL")
-            } catch GHError.invalidResponse {
-                print("invalid response")
-            } catch GHError.invalidData {
-                print("invalid data")
-            } catch {
-                print("error")
-            }
-        }
+//        .task {
+//            do {
+//                yer = try await getLine()
+//            } catch GHError.invalidURL {
+//                print("invalid URL")
+//            } catch GHError.invalidResponse {
+//                print("invalid response")
+//            } catch GHError.invalidData {
+//                print("invalid data")
+//            } catch {
+//                print("error")
+//            }
+//        }
         
     }
     

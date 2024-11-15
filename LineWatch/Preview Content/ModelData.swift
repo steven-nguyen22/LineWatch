@@ -7,7 +7,7 @@
 
 import Foundation
 
-var previewLines: ResponseBody = load("linesData.json")
+var previewLines: [ResponseBody] = load("linesData.json")
 
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data

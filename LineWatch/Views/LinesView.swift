@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct LinesView: View {
-//    var lines: ResponseBody
     var linesManager = LinesManager()
     @State var lines: [ResponseBody]?
     
@@ -36,30 +35,24 @@ struct LinesView: View {
                 
             }
             .padding(.top,20)
-            .task {
-                do {
-                    lines = try await linesManager.getCurrentLines()
-                } catch GHError.invalidURL {
-                    print("invalid URL")
-                } catch GHError.invalidResponse {
-                    print("invalid response")
-                } catch GHError.invalidData {
-                    print("invalid data")
-                } catch {
-                    print("error")
-                }
-            }
+//            .task {
+//                do {
+//                    lines = try await linesManager.getCurrentLines()
+//                } catch GHError.invalidURL {
+//                    print("invalid URL")
+//                } catch GHError.invalidResponse {
+//                    print("invalid response")
+//                } catch GHError.invalidData {
+//                    print("invalid data")
+//                } catch {
+//                    print("error")
+//                }
+//            }
             
         }
     }
 }
 
 #Preview {
-    LinesView()
+    LinesView(lines: previewLines)
 }
-
-//struct LinesView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LinesView(lines: previewLines)
-//    }
-//}
