@@ -30,8 +30,6 @@ struct LinesScreen: View {
         HStack {
             ScrollView(.horizontal) {
                 HStack() {
-                    LinesView()
-                    LinesView()
                 }
                 
             }

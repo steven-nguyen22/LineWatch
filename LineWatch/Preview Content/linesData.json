@@ -1,0 +1,220 @@
+  {
+    "id": "48c42a6286126b7f36c3d6e76c631de0",
+    "sport_key": "basketball_nba",
+    "sport_title": "NBA",
+    "commence_time": "2024-11-15T02:10:00Z",
+    "home_team": "Utah Jazz",
+    "away_team": "Dallas Mavericks",
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2024-11-14T19:18:39Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:18:39Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -360
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 290
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betonlineag",
+        "title": "BetOnline.ag",
+        "last_update": "2024-11-14T19:18:38Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:18:38Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -335
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 280
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "lowvig",
+        "title": "LowVig.ag",
+        "last_update": "2024-11-14T19:19:18Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:19:18Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -334
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 280
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2024-11-14T19:19:06Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:19:06Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -360
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 285
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "williamhill_us",
+        "title": "Caesars",
+        "last_update": "2024-11-14T19:15:28Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:15:28Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -365
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 285
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betmgm",
+        "title": "BetMGM",
+        "last_update": "2024-11-14T19:18:38Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:18:38Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -375
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 290
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "mybookieag",
+        "title": "MyBookie.ag",
+        "last_update": "2024-11-14T19:15:35Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:15:35Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -370
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 283
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "bovada",
+        "title": "Bovada",
+        "last_update": "2024-11-14T19:19:02Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:19:02Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -420
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 315
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betus",
+        "title": "BetUS",
+        "last_update": "2024-11-14T19:19:02Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:19:02Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -375
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 300
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betrivers",
+        "title": "BetRivers",
+        "last_update": "2024-11-14T19:18:44Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2024-11-14T19:18:44Z",
+            "outcomes": [
+              {
+                "name": "Dallas Mavericks",
+                "price": -385
+              },
+              {
+                "name": "Utah Jazz",
+                "price": 300
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
