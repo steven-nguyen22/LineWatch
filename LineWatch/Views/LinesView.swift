@@ -25,8 +25,8 @@ struct LinesView: View {
                     .background(Rectangle().stroke())
                     .background(.yellow)
                 VStack(spacing: 10) {
-                    ForEach(0..<index, id: \.self) { temp in
-                        Text(lines?[temp].homeTeam ?? "") + Text(" vs ") + Text(lines?[temp].awayTeam ?? "")
+                    ForEach(0..<index, id: \.self) { i in
+                        Text("\(lines?[i].awayTeam ?? "") @ \(lines?[i].homeTeam ?? "")")
                         Divider()
                     }
                     

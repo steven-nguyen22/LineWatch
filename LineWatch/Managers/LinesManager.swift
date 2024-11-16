@@ -41,14 +41,46 @@ class LinesManager {
     
 
 
-struct ResponseBody: Decodable {
-    let sportKey, homeTeam, awayTeam: String
+struct ResponseBody: Codable {
+    let id: String
+    let sportKey: String
+    let sportTitle: String
+    let homeTeam, awayTeam: String
+    let bookmakers: [Bookmaker]
     
     enum CodingKeys: String, CodingKey {
+            case id
             case sportKey = "sport_key"
+            case sportTitle = "sport_title"
             case homeTeam = "home_team"
             case awayTeam = "away_team"
+            case bookmakers
         }
+}
+
+struct Bookmaker: Codable {
+    let key, title: String
+    let markets: [Market]
+
+    enum CodingKeys: String, CodingKey {
+        case key, title
+        case markets
+    }
+}
+
+struct Market: Codable {
+    let key: String
+    let outcomes: [Outcome]
+
+    enum CodingKeys: String, CodingKey {
+        case key
+        case outcomes
+    }
+}
+
+struct Outcome: Codable {
+    let name: String
+    let price: Int
 }
 
 enum GHError: Error {

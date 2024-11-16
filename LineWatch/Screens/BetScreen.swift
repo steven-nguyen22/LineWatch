@@ -8,28 +8,39 @@
 import SwiftUI
 
 struct BetScreen: View {
+    var linesManager = LinesManager()
+    @State var lines: [ResponseBody]?
+    
     var body: some View {
+        let index = lines?[0].bookmakers.count ?? 0
+        
         ZStack(alignment: .top) {
                     Color.teal.opacity(0.3)
                         .ignoresSafeArea()
             VStack{
-                Text("Lakers vs Warriors")
-                    .foregroundStyle(.white)
-                    .font(.largeTitle)
+                Text("\(lines?[0].awayTeam ?? "") @ \(lines?[0].homeTeam ?? "")")
+                    .foregroundStyle(.black)
+                    .font(.title)
                 Divider()
                     .padding(.bottom, 30)
                 
                 
                 VStack(spacing: 20) {
-                    ForEach(0..<10, id:\.self) { _ in
+                    ForEach(0..<index, id:\.self) { i in
+                        let awayOdds = lines?[0].bookmakers[i].markets[0].outcomes[0].price
+                        let homeOdds =
+                            lines?[0].bookmakers[i].markets[0].outcomes[1].price
+                        
+                        let displayAwayOdds = awayOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
+                        let displayHomeOdds = homeOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
                         HStack{
-                            Text("Bovada")
+                            Text(lines?[0].bookmakers[i].title ?? "Bovada")
                                 .padding(.trailing, 100)
-                            Text("-200")
+                            Text(displayAwayOdds)
                                 .frame(width: 60, height: 30)
                                 .background(Rectangle().stroke())
                                 .background(.green)
-                            Text("+200")
+                            Text(displayHomeOdds)
                                 .frame(width: 60, height: 30)
                                 .background(Rectangle().stroke())
                                 .background(.red)
@@ -49,5 +60,5 @@ struct BetScreen: View {
 }
 
 #Preview {
-    BetScreen()
+    BetScreen(lines: previewLines)
 }
