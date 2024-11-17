@@ -25,33 +25,35 @@ struct BetScreen: View {
                 Divider()
                     .padding(.bottom, 30)
                 
-                
-                VStack(spacing: 20) {
-                    ForEach(0..<index, id:\.self) { i in
-                        let awayOdds = lines?[currentIndex].bookmakers[i].markets[0].outcomes[0].price
-                        let homeOdds =
-                            lines?[currentIndex].bookmakers[i].markets[0].outcomes[1].price
-                        
-                        let displayAwayOdds = awayOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
-                        let displayHomeOdds = homeOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
-                        HStack{
-                            Text(lines?[0].bookmakers[i].title ?? "Bovada")
-                                .padding(.trailing, 100)
-                            Text(displayAwayOdds)
-                                .frame(width: 60, height: 30)
-                                .background(Rectangle().stroke())
-                                .background(.green)
-                            Text(displayHomeOdds)
-                                .frame(width: 60, height: 30)
-                                .background(Rectangle().stroke())
-                                .background(.red)
+                ScrollView {
+                    VStack(spacing: 20) {
+                        ForEach(0..<index, id:\.self) { i in
+                            let awayOdds = lines?[currentIndex].bookmakers[i].markets[0].outcomes[0].price
+                            let homeOdds =
+                                lines?[currentIndex].bookmakers[i].markets[0].outcomes[1].price
+                            
+                            let displayAwayOdds = awayOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
+                            let displayHomeOdds = homeOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
+                            HStack{
+                                Text(lines?[0].bookmakers[i].title ?? "Bovada")
+                                    .padding(.trailing, 100)
+                                Text(displayAwayOdds)
+                                    .frame(width: 60, height: 30)
+                                    .background(Rectangle().stroke())
+                                    .background(.green)
+                                Text(displayHomeOdds)
+                                    .frame(width: 60, height: 30)
+                                    .background(Rectangle().stroke())
+                                    .background(.red)
+                                Divider()
+                            }
                             Divider()
                         }
-                        Divider()
+                        
                     }
-                    
+                    .padding(.top, 10)
                 }
-                .padding(.top, 10)
+                
                 
             }
             .padding(.top,20)

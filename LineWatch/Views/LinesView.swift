@@ -25,20 +25,22 @@ struct LinesView: View {
                         .frame(width: 200, height: 50)
                         .background(Rectangle().stroke())
                         .background(.yellow)
-                    VStack(spacing: 10) {
-                        ForEach(0..<index, id: \.self) { i in
-                            NavigationLink {
-                                BetScreen(lines: lines, currentIndex: i)
-                            } label : {
-                                Text("\(lines?[i].awayTeam ?? "") @ \(lines?[i].homeTeam ?? "")")
-                                    .foregroundStyle(.black)
-                                Divider()
+                    
+                    ScrollView {
+                        VStack(spacing: 20) {
+                            ForEach(0..<index, id: \.self) { i in
+                                NavigationLink {
+                                    BetScreen(lines: lines, currentIndex: i)
+                                } label : {
+                                    Text("\(lines?[i].awayTeam ?? "") @ \(lines?[i].homeTeam ?? "")")
+                                        .foregroundStyle(.black)
+                                    Divider()
+                                }
                             }
-                            
                         }
-                        
+                        .padding(.top, 10)
                     }
-                    .padding(.top, 10)
+                    
                     
                 }
                 .padding(.top,20)
