@@ -8,48 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
+//    @State private var presentedNumbers = [1, 4, 8]
     var linesManager = LinesManager()
-    @State var lines: ResponseBody?
-    
+    @State var lines: [ResponseBody]?
+
     var body: some View {
-//        VStack {
-//            Image(systemName: "globe")
-//                .imageScale(.large)
-//                .foregroundStyle(.tint)
-//            Text("Hello, world!")
-//            Text("test")
+//        NavigationStack(path: $presentedNumbers) {
+//            List(1..<50) { i in
+//                NavigationLink(value: i) {
+//                    Label("Row \(i)", systemImage: "\(i).circle")
+//                }
+//            }
+//            .navigationDestination(for: Int.self) { i in
+//                Text("Detail \(i)")
+//            }
+//            .navigationTitle("Navigation")
 //        }
-//        .padding()
         
-        VStack {
-//            if let lines = lines {
-//                Text("data fetched succesfully!")
-//            }
-//            else {
-//                LoadingView()
-//                    .task {
-//                        do {
-//                            lines = try await linesManager.getCurrentLines()
-//                        } catch {
-//                            print("Error getting weather: \(error)")
-//                        }
-//                    }
-//            }
-//            Text("test")
-//                    .task {
-//                        do {
-//                            lines = try await linesManager.getCurrentLines()
-//                        } catch {
-//                            print(String(describing: error))
-//                        }
-//                    }
-            WelcomeView()
-        }
-        .background(.blue)
-        .preferredColorScheme(.dark)
+        NavigationView {
+                    NavigationLink {
+                        BetScreen(lines: lines, currentIndex: 1)
+                    } label: {
+                        VStack {
+                            Image(systemName: "globe")
+                                .imageScale(.large)
+                                .foregroundColor(.accentColor)
+                            Text("Hello, world!")
+                        }
+                        .padding()
+                    }
+                }
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(lines: previewLines)
 }

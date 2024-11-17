@@ -10,15 +10,16 @@ import SwiftUI
 struct BetScreen: View {
     var linesManager = LinesManager()
     @State var lines: [ResponseBody]?
+    var currentIndex: Int
     
     var body: some View {
-        let index = lines?[0].bookmakers.count ?? 0
+        let index = lines?[currentIndex].bookmakers.count ?? 0
         
         ZStack(alignment: .top) {
                     Color.teal.opacity(0.3)
                         .ignoresSafeArea()
             VStack{
-                Text("\(lines?[0].awayTeam ?? "") @ \(lines?[0].homeTeam ?? "")")
+                Text("\(lines?[currentIndex].awayTeam ?? "") @ \(lines?[currentIndex].homeTeam ?? "")")
                     .foregroundStyle(.black)
                     .font(.title)
                 Divider()
@@ -27,9 +28,9 @@ struct BetScreen: View {
                 
                 VStack(spacing: 20) {
                     ForEach(0..<index, id:\.self) { i in
-                        let awayOdds = lines?[0].bookmakers[i].markets[0].outcomes[0].price
+                        let awayOdds = lines?[currentIndex].bookmakers[i].markets[0].outcomes[0].price
                         let homeOdds =
-                            lines?[0].bookmakers[i].markets[0].outcomes[1].price
+                            lines?[currentIndex].bookmakers[i].markets[0].outcomes[1].price
                         
                         let displayAwayOdds = awayOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
                         let displayHomeOdds = homeOdds.map { $0 > 0 ? "+\($0)" : "\($0)" } ?? ""
@@ -60,5 +61,5 @@ struct BetScreen: View {
 }
 
 #Preview {
-    BetScreen(lines: previewLines)
+    BetScreen(lines: previewLines, currentIndex: 0)
 }
