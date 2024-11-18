@@ -8,31 +8,17 @@
 import SwiftUI
 
 struct LinesScreen: View {
+    var linesManager = LinesManager()
+    @State var lines: [ResponseBody]?
+
     var body: some View {
 
-//            VStack{
-//                HStack{
-//                    Text("LArrow")
-//                    ScrollView(.horizontal) {
-//                        HStack(spacing: 20) {
-//                            ForEach(0..<10) {
-//                                Text("Item \($0)")
-//                                    .foregroundStyle(.white)
-//                                    .font(.largeTitle)
-//                                    .frame(width: 200, height: 200)
-//                                    .background(.red)
-//                            }
-//                        }
-//                    }
-//                    Text("RArrow")
-//                }
-//            }
         HStack {
             ScrollView(.horizontal) {
                 HStack() {
-                    LinesView()
+                    LinesView(lines: previewLines)
                         .containerRelativeFrame(.horizontal, count: 1, spacing: 16)
-                    LinesView()
+                    LinesView(lines: previewLines)
                         .containerRelativeFrame(.horizontal, count: 1, spacing: 16)
                 }
                 
@@ -46,5 +32,5 @@ struct LinesScreen: View {
 }
 
 #Preview {
-    LinesScreen()
+    LinesScreen(lines: previewLines)
 }
