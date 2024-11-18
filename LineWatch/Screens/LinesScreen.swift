@@ -30,7 +30,12 @@ struct LinesScreen: View {
         HStack {
             ScrollView(.horizontal) {
                 HStack() {
+                    LinesView()
+                        .containerRelativeFrame(.horizontal, count: 1, spacing: 16)
+                    LinesView()
+                        .containerRelativeFrame(.horizontal, count: 1, spacing: 16)
                 }
+                
                 
             }
         }

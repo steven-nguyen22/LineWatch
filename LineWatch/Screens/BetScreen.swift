@@ -11,6 +11,8 @@ struct BetScreen: View {
     var linesManager = LinesManager()
     @State var lines: [ResponseBody]?
     var currentIndex: Int
+    @State var awayList: [Int] = []
+    @State var homeList: [Int] = []
     
     var body: some View {
         let index = lines?[currentIndex].bookmakers.count ?? 0
@@ -18,6 +20,7 @@ struct BetScreen: View {
         ZStack(alignment: .top) {
                     Color.teal.opacity(0.3)
                         .ignoresSafeArea()
+            
             VStack{
                 Text("\(lines?[currentIndex].awayTeam ?? "") @ \(lines?[currentIndex].homeTeam ?? "")")
                     .foregroundStyle(.black)
@@ -40,11 +43,17 @@ struct BetScreen: View {
                                 Text(displayAwayOdds)
                                     .frame(width: 60, height: 30)
                                     .background(Rectangle().stroke())
-                                    .background(.green)
+                                    .background(
+                                            awayOdds == awayList.last ? Color.green :
+                                            awayOdds == awayList.first ? Color.red : Color.white
+                                        )
                                 Text(displayHomeOdds)
                                     .frame(width: 60, height: 30)
                                     .background(Rectangle().stroke())
-                                    .background(.red)
+                                    .background(
+                                            homeOdds == homeList.last ? Color.green :
+                                            homeOdds == homeList.first ? Color.red : Color.white
+                                        )
                                 Divider()
                             }
                             Divider()
@@ -59,6 +68,21 @@ struct BetScreen: View {
             .padding(.top,20)
             
         }
+        .onAppear {
+            updateOdds()
+        }
+        
+    }
+    
+    // Helper function to update odds
+    private func updateOdds() {
+        guard let bookmakers = lines?[currentIndex].bookmakers else { return }
+        
+        awayList = bookmakers.compactMap { $0.markets[0].outcomes[0].price }
+        homeList = bookmakers.compactMap { $0.markets[0].outcomes[1].price }
+        
+        awayList.sort()
+        homeList.sort()
     }
 }
 
