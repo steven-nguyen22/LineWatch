@@ -8,39 +8,41 @@
 import SwiftUI
 
 struct ContentView: View {
-//    @State private var presentedNumbers = [1, 4, 8]
-    var linesManager = LinesManager()
-    @State var lines: [ResponseBody]?
+    @State private var isLoading = true
+    @State private var dataService = OddsDataService()
 
     var body: some View {
-//        NavigationStack(path: $presentedNumbers) {
-//            List(1..<50) { i in
-//                NavigationLink(value: i) {
-//                    Label("Row \(i)", systemImage: "\(i).circle")
-//                }
-//            }
-//            .navigationDestination(for: Int.self) { i in
-//                Text("Detail \(i)")
-//            }
-//            .navigationTitle("Navigation")
-//        }
-        
-        NavigationView {
-                    NavigationLink {
-                        BetScreen(lines: lines, currentIndex: 1)
-                    } label: {
-                        VStack {
-                            Image(systemName: "globe")
-                                .imageScale(.large)
-                                .foregroundColor(.accentColor)
-                            Text("Hello, world!")
-                        }
-                        .padding()
+        ZStack {
+            if isLoading {
+                LoadingScreen {
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        isLoading = false
                     }
                 }
+                .transition(.opacity)
+            } else {
+                NavigationStack {
+                    LandingPage()
+                        .navigationDestination(for: AppRoute.self) { route in
+                            switch route {
+                            case .sportEvents(let sport):
+                                SubPage(sport: sport)
+                            case .eventDetail(let event):
+                                BetPage(event: event)
+                            }
+                        }
+                }
+                .environment(dataService)
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.4), value: isLoading)
+        .onAppear {
+            dataService.loadLocalData()
+        }
     }
 }
 
 #Preview {
-    ContentView(lines: previewLines)
+    ContentView()
 }

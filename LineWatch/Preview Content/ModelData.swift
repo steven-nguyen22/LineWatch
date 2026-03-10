@@ -7,7 +7,20 @@
 
 import Foundation
 
-var previewLines: [ResponseBody] = load("linesData.json")
+var previewBasketball: [ResponseBody] = load("basketball_nba.json")
+var previewFootball: [ResponseBody] = load("americanfootball_nfl.json")
+var previewBaseball: [ResponseBody] = load("baseball_mlb.json")
+
+// Backward compatibility
+var previewLines: [ResponseBody] = load("basketball_nba.json")
+
+var previewDataService: OddsDataService = {
+    let service = OddsDataService()
+    service.eventsBySport[.basketball] = previewBasketball
+    service.eventsBySport[.football] = previewFootball
+    service.eventsBySport[.baseball] = previewBaseball
+    return service
+}()
 
 func load<T: Decodable>(_ filename: String) -> T {
     let data: Data
