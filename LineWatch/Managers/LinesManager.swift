@@ -41,14 +41,45 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+// MARK: - Market Types
+
+enum MarketType: String, CaseIterable, Identifiable, Hashable {
+    case h2h = "h2h"
+    case spreads = "spreads"
+    case totals = "totals"
+    case outrights = "outrights"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .h2h: return "Moneyline"
+        case .spreads: return "Spreads"
+        case .totals: return "Totals"
+        case .outrights: return "Outrights"
+        }
+    }
+
+    /// Standard markets available for team sports (excludes outrights)
+    static var standardMarkets: [MarketType] {
+        [.h2h, .spreads, .totals]
+    }
+
+    /// Build the API query parameter value
+    static func apiMarketsParam(_ types: [MarketType]) -> String {
+        types.map(\.rawValue).joined(separator: ",")
+    }
+}
+
 // MARK: - API Manager
 
 class LinesManager {
     private let apiKey = "38362e374889c29da9e8c1692d5c133d"
     private let baseURL = "https://api.the-odds-api.com/v4/sports"
 
-    func getOdds(for sport: SportCategory) async throws -> [ResponseBody] {
-        let endpoint = "\(baseURL)/\(sport.rawValue)/odds/?apiKey=\(apiKey)&regions=us&markets=h2h&oddsFormat=american"
+    func getOdds(for sport: SportCategory, markets: [MarketType] = MarketType.standardMarkets) async throws -> [ResponseBody] {
+        let marketsParam = MarketType.apiMarketsParam(markets)
+        let endpoint = "\(baseURL)/\(sport.rawValue)/odds/?apiKey=\(apiKey)&regions=us&markets=\(marketsParam)&oddsFormat=american"
 
         guard let url = URL(string: endpoint) else {
             throw GHError.invalidURL
@@ -106,12 +137,20 @@ struct Bookmaker: Codable {
 
 struct Market: Codable {
     let key: String
+    let lastUpdate: String?
     let outcomes: [Outcome]
+
+    enum CodingKeys: String, CodingKey {
+        case key
+        case lastUpdate = "last_update"
+        case outcomes
+    }
 }
 
 struct Outcome: Codable {
     let name: String
     let price: Int
+    let point: Double?
 }
 
 enum GHError: Error {
