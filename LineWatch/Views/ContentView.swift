@@ -27,8 +27,8 @@ struct ContentView: View {
                             switch route {
                             case .sportEvents(let sport):
                                 SubPage(sport: sport)
-                            case .eventDetail(let event):
-                                BetPage(event: event)
+                            case .eventDetail(let event, let marketType):
+                                BetPage(event: event, marketType: marketType)
                             }
                         }
                 }
