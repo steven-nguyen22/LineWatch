@@ -24,6 +24,9 @@ struct BetPage: View {
     @State private var selections: [BetSelection] = []
     @State private var betAmount1: Double = 50
     @State private var betAmount2: Double = 50
+    @State private var betText1: String = "50"
+    @State private var betText2: String = "50"
+    @FocusState private var focusedBet: Int?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -72,6 +75,15 @@ struct BetPage: View {
         .animation(.easeInOut(duration: 0.25), value: selections)
         .background(AppColors.backgroundPrimary)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") {
+                    focusedBet = nil
+                }
+                .fontWeight(.semibold)
+            }
+        }
     }
 
     // MARK: - Header
@@ -357,7 +369,7 @@ struct BetPage: View {
 
                 // Selection 1
                 if selections.count >= 1 {
-                    betRow(selection: selections[0], betAmount: $betAmount1)
+                    betRow(selection: selections[0], betAmount: $betAmount1, betText: $betText1, rowIndex: 0)
                 }
 
                 // Selection 2
@@ -365,7 +377,7 @@ struct BetPage: View {
                     Divider()
                         .foregroundStyle(AppColors.divider)
 
-                    betRow(selection: selections[1], betAmount: $betAmount2)
+                    betRow(selection: selections[1], betAmount: $betAmount2, betText: $betText2, rowIndex: 1)
                 }
             }
             .padding(.horizontal, 16)
@@ -378,7 +390,7 @@ struct BetPage: View {
     }
 
     @ViewBuilder
-    private func betRow(selection: BetSelection, betAmount: Binding<Double>) -> some View {
+    private func betRow(selection: BetSelection, betAmount: Binding<Double>, betText: Binding<String>, rowIndex: Int) -> some View {
         VStack(spacing: 8) {
             // Label + remove button
             HStack {
@@ -408,20 +420,58 @@ struct BetPage: View {
             }
 
             // Slider row
-            HStack(spacing: 10) {
-                Text("$\(Int(betAmount.wrappedValue))")
-                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(AppColors.textPrimary)
-                    .frame(width: 50, alignment: .leading)
+            HStack(spacing: 8) {
+                // Tappable dollar amount — tap to type a custom value
+                HStack(spacing: 1) {
+                    Text("$")
+                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(AppColors.textPrimary)
+
+                    TextField("0", text: betText)
+                        .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(AppColors.textPrimary)
+                        .keyboardType(.numberPad)
+                        .focused($focusedBet, equals: rowIndex)
+                        .onChange(of: betText.wrappedValue) { _, newValue in
+                            // Only sync to slider if user is actively editing
+                            if focusedBet == rowIndex {
+                                let cleaned = newValue.filter { $0.isNumber }
+                                if cleaned != newValue {
+                                    betText.wrappedValue = cleaned
+                                }
+                                if let value = Double(cleaned) {
+                                    betAmount.wrappedValue = min(value, 10000)
+                                }
+                            }
+                        }
+                        .onChange(of: focusedBet) { _, newFocus in
+                            // When focus leaves this row, clamp and format
+                            if newFocus != rowIndex {
+                                let value = min(max(Double(betText.wrappedValue) ?? 0, 0), 10000)
+                                betAmount.wrappedValue = value
+                                betText.wrappedValue = "\(Int(value))"
+                            }
+                        }
+                }
+                .frame(width: 64, alignment: .leading)
+                .lineLimit(1)
 
                 Slider(value: betAmount, in: 0...1000, step: 10)
                     .tint(AppColors.primaryGreen)
+                    .onChange(of: betAmount.wrappedValue) { _, newValue in
+                        // Sync slider changes to text (only when not typing)
+                        if focusedBet != rowIndex {
+                            betText.wrappedValue = "\(Int(newValue))"
+                        }
+                    }
 
                 let payout = calculatePayout(betAmount: betAmount.wrappedValue, odds: selection.odds)
                 Text("+$\(payout, specifier: "%.2f")")
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .font(.system(size: 13, weight: .bold, design: .monospaced))
                     .foregroundStyle(AppColors.primaryGreen)
-                    .frame(width: 80, alignment: .trailing)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .frame(width: 90, alignment: .trailing)
             }
         }
     }
