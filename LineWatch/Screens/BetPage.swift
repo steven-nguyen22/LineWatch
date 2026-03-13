@@ -7,40 +7,69 @@
 
 import SwiftUI
 
+// MARK: - Bet Selection Model
+
+struct BetSelection: Equatable {
+    let bookmakerTitle: String
+    let outcomeName: String
+    let odds: Int
+}
+
+// MARK: - BetPage
+
 struct BetPage: View {
     let event: ResponseBody
     let marketType: MarketType
 
+    @State private var selections: [BetSelection] = []
+    @State private var betAmount1: Double = 50
+    @State private var betAmount2: Double = 50
+
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                // Header
-                headerSection
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    // Header
+                    headerSection
 
-                // Market type badge
-                Text(marketType.displayName)
-                    .font(AppFonts.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(AppColors.darkGreen)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(AppColors.lightGreen.opacity(0.3))
-                    )
-                    .padding(.top, 8)
-                    .padding(.bottom, 12)
+                    // Market type badge
+                    Text(marketType.displayName)
+                        .font(AppFonts.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AppColors.darkGreen)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(AppColors.lightGreen.opacity(0.3))
+                        )
+                        .padding(.top, 8)
+                        .padding(.bottom, 12)
 
-                // Column Headers
-                columnHeaders
+                    // Column Headers
+                    columnHeaders
 
-                // Sportsbook Rows
-                bookmakerRows
+                    // Sportsbook Rows
+                    bookmakerRows
 
-                // Legend
-                legend
+                    // Legend
+                    legend
+
+                    // Extra padding so content isn't hidden behind the panel
+                    if !selections.isEmpty {
+                        Spacer()
+                            .frame(height: 20)
+                    }
+                }
+            }
+
+            // Sticky bet simulator panel
+            if !selections.isEmpty {
+                betSimulatorPanel
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .animation(.easeInOut(duration: 0.25), value: selections)
         .background(AppColors.backgroundPrimary)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -140,11 +169,11 @@ struct BetPage: View {
 
                     switch marketType {
                     case .h2h:
-                        h2hCells(market: mkt)
+                        h2hCells(market: mkt, bookmakerTitle: bookmaker.title)
                     case .spreads:
-                        spreadCells(market: mkt)
+                        spreadCells(market: mkt, bookmakerTitle: bookmaker.title)
                     case .totals:
-                        totalCells(market: mkt)
+                        totalCells(market: mkt, bookmakerTitle: bookmaker.title)
                     case .outrights:
                         outrightCells(market: mkt)
                     }
@@ -165,66 +194,69 @@ struct BetPage: View {
     // MARK: - H2H Cells
 
     @ViewBuilder
-    private func h2hCells(market: Market?) -> some View {
-        let awayOdds = market?.outcomes.first(where: { $0.name == event.awayTeam })?.price
-        let homeOdds = market?.outcomes.first(where: { $0.name == event.homeTeam })?.price
+    private func h2hCells(market: Market?, bookmakerTitle: String) -> some View {
+        let awayOutcome = market?.outcomes.first(where: { $0.name == event.awayTeam })
+        let homeOutcome = market?.outcomes.first(where: { $0.name == event.homeTeam })
 
-        Text(formatOdds(awayOdds))
-            .font(AppFonts.odds)
-            .foregroundStyle(AppColors.textPrimary)
-            .frame(width: 80, height: 36, alignment: .center)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(oddsBackground(price: awayOdds, allPrices: allPricesForTeam(event.awayTeam)))
-            )
+        selectableOddsCell(
+            odds: awayOutcome?.price,
+            outcomeName: event.awayTeam,
+            bookmakerTitle: bookmakerTitle,
+            allPrices: allPricesForTeam(event.awayTeam),
+            width: 80
+        )
 
-        Text(formatOdds(homeOdds))
-            .font(AppFonts.odds)
-            .foregroundStyle(AppColors.textPrimary)
-            .frame(width: 80, height: 36, alignment: .center)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(oddsBackground(price: homeOdds, allPrices: allPricesForTeam(event.homeTeam)))
-            )
+        selectableOddsCell(
+            odds: homeOutcome?.price,
+            outcomeName: event.homeTeam,
+            bookmakerTitle: bookmakerTitle,
+            allPrices: allPricesForTeam(event.homeTeam),
+            width: 80
+        )
     }
 
     // MARK: - Spread Cells
 
     @ViewBuilder
-    private func spreadCells(market: Market?) -> some View {
+    private func spreadCells(market: Market?, bookmakerTitle: String) -> some View {
         let awayOutcome = market?.outcomes.first(where: { $0.name == event.awayTeam })
         let homeOutcome = market?.outcomes.first(where: { $0.name == event.homeTeam })
 
-        spreadCell(outcome: awayOutcome, allPrices: allPricesForTeam(event.awayTeam))
-        spreadCell(outcome: homeOutcome, allPrices: allPricesForTeam(event.homeTeam))
-    }
+        selectableSpreadCell(
+            outcome: awayOutcome,
+            outcomeName: event.awayTeam,
+            bookmakerTitle: bookmakerTitle,
+            allPrices: allPricesForTeam(event.awayTeam)
+        )
 
-    @ViewBuilder
-    private func spreadCell(outcome: Outcome?, allPrices: [Int]) -> some View {
-        VStack(spacing: 1) {
-            Text(formatPoint(outcome?.point))
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(AppColors.textPrimary)
-            Text(formatOdds(outcome?.price))
-                .font(.system(size: 12, weight: .regular, design: .monospaced))
-                .foregroundStyle(AppColors.textSecondary)
-        }
-        .frame(width: 100, height: 42, alignment: .center)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(oddsBackground(price: outcome?.price, allPrices: allPrices))
+        selectableSpreadCell(
+            outcome: homeOutcome,
+            outcomeName: event.homeTeam,
+            bookmakerTitle: bookmakerTitle,
+            allPrices: allPricesForTeam(event.homeTeam)
         )
     }
 
     // MARK: - Total Cells
 
     @ViewBuilder
-    private func totalCells(market: Market?) -> some View {
+    private func totalCells(market: Market?, bookmakerTitle: String) -> some View {
         let overOutcome = market?.outcomes.first(where: { $0.name == "Over" })
         let underOutcome = market?.outcomes.first(where: { $0.name == "Under" })
 
-        spreadCell(outcome: overOutcome, allPrices: allPricesForOutcome("Over"))
-        spreadCell(outcome: underOutcome, allPrices: allPricesForOutcome("Under"))
+        selectableSpreadCell(
+            outcome: overOutcome,
+            outcomeName: "Over",
+            bookmakerTitle: bookmakerTitle,
+            allPrices: allPricesForOutcome("Over")
+        )
+
+        selectableSpreadCell(
+            outcome: underOutcome,
+            outcomeName: "Under",
+            bookmakerTitle: bookmakerTitle,
+            allPrices: allPricesForOutcome("Under")
+        )
     }
 
     // MARK: - Outright Cells
@@ -241,6 +273,156 @@ struct BetPage: View {
                 .font(AppFonts.odds)
                 .foregroundStyle(AppColors.textSecondary)
                 .frame(width: 80, height: 36, alignment: .center)
+        }
+    }
+
+    // MARK: - Selectable Odds Cell (H2H)
+
+    @ViewBuilder
+    private func selectableOddsCell(odds: Int?, outcomeName: String, bookmakerTitle: String, allPrices: [Int], width: CGFloat) -> some View {
+        let selected = isSelected(bookmakerTitle: bookmakerTitle, outcomeName: outcomeName)
+
+        Text(formatOdds(odds))
+            .font(AppFonts.odds)
+            .foregroundStyle(AppColors.textPrimary)
+            .frame(width: width, height: 36, alignment: .center)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(oddsBackground(price: odds, allPrices: allPrices))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(selected ? AppColors.primaryGreen : Color.clear, lineWidth: 2.5)
+            )
+            .onTapGesture {
+                if let odds {
+                    toggleSelection(BetSelection(
+                        bookmakerTitle: bookmakerTitle,
+                        outcomeName: outcomeName,
+                        odds: odds
+                    ))
+                }
+            }
+    }
+
+    // MARK: - Selectable Spread/Total Cell
+
+    @ViewBuilder
+    private func selectableSpreadCell(outcome: Outcome?, outcomeName: String, bookmakerTitle: String, allPrices: [Int]) -> some View {
+        let selected = isSelected(bookmakerTitle: bookmakerTitle, outcomeName: outcomeName)
+
+        VStack(spacing: 1) {
+            Text(formatPoint(outcome?.point))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AppColors.textPrimary)
+            Text(formatOdds(outcome?.price))
+                .font(.system(size: 12, weight: .regular, design: .monospaced))
+                .foregroundStyle(AppColors.textSecondary)
+        }
+        .frame(width: 100, height: 42, alignment: .center)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(oddsBackground(price: outcome?.price, allPrices: allPrices))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(selected ? AppColors.primaryGreen : Color.clear, lineWidth: 2.5)
+        )
+        .onTapGesture {
+            if let price = outcome?.price {
+                toggleSelection(BetSelection(
+                    bookmakerTitle: bookmakerTitle,
+                    outcomeName: outcomeName,
+                    odds: price
+                ))
+            }
+        }
+    }
+
+    // MARK: - Bet Simulator Panel
+
+    private var betSimulatorPanel: some View {
+        VStack(spacing: 0) {
+            // Top accent border
+            Rectangle()
+                .fill(AppColors.primaryGreen)
+                .frame(height: 2)
+
+            VStack(spacing: 12) {
+                // Header
+                Text("Bet Simulator")
+                    .font(AppFonts.headline)
+                    .foregroundStyle(AppColors.textPrimary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                // Selection 1
+                if selections.count >= 1 {
+                    betRow(selection: selections[0], betAmount: $betAmount1)
+                }
+
+                // Selection 2
+                if selections.count >= 2 {
+                    Divider()
+                        .foregroundStyle(AppColors.divider)
+
+                    betRow(selection: selections[1], betAmount: $betAmount2)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+        }
+        .background(
+            AppColors.backgroundCard
+                .shadow(color: AppColors.cardShadow, radius: 8, x: 0, y: -4)
+        )
+    }
+
+    @ViewBuilder
+    private func betRow(selection: BetSelection, betAmount: Binding<Double>) -> some View {
+        VStack(spacing: 8) {
+            // Label + remove button
+            HStack {
+                HStack(spacing: 4) {
+                    Text(selection.bookmakerTitle)
+                        .font(AppFonts.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AppColors.textPrimary)
+
+                    Text("·")
+                        .foregroundStyle(AppColors.textSecondary)
+
+                    Text("\(shortenTeamName(selection.outcomeName)) (\(formatOdds(selection.odds)))")
+                        .font(AppFonts.caption)
+                        .foregroundStyle(AppColors.primaryGreen)
+                }
+
+                Spacer()
+
+                Button {
+                    removeSelection(selection)
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.6))
+                }
+            }
+
+            // Slider row
+            HStack(spacing: 10) {
+                Text("$\(Int(betAmount.wrappedValue))")
+                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .frame(width: 50, alignment: .leading)
+
+                Slider(value: betAmount, in: 0...1000, step: 10)
+                    .tint(AppColors.primaryGreen)
+
+                let payout = calculatePayout(betAmount: betAmount.wrappedValue, odds: selection.odds)
+                Text("+$\(payout, specifier: "%.2f")")
+                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .foregroundStyle(AppColors.primaryGreen)
+                    .frame(width: 80, alignment: .trailing)
+            }
         }
     }
 
@@ -270,7 +452,38 @@ struct BetPage: View {
         .padding(.bottom, 12)
     }
 
-    // MARK: - Helpers
+    // MARK: - Selection Helpers
+
+    private func toggleSelection(_ selection: BetSelection) {
+        if let index = selections.firstIndex(of: selection) {
+            selections.remove(at: index)
+        } else if selections.count < 2 {
+            selections.append(selection)
+        } else {
+            selections[0] = selection
+        }
+    }
+
+    private func removeSelection(_ selection: BetSelection) {
+        selections.removeAll { $0 == selection }
+    }
+
+    private func isSelected(bookmakerTitle: String, outcomeName: String) -> Bool {
+        selections.contains { $0.bookmakerTitle == bookmakerTitle && $0.outcomeName == outcomeName }
+    }
+
+    // MARK: - Payout Calculation
+
+    private func calculatePayout(betAmount: Double, odds: Int) -> Double {
+        guard betAmount > 0 else { return 0 }
+        if odds > 0 {
+            return betAmount * (Double(odds) / 100.0)
+        } else {
+            return betAmount * (100.0 / Double(abs(odds)))
+        }
+    }
+
+    // MARK: - Formatting Helpers
 
     private func marketForBookmaker(_ bookmaker: Bookmaker) -> Market? {
         bookmaker.markets.first(where: { $0.key == marketType.rawValue })
@@ -290,6 +503,10 @@ struct BetPage: View {
 
     private func formatOdds(_ price: Int?) -> String {
         guard let price else { return "-" }
+        return price > 0 ? "+\(price)" : "\(price)"
+    }
+
+    private func formatOdds(_ price: Int) -> String {
         return price > 0 ? "+\(price)" : "\(price)"
     }
 
