@@ -18,8 +18,12 @@ class OddsDataService {
     // Load from bundled JSON files (no API calls)
     func loadLocalData() {
         for sport in SportCategory.allCases {
-            let events: [ResponseBody] = loadFromBundle(sport.localFileName)
-            eventsBySport[sport] = events
+            var allEvents: [ResponseBody] = []
+            for fileName in sport.localFileNames {
+                let events: [ResponseBody] = loadFromBundle(fileName)
+                allEvents.append(contentsOf: events)
+            }
+            eventsBySport[sport] = allEvents
         }
     }
 
@@ -28,15 +32,20 @@ class OddsDataService {
         isLoading = true
         defer { isLoading = false }
 
-        do {
-            let events = try await linesManager.getOdds(for: sport)
-            eventsBySport[sport] = events
-            saveToDocuments(events, filename: "\(sport.localFileName).json")
-        } catch {
-            self.error = error
-            // Fall back to local data
-            eventsBySport[sport] = loadFromBundle(sport.localFileName)
+        var allEvents: [ResponseBody] = []
+        for (index, key) in sport.sportKeys.enumerated() {
+            do {
+                let events = try await linesManager.getOdds(forKey: key, markets: sport.availableMarkets)
+                allEvents.append(contentsOf: events)
+                saveToDocuments(events, filename: "\(sport.localFileNames[index]).json")
+            } catch {
+                self.error = error
+                // Fall back to local data for this key
+                let local: [ResponseBody] = loadFromBundle(sport.localFileNames[index])
+                allEvents.append(contentsOf: local)
+            }
         }
+        eventsBySport[sport] = allEvents
     }
 
     // Fetch all sports from API
@@ -45,14 +54,19 @@ class OddsDataService {
         defer { isLoading = false }
 
         for sport in SportCategory.allCases {
-            do {
-                let events = try await linesManager.getOdds(for: sport)
-                eventsBySport[sport] = events
-                saveToDocuments(events, filename: "\(sport.localFileName).json")
-            } catch {
-                self.error = error
-                eventsBySport[sport] = loadFromBundle(sport.localFileName)
+            var allEvents: [ResponseBody] = []
+            for (index, key) in sport.sportKeys.enumerated() {
+                do {
+                    let events = try await linesManager.getOdds(forKey: key, markets: sport.availableMarkets)
+                    allEvents.append(contentsOf: events)
+                    saveToDocuments(events, filename: "\(sport.localFileNames[index]).json")
+                } catch {
+                    self.error = error
+                    let local: [ResponseBody] = loadFromBundle(sport.localFileNames[index])
+                    allEvents.append(contentsOf: local)
+                }
             }
+            eventsBySport[sport] = allEvents
         }
     }
 

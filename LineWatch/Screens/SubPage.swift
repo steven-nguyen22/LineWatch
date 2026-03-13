@@ -36,16 +36,32 @@ struct SubPage: View {
                 .padding(.horizontal, 40)
             } else {
                 VStack(spacing: 0) {
-                    // Market type picker
-                    Picker("Market", selection: $selectedMarket) {
-                        ForEach(MarketType.standardMarkets) { market in
-                            Text(market.displayName).tag(market)
+                    // Market type picker (only show if more than 1 market available)
+                    if sport.availableMarkets.count > 1 {
+                        Picker("Market", selection: $selectedMarket) {
+                            ForEach(sport.availableMarkets) { market in
+                                Text(market.displayName).tag(market)
+                            }
                         }
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
+                        .padding(.bottom, 16)
+                    } else {
+                        // Single market badge (e.g., "Moneyline" for fighting, "Outrights" for golf)
+                        Text(sport.availableMarkets.first?.displayName ?? "")
+                            .font(AppFonts.caption)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(AppColors.darkGreen)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule()
+                                    .fill(AppColors.lightGreen.opacity(0.3))
+                            )
+                            .padding(.top, 12)
+                            .padding(.bottom, 16)
                     }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 16)
 
                     // Event list
                     LazyVStack(spacing: 12) {
@@ -65,6 +81,11 @@ struct SubPage: View {
         .navigationTitle(sport.displayName)
         .navigationBarTitleDisplayMode(.large)
         .tint(AppColors.primaryGreen)
+        .onAppear {
+            if !sport.availableMarkets.contains(selectedMarket) {
+                selectedMarket = sport.availableMarkets.first ?? .h2h
+            }
+        }
     }
 }
 
@@ -83,7 +104,7 @@ private struct EventCard: View {
 
             // Team info
             VStack(alignment: .leading, spacing: 6) {
-                Text(event.awayTeam)
+                Text(event.awayDisplay)
                     .font(AppFonts.headline)
                     .foregroundStyle(AppColors.textPrimary)
 
@@ -92,7 +113,7 @@ private struct EventCard: View {
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
 
-                    Text(event.homeTeam)
+                    Text(event.homeDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
                 }

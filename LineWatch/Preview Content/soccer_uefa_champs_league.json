@@ -1,0 +1,2873 @@
+[
+    {
+        "id": "193500d339a47b5fa883fbbc23b8795e",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-17T17:45:00Z",
+        "home_team": "Sporting Lisbon",
+        "away_team": "Bod\u00f8/Glimt",
+        "bookmakers": [
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 380
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -175
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 360
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 110,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -150,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 350
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -175
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 380
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 365
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -172
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 390
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": -112,
+                                "point": 1.0
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -108,
+                                "point": -1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -110,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -110,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 380
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -172
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 412
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": -112,
+                                "point": 1.0
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -108,
+                                "point": -1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -105,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -115,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 380
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -172
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 412
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": -112,
+                                "point": 1.0
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -108,
+                                "point": -1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -105,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -115,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:45:08Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:08Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 370
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -175
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 380
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 365
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -172
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 390
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": -110,
+                                "point": 1.0
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -110,
+                                "point": -1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -105,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -115,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Bod\u00f8/Glimt",
+                                "price": 400
+                            },
+                            {
+                                "name": "Sporting Lisbon",
+                                "price": -175
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 340
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 120,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -152,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "283cc3f3e87a270fe181353c3db55118",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-17T20:00:00Z",
+        "home_team": "Arsenal",
+        "away_team": "Bayer Leverkusen",
+        "bookmakers": [
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -325
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 825
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 450
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -165,
+                                "point": 2.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": 120,
+                                "point": 2.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -425
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 800
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 480
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -350
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 875
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 475
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -110,
+                                "point": -1.5
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": -110,
+                                "point": 1.5
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": 100,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -340
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 975
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 490
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -113,
+                                "point": -1.5
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": -107,
+                                "point": 1.5
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -121,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": 101,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -340
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 975
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 490
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -113,
+                                "point": -1.5
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": -107,
+                                "point": 1.5
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -121,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": 101,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:45:08Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:08Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -340
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 800
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 475
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -350
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 875
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 475
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -110,
+                                "point": -1.5
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": -110,
+                                "point": 1.5
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": 100,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Arsenal",
+                                "price": -375
+                            },
+                            {
+                                "name": "Bayer Leverkusen",
+                                "price": 950
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 475
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -180,
+                                "point": 2.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": 140,
+                                "point": 2.5
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "7841dd955295660c61e31ae373fe2285",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-17T20:00:00Z",
+        "home_team": "Chelsea",
+        "away_team": "Paris Saint Germain",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 105
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 180
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 360
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 110
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 210
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 290
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 105,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -145,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 107
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 200
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 325
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": -120,
+                                "point": -0.25
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 100,
+                                "point": 0.25
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -112,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -108,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 110
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 208
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 327
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": -117,
+                                "point": -0.25
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": -103,
+                                "point": 0.25
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 101,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -121,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 110
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 208
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 327
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": -117,
+                                "point": -0.25
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": -103,
+                                "point": 0.25
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 101,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -121,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:45:08Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:08Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 105
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 200
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 310
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 107
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 200
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 325
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -112,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -108,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Chelsea",
+                                "price": 108
+                            },
+                            {
+                                "name": "Paris Saint Germain",
+                                "price": 210
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 295
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 120,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -155,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "52b31feeb945ee25598f8d16ac09530c",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-17T20:00:00Z",
+        "home_team": "Manchester City",
+        "away_team": "Real Madrid",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -220
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 400
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 450
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -200
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 450
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 380
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 110,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -155,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -208
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 385
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 475
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": 105,
+                                "point": -1.25
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": -125,
+                                "point": 1.25
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -125,
+                                "point": 3.0
+                            },
+                            {
+                                "name": "Under",
+                                "price": 105,
+                                "point": 3.0
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:45:08Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:08Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -205
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 400
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 425
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -198
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 390
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 500
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": 110,
+                                "point": -1.25
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": -130,
+                                "point": 1.25
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -103,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -117,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -198
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 390
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 500
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": 110,
+                                "point": -1.25
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": -130,
+                                "point": 1.25
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -103,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -117,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -208
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 385
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 475
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -105,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -115,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Manchester City",
+                                "price": -210
+                            },
+                            {
+                                "name": "Real Madrid",
+                                "price": 450
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 390
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 115,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -148,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "84a52f6bed227ab75cacc1e93a7faed5",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-18T17:45:00Z",
+        "home_team": "Barcelona",
+        "away_team": "Newcastle United",
+        "bookmakers": [
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -175
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 375
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 400
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -110,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -130,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -190
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 400
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 380
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:45:08Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:08Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -180
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 390
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 370
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -190
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 430
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 350
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 115,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -148,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -173
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 410
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 385
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -108,
+                                "point": -1.0
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": -112,
+                                "point": 1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -118,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -102,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -173
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 410
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 385
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -108,
+                                "point": -1.0
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": -112,
+                                "point": 1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -118,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": -102,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -174
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 390
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 365
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -110,
+                                "point": -1.0
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": -110,
+                                "point": 1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 3.25
+                            },
+                            {
+                                "name": "Under",
+                                "price": 100,
+                                "point": 3.25
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -174
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": 390
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 365
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Barcelona",
+                                "price": -110,
+                                "point": -1.0
+                            },
+                            {
+                                "name": "Newcastle United",
+                                "price": -110,
+                                "point": 1.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": 102,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -122,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "c3ac09fbb8372fd9a48dc5cdb68502f7",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-18T20:00:00Z",
+        "home_team": "Bayern Munich",
+        "away_team": "Atalanta BC",
+        "bookmakers": [
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 675
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -325
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 525
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -110,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 700
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -350
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:45:08Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:08Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 650
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -320
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 800
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -375
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 510
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -106,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 725
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -310
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 533
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": -114,
+                                "point": 1.75
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -106,
+                                "point": -1.75
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -119,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -101,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 725
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -310
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 533
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": -114,
+                                "point": 1.75
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -106,
+                                "point": -1.75
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -119,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -101,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 650
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -310
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 500
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": 100,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": 650
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -310
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 500
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Atalanta BC",
+                                "price": -112,
+                                "point": 1.75
+                            },
+                            {
+                                "name": "Bayern Munich",
+                                "price": -108,
+                                "point": -1.75
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": 100,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "f4e19a3e5cb563921d4f031f9a4e470c",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-18T20:00:00Z",
+        "home_team": "Tottenham Hotspur",
+        "away_team": "Atl\u00e9tico Madrid",
+        "bookmakers": [
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 150
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 150
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 275
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -150,
+                                "point": 2.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": 110,
+                                "point": 2.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 150
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 140
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 310
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:45:08Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:08Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 160
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 145
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 280
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 150
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 155
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 270
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -162,
+                                "point": 2.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": 128,
+                                "point": 2.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 159
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 150
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 301
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": -106,
+                                "point": 0.0
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": -114,
+                                "point": 0.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -115,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": -105,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 159
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 150
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 301
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": -106,
+                                "point": 0.0
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": -114,
+                                "point": 0.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -115,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": -105,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 162
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 142
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 285
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": -103,
+                                "point": 0.0
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": -117,
+                                "point": 0.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -115,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": -105,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 162
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": 142
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 285
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Atl\u00e9tico Madrid",
+                                "price": 100,
+                                "point": 0.0
+                            },
+                            {
+                                "name": "Tottenham Hotspur",
+                                "price": -120,
+                                "point": 0.0
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -105,
+                                "point": 2.75
+                            },
+                            {
+                                "name": "Under",
+                                "price": -115,
+                                "point": 2.75
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "a142e47748a46aa75f8c4f6488850819",
+        "sport_key": "soccer_uefa_champs_league",
+        "sport_title": "UEFA Champions League",
+        "commence_time": "2026-03-18T20:00:00Z",
+        "home_team": "Liverpool",
+        "away_team": "Galatasaray",
+        "bookmakers": [
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:52Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": 725
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -350
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 550
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:52Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -120,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -115,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:14Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:14Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": 850
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -425
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:32Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": 1000
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -420
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 540
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:32Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -115,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -110,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:31Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": 875
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -360
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 569
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": -101,
+                                "point": 1.75
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -119,
+                                "point": -1.75
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:45:31Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -117,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -103,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:44:38Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": 875
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -360
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 569
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": -101,
+                                "point": 1.75
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -119,
+                                "point": -1.75
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:38Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -117,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -103,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:44:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": 850
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -375
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 525
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:44:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -115,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -105,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:36:37Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": 850
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -375
+                            },
+                            {
+                                "name": "Draw",
+                                "price": 525
+                            }
+                        ]
+                    },
+                    {
+                        "key": "spreads",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Galatasaray",
+                                "price": -105,
+                                "point": 1.75
+                            },
+                            {
+                                "name": "Liverpool",
+                                "price": -115,
+                                "point": -1.75
+                            }
+                        ]
+                    },
+                    {
+                        "key": "totals",
+                        "last_update": "2026-03-13T16:36:37Z",
+                        "outcomes": [
+                            {
+                                "name": "Over",
+                                "price": -115,
+                                "point": 3.5
+                            },
+                            {
+                                "name": "Under",
+                                "price": -105,
+                                "point": 3.5
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

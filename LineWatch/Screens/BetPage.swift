@@ -101,7 +101,7 @@ struct BetPage: View {
                         .fill(AppColors.primaryGreen.opacity(0.12))
                 )
 
-            Text(event.awayTeam)
+            Text(event.awayDisplay)
                 .font(AppFonts.title)
                 .foregroundStyle(AppColors.textPrimary)
 
@@ -109,7 +109,7 @@ struct BetPage: View {
                 .font(AppFonts.body)
                 .foregroundStyle(AppColors.textSecondary)
 
-            Text(event.homeTeam)
+            Text(event.homeDisplay)
                 .font(AppFonts.title)
                 .foregroundStyle(AppColors.textPrimary)
 
@@ -133,15 +133,15 @@ struct BetPage: View {
 
             switch marketType {
             case .h2h:
-                Text(shortenTeamName(event.awayTeam))
+                Text(shortenTeamName(event.awayDisplay))
                     .frame(width: 80, alignment: .center)
-                Text(shortenTeamName(event.homeTeam))
+                Text(shortenTeamName(event.homeDisplay))
                     .frame(width: 80, alignment: .center)
 
             case .spreads:
-                Text(shortenTeamName(event.awayTeam))
+                Text(shortenTeamName(event.awayDisplay))
                     .frame(width: 100, alignment: .center)
-                Text(shortenTeamName(event.homeTeam))
+                Text(shortenTeamName(event.homeDisplay))
                     .frame(width: 100, alignment: .center)
 
             case .totals:
@@ -207,22 +207,22 @@ struct BetPage: View {
 
     @ViewBuilder
     private func h2hCells(market: Market?, bookmakerTitle: String) -> some View {
-        let awayOutcome = market?.outcomes.first(where: { $0.name == event.awayTeam })
-        let homeOutcome = market?.outcomes.first(where: { $0.name == event.homeTeam })
+        let awayOutcome = market?.outcomes.first(where: { $0.name == event.awayDisplay })
+        let homeOutcome = market?.outcomes.first(where: { $0.name == event.homeDisplay })
 
         selectableOddsCell(
             odds: awayOutcome?.price,
-            outcomeName: event.awayTeam,
+            outcomeName: event.awayDisplay,
             bookmakerTitle: bookmakerTitle,
-            allPrices: allPricesForTeam(event.awayTeam),
+            allPrices: allPricesForTeam(event.awayDisplay),
             width: 80
         )
 
         selectableOddsCell(
             odds: homeOutcome?.price,
-            outcomeName: event.homeTeam,
+            outcomeName: event.homeDisplay,
             bookmakerTitle: bookmakerTitle,
-            allPrices: allPricesForTeam(event.homeTeam),
+            allPrices: allPricesForTeam(event.homeDisplay),
             width: 80
         )
     }
@@ -231,21 +231,21 @@ struct BetPage: View {
 
     @ViewBuilder
     private func spreadCells(market: Market?, bookmakerTitle: String) -> some View {
-        let awayOutcome = market?.outcomes.first(where: { $0.name == event.awayTeam })
-        let homeOutcome = market?.outcomes.first(where: { $0.name == event.homeTeam })
+        let awayOutcome = market?.outcomes.first(where: { $0.name == event.awayDisplay })
+        let homeOutcome = market?.outcomes.first(where: { $0.name == event.homeDisplay })
 
         selectableSpreadCell(
             outcome: awayOutcome,
-            outcomeName: event.awayTeam,
+            outcomeName: event.awayDisplay,
             bookmakerTitle: bookmakerTitle,
-            allPrices: allPricesForTeam(event.awayTeam)
+            allPrices: allPricesForTeam(event.awayDisplay)
         )
 
         selectableSpreadCell(
             outcome: homeOutcome,
-            outcomeName: event.homeTeam,
+            outcomeName: event.homeDisplay,
             bookmakerTitle: bookmakerTitle,
-            allPrices: allPricesForTeam(event.homeTeam)
+            allPrices: allPricesForTeam(event.homeDisplay)
         )
     }
 

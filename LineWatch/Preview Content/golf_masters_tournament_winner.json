@@ -1,0 +1,1842 @@
+[
+    {
+        "id": "b709a17e8bec948af575f4534c598144",
+        "has_outrights": true,
+        "sport_key": "golf_masters_tournament_winner",
+        "sport_title": "Masters Tournament Winner",
+        "commence_time": "2026-04-12T21:45:00Z",
+        "home_team": null,
+        "away_team": null,
+        "bookmakers": [
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:42:21Z",
+                "markets": [
+                    {
+                        "key": "outrights",
+                        "last_update": "2026-03-13T16:42:21Z",
+                        "outcomes": [
+                            {
+                                "name": "Scottie Scheffler",
+                                "price": 275
+                            },
+                            {
+                                "name": "Rory McIlroy",
+                                "price": 700
+                            },
+                            {
+                                "name": "Jon Rahm",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Bryson DeChambeau",
+                                "price": 1600
+                            },
+                            {
+                                "name": "Xander Schauffele",
+                                "price": 1600
+                            },
+                            {
+                                "name": "Ludvig Aberg",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Tommy Fleetwood",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Collin Morikawa",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Patrick Reed",
+                                "price": 2500
+                            },
+                            {
+                                "name": "Justin Rose",
+                                "price": 2500
+                            },
+                            {
+                                "name": "Hideki Matsuyama",
+                                "price": 2800
+                            },
+                            {
+                                "name": "Cameron Young",
+                                "price": 2800
+                            },
+                            {
+                                "name": "Viktor Hovland",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Patrick Cantlay",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Tyrrell Hatton",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Brooks Koepka",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Shane Lowry",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Robert Macintyre",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Min Woo Lee",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Jordan Spieth",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Christopher Gotterup",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Matthew Fitzpatrick",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Russell Henley",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Justin Thomas",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Akshay Bhatia",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Corey Conners",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Jason Day",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Harris English",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Adam Scott",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Cameron Smith",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Sepp Straka",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Sungjae Im",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Si Woo Kim",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Ben Griffin",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Sam Burns",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Wyndham Clark",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Max Homa",
+                                "price": 8000
+                            },
+                            {
+                                "name": "J. J. Spaun",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Jacob Bridgeman",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Keegan Bradley",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Kurt Kitayama",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Marco Penge",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Rasmus Hojgaard",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Tom McKibbin",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Daniel Berger",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Sergio Garcia",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Dustin Johnson",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Maverick Mcnealy",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Alexander Noren",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Harry Hall",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Max Greyserman",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Nick Taylor",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Ryan Fox",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Ryan Gerard",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Brian Harman",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Nicolai Hojgaard",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Michael Kim",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Taylor Pendrith",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Aaron Rai",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Andrew Novak",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Carlos Ortiz",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Haotong Li",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Kristoffer Reitan",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Michael Brennan",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Rasmus Neergaard-Petersen",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Sam Stevens",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Sami V\u00e4lim\u00e4ki",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Byeong Hun An",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Thomas Detry",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Billy Horschel",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Phil Mickelson",
+                                "price": 20000
+                            },
+                            {
+                                "name": "John Keefer",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Nico Echavarria",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Bubba Watson",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Tiger Woods",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Aldrich Potgieter",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Davis Riley",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Zach Johnson",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Charl Schwartzel",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Danny Willett",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Ben Campbell",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Naoyuki Kataoka",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Ethan Fang",
+                                "price": 50000
+                            },
+                            {
+                                "name": "Angel Cabrera",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Fred Couples",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Jose Maria Olaz\u00e1bal",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Mike Weir",
+                                "price": 100000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:42:04Z",
+                "markets": [
+                    {
+                        "key": "outrights",
+                        "last_update": "2026-03-13T16:42:04Z",
+                        "outcomes": [
+                            {
+                                "name": "Scottie Scheffler",
+                                "price": 333
+                            },
+                            {
+                                "name": "Rory McIlroy",
+                                "price": 800
+                            },
+                            {
+                                "name": "Bryson DeChambeau",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Jon Rahm",
+                                "price": 1400
+                            },
+                            {
+                                "name": "Ludvig Aberg",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Xander Schauffele",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Collin Morikawa",
+                                "price": 2000
+                            },
+                            {
+                                "name": "Tommy Fleetwood",
+                                "price": 2000
+                            },
+                            {
+                                "name": "Justin Rose",
+                                "price": 2800
+                            },
+                            {
+                                "name": "Patrick Reed",
+                                "price": 2800
+                            },
+                            {
+                                "name": "Hideki Matsuyama",
+                                "price": 3000
+                            },
+                            {
+                                "name": "Cameron Young",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Viktor Hovland",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Jordan Spieth",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Robert Macintyre",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Brooks Koepka",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Patrick Cantlay",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Tyrrell Hatton",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Christopher Gotterup",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Justin Thomas",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Min Woo Lee",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Akshay Bhatia",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Matthew Fitzpatrick",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Shane Lowry",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Ben Griffin",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Corey Conners",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Russell Henley",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Sam Burns",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Cameron Smith",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Jason Day",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Max Homa",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Sepp Straka",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Si Woo Kim",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Harris English",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Sungjae Im",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Wyndham Clark",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Jacob Bridgeman",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Marco Penge",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Adam Scott",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Dustin Johnson",
+                                "price": 10000
+                            },
+                            {
+                                "name": "J. J. Spaun",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Maverick Mcnealy",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Sergio Garcia",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Alexander Noren",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Ryan Fox",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Tom McKibbin",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Aaron Rai",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Keegan Bradley",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Michael Kim",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Rasmus Hojgaard",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Andrew Novak",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Harry Hall",
+                                "price": 12500
+                            },
+                            {
+                                "name": "John Keefer",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Kristoffer Reitan",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Kurt Kitayama",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Rasmus Neergaard-Petersen",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Sami V\u00e4lim\u00e4ki",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Max Greyserman",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Phil Mickelson",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Taylor Pendrith",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Carlos Ortiz",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Michael Brennan",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Ryan Gerard",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Brian Harman",
+                                "price": 17500
+                            },
+                            {
+                                "name": "Haotong Li",
+                                "price": 17500
+                            },
+                            {
+                                "name": "Sam Stevens",
+                                "price": 17500
+                            },
+                            {
+                                "name": "Tiger Woods",
+                                "price": 17500
+                            },
+                            {
+                                "name": "Aldrich Potgieter",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Nick Taylor",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Bubba Watson",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Davis Riley",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Naoyuki Kataoka",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Ben Campbell",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Charl Schwartzel",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Danny Willett",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Zach Johnson",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Michael La Sasso",
+                                "price": 75000
+                            },
+                            {
+                                "name": "Angel Cabrera",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Brandon Wu",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Ethan Fang",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Mason Howell",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Fred Couples",
+                                "price": 200000
+                            },
+                            {
+                                "name": "Vijay Singh",
+                                "price": 200000
+                            },
+                            {
+                                "name": "Jose Maria Olaz\u00e1bal",
+                                "price": 250000
+                            },
+                            {
+                                "name": "Mike Weir",
+                                "price": 250000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:41:00Z",
+                "markets": [
+                    {
+                        "key": "outrights",
+                        "last_update": "2026-03-13T16:41:00Z",
+                        "outcomes": [
+                            {
+                                "name": "Scottie Scheffler",
+                                "price": 300
+                            },
+                            {
+                                "name": "Rory McIlroy",
+                                "price": 900
+                            },
+                            {
+                                "name": "Jon Rahm",
+                                "price": 1400
+                            },
+                            {
+                                "name": "Xander Schauffele",
+                                "price": 1600
+                            },
+                            {
+                                "name": "Bryson DeChambeau",
+                                "price": 2000
+                            },
+                            {
+                                "name": "Ludvig Aberg",
+                                "price": 2000
+                            },
+                            {
+                                "name": "Collin Morikawa",
+                                "price": 2500
+                            },
+                            {
+                                "name": "Tommy Fleetwood",
+                                "price": 2500
+                            },
+                            {
+                                "name": "Hideki Matsuyama",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Justin Rose",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Patrick Reed",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Viktor Hovland",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Cameron Young",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Jordan Spieth",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Si Woo Kim",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Christopher Gotterup",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Brooks Koepka",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Justin Thomas",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Min Woo Lee",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Akshay Bhatia",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Daniel Berger",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Tyrrell Hatton",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Robert Macintyre",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Matthew Fitzpatrick",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Patrick Cantlay",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Russell Henley",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Sepp Straka",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Adam Scott",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Jacob Bridgeman",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Rickie Fowler",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Joaquin Niemann",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Shane Lowry",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Corey Conners",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Maverick Mcnealy",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Jake Knapp",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Jason Day",
+                                "price": 9000
+                            },
+                            {
+                                "name": "Cameron Smith",
+                                "price": 9000
+                            },
+                            {
+                                "name": "Sam Burns",
+                                "price": 9000
+                            },
+                            {
+                                "name": "Sahith Theegala",
+                                "price": 10000
+                            },
+                            {
+                                "name": "J. J. Spaun",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Ben Griffin",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Will Zalatoris",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Ryan Gerard",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Marco Penge",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Kurt Kitayama",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Tony Finau",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Keegan Bradley",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Max Homa",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Harris English",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Nico Echavarria",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Wyndham Clark",
+                                "price": 17500
+                            },
+                            {
+                                "name": "Ryan Fox",
+                                "price": 17500
+                            },
+                            {
+                                "name": "Tiger Woods",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Aaron Rai",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Taylor Pendrith",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Aldrich Potgieter",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Max Greyserman",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Sungjae Im",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Nick Taylor",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Rasmus Neergaard-Petersen",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Haotong Li",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Harry Hall",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Sam Stevens",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Carlos Ortiz",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Jayden Trey Schaper",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Elvis Smylie",
+                                "price": 22500
+                            },
+                            {
+                                "name": "Sergio Garcia",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Alexander Noren",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Tom McKibbin",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Matt McCarty",
+                                "price": 25000
+                            },
+                            {
+                                "name": "David Puig",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Angel Ayora",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Joohyung Kim",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Davis Thompson",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Brian Harman",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Denny McCarthy",
+                                "price": 30000
+                            },
+                            {
+                                "name": "John Keefer",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Garrick Higgo",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Dustin Johnson",
+                                "price": 32500
+                            },
+                            {
+                                "name": "Bubba Watson",
+                                "price": 32500
+                            },
+                            {
+                                "name": "Billy Horschel",
+                                "price": 35000
+                            },
+                            {
+                                "name": "J.T. Poston",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Sami V\u00e4lim\u00e4ki",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Phil Mickelson",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Michael Kim",
+                                "price": 40000
+                            },
+                            {
+                                "name": "John Parry",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Charl Schwartzel",
+                                "price": 50000
+                            },
+                            {
+                                "name": "Zach Johnson",
+                                "price": 100000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:41:39Z",
+                "markets": [
+                    {
+                        "key": "outrights",
+                        "last_update": "2026-03-13T16:41:39Z",
+                        "outcomes": [
+                            {
+                                "name": "Scottie Scheffler",
+                                "price": 370
+                            },
+                            {
+                                "name": "Rory McIlroy",
+                                "price": 900
+                            },
+                            {
+                                "name": "Jon Rahm",
+                                "price": 1300
+                            },
+                            {
+                                "name": "Ludvig Aberg",
+                                "price": 1600
+                            },
+                            {
+                                "name": "Xander Schauffele",
+                                "price": 1700
+                            },
+                            {
+                                "name": "Bryson DeChambeau",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Tommy Fleetwood",
+                                "price": 2000
+                            },
+                            {
+                                "name": "Justin Rose",
+                                "price": 2500
+                            },
+                            {
+                                "name": "Collin Morikawa",
+                                "price": 2500
+                            },
+                            {
+                                "name": "Hideki Matsuyama",
+                                "price": 3000
+                            },
+                            {
+                                "name": "Patrick Reed",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Jordan Spieth",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Akshay Bhatia",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Cameron Young",
+                                "price": 3300
+                            },
+                            {
+                                "name": "Shane Lowry",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Viktor Hovland",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Brooks Koepka",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Russell Henley",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Robert Macintyre",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Matthew Fitzpatrick",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Cameron Smith",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Will Zalatoris",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Tyrrell Hatton",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Justin Thomas",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Min Woo Lee",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Christopher Gotterup",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Sungjae Im",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Corey Conners",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Sepp Straka",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Sahith Theegala",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Ben Griffin",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Si Woo Kim",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Sam Burns",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Patrick Cantlay",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Joaquin Niemann",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Adam Scott",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Jason Day",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Wyndham Clark",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Tony Finau",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Max Homa",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Dustin Johnson",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Jacob Bridgeman",
+                                "price": 6500
+                            },
+                            {
+                                "name": "Marco Penge",
+                                "price": 7500
+                            },
+                            {
+                                "name": "Joohyung Kim",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Harris English",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Aaron Rai",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Maverick Mcnealy",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Keegan Bradley",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Rasmus Hojgaard",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Billy Horschel",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Phil Mickelson",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Davis Thompson",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Sergio Garcia",
+                                "price": 10000
+                            },
+                            {
+                                "name": "J. J. Spaun",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Ryan Gerard",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Aldrich Potgieter",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Ryan Fox",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Alexander Noren",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Matt McCarty",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Tom McKibbin",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Pierceson Coody",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Rasmus Neergaard-Petersen",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Harry Hall",
+                                "price": 12500
+                            },
+                            {
+                                "name": "Nicolai Hojgaard",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Denny McCarthy",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Brian Harman",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Thomas Detry",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Taylor Pendrith",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Byeong Hun An",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Kurt Kitayama",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Carlos Ortiz",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Sam Stevens",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Sami V\u00e4lim\u00e4ki",
+                                "price": 17500
+                            },
+                            {
+                                "name": "Andrew Novak",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Jayden Trey Schaper",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Michael Kim",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Tiger Woods",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Nick Taylor",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Haotong Li",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Max Greyserman",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Danny Willett",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Bubba Watson",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Charl Schwartzel",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Davis Riley",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Kristoffer Reitan",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Zach Johnson",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Ben Campbell",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Michael Brennan",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Angel Cabrera",
+                                "price": 50000
+                            },
+                            {
+                                "name": "Fred Couples",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Vijay Singh",
+                                "price": 100000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:41:24Z",
+                "markets": [
+                    {
+                        "key": "outrights",
+                        "last_update": "2026-03-13T16:41:24Z",
+                        "outcomes": [
+                            {
+                                "name": "Scottie Scheffler",
+                                "price": 300
+                            },
+                            {
+                                "name": "Rory McIlroy",
+                                "price": 700
+                            },
+                            {
+                                "name": "Bryson DeChambeau",
+                                "price": 1000
+                            },
+                            {
+                                "name": "Jon Rahm",
+                                "price": 1600
+                            },
+                            {
+                                "name": "Xander Schauffele",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Tommy Fleetwood",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Ludvig Aberg",
+                                "price": 2200
+                            },
+                            {
+                                "name": "Collin Morikawa",
+                                "price": 2200
+                            },
+                            {
+                                "name": "Patrick Reed",
+                                "price": 3000
+                            },
+                            {
+                                "name": "Justin Rose",
+                                "price": 3000
+                            },
+                            {
+                                "name": "Christopher Gotterup",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Hideki Matsuyama",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Viktor Hovland",
+                                "price": 3500
+                            },
+                            {
+                                "name": "Justin Thomas",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Robert Macintyre",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Jordan Spieth",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Cameron Young",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Brooks Koepka",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Tyrrell Hatton",
+                                "price": 4000
+                            },
+                            {
+                                "name": "Shane Lowry",
+                                "price": 4500
+                            },
+                            {
+                                "name": "Patrick Cantlay",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Ben Griffin",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Joaquin Niemann",
+                                "price": 5000
+                            },
+                            {
+                                "name": "Matthew Fitzpatrick",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Will Zalatoris",
+                                "price": 5500
+                            },
+                            {
+                                "name": "Si Woo Kim",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Corey Conners",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Akshay Bhatia",
+                                "price": 6000
+                            },
+                            {
+                                "name": "Russell Henley",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Min Woo Lee",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Max Homa",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Jason Day",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Cameron Smith",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Adam Scott",
+                                "price": 6600
+                            },
+                            {
+                                "name": "Sepp Straka",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Sam Burns",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Daniel Berger",
+                                "price": 7000
+                            },
+                            {
+                                "name": "Sungjae Im",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Sahith Theegala",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Marco Penge",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Wyndham Clark",
+                                "price": 8000
+                            },
+                            {
+                                "name": "Jacob Bridgeman",
+                                "price": 9000
+                            },
+                            {
+                                "name": "J. J. Spaun",
+                                "price": 9000
+                            },
+                            {
+                                "name": "Harris English",
+                                "price": 9000
+                            },
+                            {
+                                "name": "Dustin Johnson",
+                                "price": 9000
+                            },
+                            {
+                                "name": "Sergio Garcia",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Matt McCarty",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Alexander Noren",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Tony Finau",
+                                "price": 10000
+                            },
+                            {
+                                "name": "Maverick Mcnealy",
+                                "price": 11000
+                            },
+                            {
+                                "name": "Ryan Gerard",
+                                "price": 11000
+                            },
+                            {
+                                "name": "Ryan Fox",
+                                "price": 12000
+                            },
+                            {
+                                "name": "Keegan Bradley",
+                                "price": 12000
+                            },
+                            {
+                                "name": "Harry Hall",
+                                "price": 13000
+                            },
+                            {
+                                "name": "Aaron Rai",
+                                "price": 13000
+                            },
+                            {
+                                "name": "Pierceson Coody",
+                                "price": 13000
+                            },
+                            {
+                                "name": "John Keefer",
+                                "price": 13000
+                            },
+                            {
+                                "name": "Rasmus Neergaard-Petersen",
+                                "price": 13000
+                            },
+                            {
+                                "name": "Davis Thompson",
+                                "price": 14000
+                            },
+                            {
+                                "name": "Tom McKibbin",
+                                "price": 14000
+                            },
+                            {
+                                "name": "Taylor Pendrith",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Tiger Woods",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Rasmus Hojgaard",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Nicolai Hojgaard",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Kurt Kitayama",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Carlos Ortiz",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Brian Harman",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Sam Stevens",
+                                "price": 15000
+                            },
+                            {
+                                "name": "Sami V\u00e4lim\u00e4ki",
+                                "price": 19000
+                            },
+                            {
+                                "name": "Phil Mickelson",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Michael Kim",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Andrew Novak",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Aldrich Potgieter",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Jayden Trey Schaper",
+                                "price": 20000
+                            },
+                            {
+                                "name": "Nick Taylor",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Max Greyserman",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Haotong Li",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Bubba Watson",
+                                "price": 25000
+                            },
+                            {
+                                "name": "Davis Riley",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Kristoffer Reitan",
+                                "price": 30000
+                            },
+                            {
+                                "name": "Charl Schwartzel",
+                                "price": 35000
+                            },
+                            {
+                                "name": "Ben Campbell",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Michael Brennan",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Zach Johnson",
+                                "price": 40000
+                            },
+                            {
+                                "name": "Danny Willett",
+                                "price": 50000
+                            },
+                            {
+                                "name": "Angel Cabrera",
+                                "price": 50000
+                            },
+                            {
+                                "name": "Vijay Singh",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Mike Weir",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Fred Couples",
+                                "price": 100000
+                            },
+                            {
+                                "name": "Jose Maria Olaz\u00e1bal",
+                                "price": 200000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -13,6 +13,10 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
     case basketball = "basketball_nba"
     case football = "americanfootball_nfl"
     case baseball = "baseball_mlb"
+    case hockey = "icehockey_nhl"
+    case soccer = "soccer_uefa_champs_league"
+    case fighting = "fighting"
+    case golf = "golf"
 
     var id: String { rawValue }
 
@@ -21,6 +25,10 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         case .basketball: return "Basketball"
         case .football: return "Football"
         case .baseball: return "Baseball"
+        case .hockey: return "Hockey"
+        case .soccer: return "Soccer"
+        case .fighting: return "MMA / Boxing"
+        case .golf: return "Golf"
         }
     }
 
@@ -29,14 +37,40 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         case .basketball: return "basketball.fill"
         case .football: return "football.fill"
         case .baseball: return "baseball.fill"
+        case .hockey: return "hockey.puck"
+        case .soccer: return "soccerball"
+        case .fighting: return "figure.boxing"
+        case .golf: return "figure.golf"
         }
     }
 
-    var localFileName: String {
+    /// API sport keys for this category (combined categories return multiple keys)
+    var sportKeys: [String] {
         switch self {
-        case .basketball: return "basketball_nba"
-        case .football: return "americanfootball_nfl"
-        case .baseball: return "baseball_mlb"
+        case .basketball: return ["basketball_nba"]
+        case .football: return ["americanfootball_nfl"]
+        case .baseball: return ["baseball_mlb"]
+        case .hockey: return ["icehockey_nhl"]
+        case .soccer: return ["soccer_uefa_champs_league"]
+        case .fighting: return ["mma_mixed_martial_arts", "boxing_boxing"]
+        case .golf: return ["golf_masters_tournament_winner", "golf_pga_championship_winner", "golf_the_open_championship_winner", "golf_us_open_winner"]
+        }
+    }
+
+    /// Local JSON filenames (one per sport key, without extension)
+    var localFileNames: [String] {
+        sportKeys
+    }
+
+    /// Available market types for this sport
+    var availableMarkets: [MarketType] {
+        switch self {
+        case .basketball, .football, .baseball, .hockey, .soccer:
+            return [.h2h, .spreads, .totals]
+        case .fighting:
+            return [.h2h]
+        case .golf:
+            return [.outrights]
         }
     }
 }
@@ -78,8 +112,13 @@ class LinesManager {
     private let baseURL = "https://api.the-odds-api.com/v4/sports"
 
     func getOdds(for sport: SportCategory, markets: [MarketType] = MarketType.standardMarkets) async throws -> [ResponseBody] {
+        // For single-key sports, use the rawValue. For multi-key, caller should use getOdds(forKey:) instead.
+        return try await getOdds(forKey: sport.sportKeys[0], markets: markets)
+    }
+
+    func getOdds(forKey sportKey: String, markets: [MarketType] = MarketType.standardMarkets) async throws -> [ResponseBody] {
         let marketsParam = MarketType.apiMarketsParam(markets)
-        let endpoint = "\(baseURL)/\(sport.rawValue)/odds/?apiKey=\(apiKey)&regions=us&markets=\(marketsParam)&oddsFormat=american"
+        let endpoint = "\(baseURL)/\(sportKey)/odds/?apiKey=\(apiKey)&regions=us&markets=\(marketsParam)&oddsFormat=american"
 
         guard let url = URL(string: endpoint) else {
             throw GHError.invalidURL
@@ -106,7 +145,8 @@ struct ResponseBody: Codable, Identifiable {
     let sportKey: String
     let sportTitle: String
     let commenceTime: String?
-    let homeTeam, awayTeam: String
+    let homeTeam: String?
+    let awayTeam: String?
     let bookmakers: [Bookmaker]
 
     enum CodingKeys: String, CodingKey {
@@ -118,6 +158,11 @@ struct ResponseBody: Codable, Identifiable {
         case awayTeam = "away_team"
         case bookmakers
     }
+
+    /// Display name for the home side (falls back to sport title for outrights)
+    var homeDisplay: String { homeTeam ?? sportTitle }
+    /// Display name for the away side (falls back to empty for outrights)
+    var awayDisplay: String { awayTeam ?? "" }
 }
 
 extension ResponseBody: Hashable {
