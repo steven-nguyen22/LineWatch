@@ -1,0 +1,5423 @@
+[
+    {
+        "id": "2baee3153bf7922ae57f1825d3b4f04a",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-13T22:00:00Z",
+        "home_team": "Dante Benjamin Jr",
+        "away_team": "Angel Lozano",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Angel Lozano",
+                                "price": 600
+                            },
+                            {
+                                "name": "Dante Benjamin Jr",
+                                "price": -1000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Angel Lozano",
+                                "price": 483
+                            },
+                            {
+                                "name": "Dante Benjamin Jr",
+                                "price": -800
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Angel Lozano",
+                                "price": 483
+                            },
+                            {
+                                "name": "Dante Benjamin Jr",
+                                "price": -800
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Angel Lozano",
+                                "price": 540
+                            },
+                            {
+                                "name": "Dante Benjamin Jr",
+                                "price": -1100
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:55Z",
+                        "outcomes": [
+                            {
+                                "name": "Angel Lozano",
+                                "price": 600
+                            },
+                            {
+                                "name": "Dante Benjamin Jr",
+                                "price": -1000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "5025c76ab49b7369a7e9d57bd5addeb9",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-13T22:40:00Z",
+        "home_team": "Christian Chessa",
+        "away_team": "Delvin McKinley",
+        "bookmakers": [
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Christian Chessa",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Delvin McKinley",
+                                "price": 750
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Christian Chessa",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Delvin McKinley",
+                                "price": 750
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Christian Chessa",
+                                "price": -1100
+                            },
+                            {
+                                "name": "Delvin McKinley",
+                                "price": 540
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Christian Chessa",
+                                "price": -1430
+                            },
+                            {
+                                "name": "Delvin McKinley",
+                                "price": 730
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Christian Chessa",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Delvin McKinley",
+                                "price": 600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:55Z",
+                        "outcomes": [
+                            {
+                                "name": "Christian Chessa",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Delvin McKinley",
+                                "price": 750
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "bc4f822b2a71ef3a0c0a689e03ab20cb",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-13T23:20:00Z",
+        "home_team": "Kenyan Valle",
+        "away_team": "Anel Dudo",
+        "bookmakers": [
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Anel Dudo",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Kenyan Valle",
+                                "price": -10000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Anel Dudo",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Kenyan Valle",
+                                "price": -10000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Anel Dudo",
+                                "price": 810
+                            },
+                            {
+                                "name": "Kenyan Valle",
+                                "price": -2400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Anel Dudo",
+                                "price": 1333
+                            },
+                            {
+                                "name": "Kenyan Valle",
+                                "price": -3333
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Anel Dudo",
+                                "price": 800
+                            },
+                            {
+                                "name": "Kenyan Valle",
+                                "price": -3000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:55Z",
+                        "outcomes": [
+                            {
+                                "name": "Anel Dudo",
+                                "price": 1000
+                            },
+                            {
+                                "name": "Kenyan Valle",
+                                "price": -3000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "0d38c579cdf8b2108a8192f13935a10d",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T01:45:00Z",
+        "home_team": "Dominic Valle",
+        "away_team": "Eduardo Ramirez",
+        "bookmakers": [
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Dominic Valle",
+                                "price": -550
+                            },
+                            {
+                                "name": "Eduardo Ramirez",
+                                "price": 366
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Dominic Valle",
+                                "price": -550
+                            },
+                            {
+                                "name": "Eduardo Ramirez",
+                                "price": 366
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Dominic Valle",
+                                "price": -769
+                            },
+                            {
+                                "name": "Eduardo Ramirez",
+                                "price": 494
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Dominic Valle",
+                                "price": -550
+                            },
+                            {
+                                "name": "Eduardo Ramirez",
+                                "price": 350
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Dominic Valle",
+                                "price": -500
+                            },
+                            {
+                                "name": "Eduardo Ramirez",
+                                "price": 333
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:55Z",
+                        "outcomes": [
+                            {
+                                "name": "Dominic Valle",
+                                "price": -550
+                            },
+                            {
+                                "name": "Eduardo Ramirez",
+                                "price": 380
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "52769cf578496e9cbffb5c4a1f4dc411",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T02:30:00Z",
+        "home_team": "Najee Lopez",
+        "away_team": "Manuel Gallegos",
+        "bookmakers": [
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Manuel Gallegos",
+                                "price": 800
+                            },
+                            {
+                                "name": "Najee Lopez",
+                                "price": -1500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Manuel Gallegos",
+                                "price": 800
+                            },
+                            {
+                                "name": "Najee Lopez",
+                                "price": -1500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Manuel Gallegos",
+                                "price": 460
+                            },
+                            {
+                                "name": "Najee Lopez",
+                                "price": -800
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Manuel Gallegos",
+                                "price": 600
+                            },
+                            {
+                                "name": "Najee Lopez",
+                                "price": -1000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:55Z",
+                        "outcomes": [
+                            {
+                                "name": "Manuel Gallegos",
+                                "price": 475
+                            },
+                            {
+                                "name": "Najee Lopez",
+                                "price": -750
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Manuel Gallegos",
+                                "price": 550
+                            },
+                            {
+                                "name": "Najee Lopez",
+                                "price": -1000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ed35204948c4b6ddf8b8a69acd64cd8b",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T17:00:00Z",
+        "home_team": "Eoghan Lavin",
+        "away_team": "Liam Walsh",
+        "bookmakers": [
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Eoghan Lavin",
+                                "price": -400
+                            },
+                            {
+                                "name": "Liam Walsh",
+                                "price": 284
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Eoghan Lavin",
+                                "price": -400
+                            },
+                            {
+                                "name": "Liam Walsh",
+                                "price": 284
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Eoghan Lavin",
+                                "price": -400
+                            },
+                            {
+                                "name": "Liam Walsh",
+                                "price": 300
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "f9794abd1bb884a66ec326a4366066ab",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T18:00:00Z",
+        "home_team": "Steven Cairns",
+        "away_team": "Arnie Dawson",
+        "bookmakers": [
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnie Dawson",
+                                "price": 1600
+                            },
+                            {
+                                "name": "Steven Cairns",
+                                "price": -5000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnie Dawson",
+                                "price": 1600
+                            },
+                            {
+                                "name": "Steven Cairns",
+                                "price": -5000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnie Dawson",
+                                "price": 900
+                            },
+                            {
+                                "name": "Steven Cairns",
+                                "price": -2500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnie Dawson",
+                                "price": 590
+                            },
+                            {
+                                "name": "Steven Cairns",
+                                "price": -1300
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "2a7f3837350435ba963e8df3036a21ba",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T18:30:00Z",
+        "home_team": "Jono Carroll",
+        "away_team": "Colm Murphy",
+        "bookmakers": [
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Colm Murphy",
+                                "price": -115
+                            },
+                            {
+                                "name": "Jono Carroll",
+                                "price": -115
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Colm Murphy",
+                                "price": -130
+                            },
+                            {
+                                "name": "Jono Carroll",
+                                "price": 105
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Colm Murphy",
+                                "price": -115
+                            },
+                            {
+                                "name": "Jono Carroll",
+                                "price": -115
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Colm Murphy",
+                                "price": -135
+                            },
+                            {
+                                "name": "Jono Carroll",
+                                "price": 105
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Colm Murphy",
+                                "price": -140
+                            },
+                            {
+                                "name": "Jono Carroll",
+                                "price": 105
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "045a7838db6f1b7ad469b89f831d9f92",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T21:00:00Z",
+        "home_team": "Pierce O'Leary",
+        "away_team": "Maxi Hughes",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Maxi Hughes",
+                                "price": 200
+                            },
+                            {
+                                "name": "Pierce O'Leary",
+                                "price": -250
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Maxi Hughes",
+                                "price": 185
+                            },
+                            {
+                                "name": "Pierce O'Leary",
+                                "price": -240
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Maxi Hughes",
+                                "price": 206
+                            },
+                            {
+                                "name": "Pierce O'Leary",
+                                "price": -275
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Maxi Hughes",
+                                "price": 206
+                            },
+                            {
+                                "name": "Pierce O'Leary",
+                                "price": -275
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Maxi Hughes",
+                                "price": 160
+                            },
+                            {
+                                "name": "Pierce O'Leary",
+                                "price": -210
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "b1f71ac63d8ae54a25cda319725ca4a5",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T22:00:00Z",
+        "home_team": "James Dickens",
+        "away_team": "Anthony Cacace",
+        "bookmakers": [
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Cacace",
+                                "price": -280
+                            },
+                            {
+                                "name": "James Dickens",
+                                "price": 209
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Cacace",
+                                "price": -280
+                            },
+                            {
+                                "name": "James Dickens",
+                                "price": 209
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Cacace",
+                                "price": -280
+                            },
+                            {
+                                "name": "James Dickens",
+                                "price": 225
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Cacace",
+                                "price": -275
+                            },
+                            {
+                                "name": "James Dickens",
+                                "price": 200
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "325f3672c2f2abb4a4d7641cb36f0bf5",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T22:00:00Z",
+        "home_team": "Daniel Garcia",
+        "away_team": "Blas Caro",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Blas Caro",
+                                "price": 1400
+                            },
+                            {
+                                "name": "Daniel Garcia",
+                                "price": -5000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Blas Caro",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Daniel Garcia",
+                                "price": -5000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ddc8f87d1b41cb125921cff3adc2c4e2",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T22:00:00Z",
+        "home_team": "Leonardo Sanchez",
+        "away_team": "Cesar Juarez",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Cesar Juarez",
+                                "price": 1080
+                            },
+                            {
+                                "name": "Leonardo Sanchez",
+                                "price": -4500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Cesar Juarez",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Leonardo Sanchez",
+                                "price": -5000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Cesar Juarez",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Leonardo Sanchez",
+                                "price": -4000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "46afb0f78490e38441e1ba87d47bf9f5",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T22:00:00Z",
+        "home_team": "Fabian Guzman",
+        "away_team": "Julian Delgado",
+        "bookmakers": [
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Fabian Guzman",
+                                "price": -10000
+                            },
+                            {
+                                "name": "Julian Delgado",
+                                "price": 1600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Fabian Guzman",
+                                "price": -10000
+                            },
+                            {
+                                "name": "Julian Delgado",
+                                "price": 1600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Fabian Guzman",
+                                "price": -2400
+                            },
+                            {
+                                "name": "Julian Delgado",
+                                "price": 810
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Fabian Guzman",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Julian Delgado",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Fabian Guzman",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Julian Delgado",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Fabian Guzman",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Julian Delgado",
+                                "price": 800
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "4278851a5b4bb206118ae9c18fa5e246",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T22:00:00Z",
+        "home_team": "Grant Flores",
+        "away_team": "Rashid Stevens",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Grant Flores",
+                                "price": -750
+                            },
+                            {
+                                "name": "Rashid Stevens",
+                                "price": 475
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Grant Flores",
+                                "price": -1250
+                            },
+                            {
+                                "name": "Rashid Stevens",
+                                "price": 700
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Grant Flores",
+                                "price": -1250
+                            },
+                            {
+                                "name": "Rashid Stevens",
+                                "price": 700
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Grant Flores",
+                                "price": -800
+                            },
+                            {
+                                "name": "Rashid Stevens",
+                                "price": 500
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "e3c6d64eb8f79a3cf8369ea5f61dffbb",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-14T22:00:00Z",
+        "home_team": "Joel Iriarte",
+        "away_team": "Rock Dodler Myrthil",
+        "bookmakers": [
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Joel Iriarte",
+                                "price": -10000
+                            },
+                            {
+                                "name": "Rock Dodler Myrthil",
+                                "price": 1600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Joel Iriarte",
+                                "price": -10000
+                            },
+                            {
+                                "name": "Rock Dodler Myrthil",
+                                "price": 1600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Joel Iriarte",
+                                "price": -5000
+                            },
+                            {
+                                "name": "Rock Dodler Myrthil",
+                                "price": 1400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Joel Iriarte",
+                                "price": -5000
+                            },
+                            {
+                                "name": "Rock Dodler Myrthil",
+                                "price": 1200
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Joel Iriarte",
+                                "price": -5000
+                            },
+                            {
+                                "name": "Rock Dodler Myrthil",
+                                "price": 1300
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "e3ab438d3f898f6c73efaeaa981ffca6",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T00:00:00Z",
+        "home_team": "Gabriela Fundora",
+        "away_team": "Viviana Ruiz Corredor",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Gabriela Fundora",
+                                "price": -4500
+                            },
+                            {
+                                "name": "Viviana Ruiz Corredor",
+                                "price": 1180
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Gabriela Fundora",
+                                "price": -3500
+                            },
+                            {
+                                "name": "Viviana Ruiz Corredor",
+                                "price": 1100
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Gabriela Fundora",
+                                "price": -5000
+                            },
+                            {
+                                "name": "Viviana Ruiz Corredor",
+                                "price": 1200
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Gabriela Fundora",
+                                "price": -3000
+                            },
+                            {
+                                "name": "Viviana Ruiz Corredor",
+                                "price": 1000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "938b0ce015d3f348cdf19f018d88be41",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T00:00:00Z",
+        "home_team": "Oscar Collazo",
+        "away_team": "Jesus Haro",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Jesus Haro",
+                                "price": 1400
+                            },
+                            {
+                                "name": "Oscar Collazo",
+                                "price": -5000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Jesus Haro",
+                                "price": 1400
+                            },
+                            {
+                                "name": "Oscar Collazo",
+                                "price": -4000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Jesus Haro",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Oscar Collazo",
+                                "price": -5000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Jesus Haro",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Oscar Collazo",
+                                "price": -10000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Jesus Haro",
+                                "price": 1800
+                            },
+                            {
+                                "name": "Oscar Collazo",
+                                "price": -10000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Jesus Haro",
+                                "price": 1000
+                            },
+                            {
+                                "name": "Oscar Collazo",
+                                "price": -3000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "0e1c2496dcdd6958b9bca2796e22bb24",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T00:15:00Z",
+        "home_team": "Cayden Griffiths",
+        "away_team": "Omar Gutierrez",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Cayden Griffiths",
+                                "price": -3000
+                            },
+                            {
+                                "name": "Omar Gutierrez",
+                                "price": 890
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Cayden Griffiths",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Omar Gutierrez",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Cayden Griffiths",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Omar Gutierrez",
+                                "price": 1000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "7b933a27835688755fb3f38b59a73120",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T01:00:00Z",
+        "home_team": "Alexis Rocha",
+        "away_team": "Joseph Diaz",
+        "bookmakers": [
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Alexis Rocha",
+                                "price": -1600
+                            },
+                            {
+                                "name": "Joseph Diaz",
+                                "price": 660
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Alexis Rocha",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Joseph Diaz",
+                                "price": 1000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Alexis Rocha",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Joseph Diaz",
+                                "price": 1000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Alexis Rocha",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Joseph Diaz",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Alexis Rocha",
+                                "price": -1600
+                            },
+                            {
+                                "name": "Joseph Diaz",
+                                "price": 800
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "1723da410c00751991f26900c60e9c07",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T03:00:00Z",
+        "home_team": "Arnold Barboza Jr",
+        "away_team": "Kenneth Sims Jr",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnold Barboza Jr",
+                                "price": 135
+                            },
+                            {
+                                "name": "Kenneth Sims Jr",
+                                "price": -170
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnold Barboza Jr",
+                                "price": -105
+                            },
+                            {
+                                "name": "Kenneth Sims Jr",
+                                "price": -125
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnold Barboza Jr",
+                                "price": -105
+                            },
+                            {
+                                "name": "Kenneth Sims Jr",
+                                "price": -125
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnold Barboza Jr",
+                                "price": 110
+                            },
+                            {
+                                "name": "Kenneth Sims Jr",
+                                "price": -140
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnold Barboza Jr",
+                                "price": 124
+                            },
+                            {
+                                "name": "Kenneth Sims Jr",
+                                "price": -146
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Arnold Barboza Jr",
+                                "price": 130
+                            },
+                            {
+                                "name": "Kenneth Sims Jr",
+                                "price": -175
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "43fbd7a7d3f9ebcbeb87be73abd02c07",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T08:00:00Z",
+        "home_team": "Ryusei Matsumoto",
+        "away_team": "Yuni Takada",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Ryusei Matsumoto",
+                                "price": -1200
+                            },
+                            {
+                                "name": "Yuni Takada",
+                                "price": 650
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Ryusei Matsumoto",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Yuni Takada",
+                                "price": 1000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Ryusei Matsumoto",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Yuni Takada",
+                                "price": 1000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Ryusei Matsumoto",
+                                "price": -1000
+                            },
+                            {
+                                "name": "Yuni Takada",
+                                "price": 550
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Ryusei Matsumoto",
+                                "price": -1150
+                            },
+                            {
+                                "name": "Yuni Takada",
+                                "price": 540
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "89157ef45a1c1e9ad879098e904be808",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T09:00:00Z",
+        "home_team": "Thammanoon Niyomtrong",
+        "away_team": "Shokichi Iwata",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Shokichi Iwata",
+                                "price": -255
+                            },
+                            {
+                                "name": "Thammanoon Niyomtrong",
+                                "price": 195
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Shokichi Iwata",
+                                "price": -250
+                            },
+                            {
+                                "name": "Thammanoon Niyomtrong",
+                                "price": 200
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Shokichi Iwata",
+                                "price": -265
+                            },
+                            {
+                                "name": "Thammanoon Niyomtrong",
+                                "price": 199
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Shokichi Iwata",
+                                "price": -265
+                            },
+                            {
+                                "name": "Thammanoon Niyomtrong",
+                                "price": 199
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Shokichi Iwata",
+                                "price": -375
+                            },
+                            {
+                                "name": "Thammanoon Niyomtrong",
+                                "price": 250
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Shokichi Iwata",
+                                "price": -340
+                            },
+                            {
+                                "name": "Thammanoon Niyomtrong",
+                                "price": 235
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "94baaa68e78ddc937cccde42818a4209",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T10:00:00Z",
+        "home_team": "Anthony Olascuaga",
+        "away_team": "Jukiya Iimura",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Olascuaga",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Jukiya Iimura",
+                                "price": 700
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:35Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Olascuaga",
+                                "price": -1500
+                            },
+                            {
+                                "name": "Jukiya Iimura",
+                                "price": 713
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Olascuaga",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Jukiya Iimura",
+                                "price": 700
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:01Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Olascuaga",
+                                "price": -1500
+                            },
+                            {
+                                "name": "Jukiya Iimura",
+                                "price": 713
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betmgm",
+                "title": "BetMGM",
+                "last_update": "2026-03-13T16:44:48Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:48Z",
+                        "outcomes": [
+                            {
+                                "name": "Anthony Olascuaga",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Jukiya Iimura",
+                                "price": 600
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "a381d4c2e4d0d5910c1cd4c5df912ab4",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-15T11:00:00Z",
+        "home_team": "Nonito Donaire",
+        "away_team": "Riku Masuda",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Nonito Donaire",
+                                "price": 169
+                            },
+                            {
+                                "name": "Riku Masuda",
+                                "price": -204
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Nonito Donaire",
+                                "price": 157
+                            },
+                            {
+                                "name": "Riku Masuda",
+                                "price": -205
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Nonito Donaire",
+                                "price": 157
+                            },
+                            {
+                                "name": "Riku Masuda",
+                                "price": -205
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "c4ee6b760f71afcc5b88d4574d727dae",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-20T22:00:00Z",
+        "home_team": "Michael Conlan",
+        "away_team": "Kevin Walsh",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Kevin Walsh",
+                                "price": 350
+                            },
+                            {
+                                "name": "Michael Conlan",
+                                "price": -500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Kevin Walsh",
+                                "price": 330
+                            },
+                            {
+                                "name": "Michael Conlan",
+                                "price": -455
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Kevin Walsh",
+                                "price": 410
+                            },
+                            {
+                                "name": "Michael Conlan",
+                                "price": -650
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "c2fa867c4eaedec23c146093ec6cdc6d",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-21T20:00:00Z",
+        "home_team": "Jimmy Sains",
+        "away_team": "Derrick Osaze",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Derrick Osaze",
+                                "price": 425
+                            },
+                            {
+                                "name": "Jimmy Sains",
+                                "price": -650
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Derrick Osaze",
+                                "price": 500
+                            },
+                            {
+                                "name": "Jimmy Sains",
+                                "price": -800
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Derrick Osaze",
+                                "price": 500
+                            },
+                            {
+                                "name": "Jimmy Sains",
+                                "price": -950
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "5c5bdbd357c8fa9932f58b7b84368e9e",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-21T21:00:00Z",
+        "home_team": "Giorgio Visoli",
+        "away_team": "Levi Giles",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Giorgio Visoli",
+                                "price": -1000
+                            },
+                            {
+                                "name": "Levi Giles",
+                                "price": 600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Giorgio Visoli",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Levi Giles",
+                                "price": 850
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Giorgio Visoli",
+                                "price": -1350
+                            },
+                            {
+                                "name": "Levi Giles",
+                                "price": 620
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "aa948751427e949320979a9f8bd107f6",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-21T22:00:00Z",
+        "home_team": "George Liddard",
+        "away_team": "Tyler Denny",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "George Liddard",
+                                "price": -1200
+                            },
+                            {
+                                "name": "Tyler Denny",
+                                "price": 650
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "George Liddard",
+                                "price": -1200
+                            },
+                            {
+                                "name": "Tyler Denny",
+                                "price": 650
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "George Liddard",
+                                "price": -1000
+                            },
+                            {
+                                "name": "Tyler Denny",
+                                "price": 510
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "039963c37258b22eb08847e6e1f3c85a",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-22T03:00:00Z",
+        "home_team": "Carlos Adames",
+        "away_team": "Austin Williams",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Austin Williams",
+                                "price": 285
+                            },
+                            {
+                                "name": "Carlos Adames",
+                                "price": -390
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Austin Williams",
+                                "price": 270
+                            },
+                            {
+                                "name": "Carlos Adames",
+                                "price": -380
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Austin Williams",
+                                "price": 270
+                            },
+                            {
+                                "name": "Carlos Adames",
+                                "price": -370
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Austin Williams",
+                                "price": 275
+                            },
+                            {
+                                "name": "Carlos Adames",
+                                "price": -375
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Austin Williams",
+                                "price": 275
+                            },
+                            {
+                                "name": "Carlos Adames",
+                                "price": -375
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "96d440d5cb8ed7334f989872926f3e9e",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-28T18:00:00Z",
+        "home_team": "Shakiel Thompson",
+        "away_team": "Brad Pauls",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Brad Pauls",
+                                "price": 285
+                            },
+                            {
+                                "name": "Shakiel Thompson",
+                                "price": -390
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Brad Pauls",
+                                "price": 284
+                            },
+                            {
+                                "name": "Shakiel Thompson",
+                                "price": -400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Brad Pauls",
+                                "price": 284
+                            },
+                            {
+                                "name": "Shakiel Thompson",
+                                "price": -400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Brad Pauls",
+                                "price": 300
+                            },
+                            {
+                                "name": "Shakiel Thompson",
+                                "price": -400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Brad Pauls",
+                                "price": 260
+                            },
+                            {
+                                "name": "Shakiel Thompson",
+                                "price": -380
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "a50c97c00ce8606a7fdae3511b0cd31e",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-28T18:00:00Z",
+        "home_team": "Michael Gomez Jr",
+        "away_team": "Jordan Flynn",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Jordan Flynn",
+                                "price": 145
+                            },
+                            {
+                                "name": "Michael Gomez Jr",
+                                "price": -185
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Jordan Flynn",
+                                "price": 160
+                            },
+                            {
+                                "name": "Michael Gomez Jr",
+                                "price": -190
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Jordan Flynn",
+                                "price": 154
+                            },
+                            {
+                                "name": "Michael Gomez Jr",
+                                "price": -210
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "3bfa3130997443a02e987a8012536ae7",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-28T19:00:00Z",
+        "home_team": "Nathan Heaney",
+        "away_team": "Gerome Warburton",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Gerome Warburton",
+                                "price": 125
+                            },
+                            {
+                                "name": "Nathan Heaney",
+                                "price": -155
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Gerome Warburton",
+                                "price": 117
+                            },
+                            {
+                                "name": "Nathan Heaney",
+                                "price": -150
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Gerome Warburton",
+                                "price": 117
+                            },
+                            {
+                                "name": "Nathan Heaney",
+                                "price": -150
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Gerome Warburton",
+                                "price": 130
+                            },
+                            {
+                                "name": "Nathan Heaney",
+                                "price": -160
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Gerome Warburton",
+                                "price": 122
+                            },
+                            {
+                                "name": "Nathan Heaney",
+                                "price": -166
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "43ea0cc699fb5c97bcd33aa93b14628d",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-28T21:00:00Z",
+        "home_team": "Willy Hutchinson",
+        "away_team": "Ezra Taylor",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Ezra Taylor",
+                                "price": 150
+                            },
+                            {
+                                "name": "Willy Hutchinson",
+                                "price": -190
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Ezra Taylor",
+                                "price": 140
+                            },
+                            {
+                                "name": "Willy Hutchinson",
+                                "price": -175
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Ezra Taylor",
+                                "price": 145
+                            },
+                            {
+                                "name": "Willy Hutchinson",
+                                "price": -175
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Ezra Taylor",
+                                "price": 140
+                            },
+                            {
+                                "name": "Willy Hutchinson",
+                                "price": -175
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Ezra Taylor",
+                                "price": 154
+                            },
+                            {
+                                "name": "Willy Hutchinson",
+                                "price": -215
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "39e8c02e5d530f7ba67221efc424ebd3",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-28T22:00:00Z",
+        "home_team": "Moses Itauma",
+        "away_team": "Jermaine Franklin Jr",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Jermaine Franklin Jr",
+                                "price": 900
+                            },
+                            {
+                                "name": "Moses Itauma",
+                                "price": -2500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Jermaine Franklin Jr",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Moses Itauma",
+                                "price": -4000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Jermaine Franklin Jr",
+                                "price": 1200
+                            },
+                            {
+                                "name": "Moses Itauma",
+                                "price": -4000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:19Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:19Z",
+                        "outcomes": [
+                            {
+                                "name": "Jermaine Franklin Jr",
+                                "price": 1000
+                            },
+                            {
+                                "name": "Moses Itauma",
+                                "price": -2000
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Jermaine Franklin Jr",
+                                "price": 1100
+                            },
+                            {
+                                "name": "Moses Itauma",
+                                "price": -2500
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Jermaine Franklin Jr",
+                                "price": 1140
+                            },
+                            {
+                                "name": "Moses Itauma",
+                                "price": -2400
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "292b1f5faa7a3f329ce3f4095d85ccf5",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-29T00:00:00Z",
+        "home_team": "Yoenli Hernandez",
+        "away_team": "Terrell Gausha",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Terrell Gausha",
+                                "price": 650
+                            },
+                            {
+                                "name": "Yoenli Hernandez",
+                                "price": -1200
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Terrell Gausha",
+                                "price": 700
+                            },
+                            {
+                                "name": "Yoenli Hernandez",
+                                "price": -1400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Terrell Gausha",
+                                "price": 650
+                            },
+                            {
+                                "name": "Yoenli Hernandez",
+                                "price": -1450
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "dfbd44a230017396e093e0b5ce91b70a",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-29T02:00:00Z",
+        "home_team": "Frank Sanchez",
+        "away_team": "Richard Torrez Jr",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Frank Sanchez",
+                                "price": 165
+                            },
+                            {
+                                "name": "Richard Torrez Jr",
+                                "price": -210
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Frank Sanchez",
+                                "price": 225
+                            },
+                            {
+                                "name": "Richard Torrez Jr",
+                                "price": -285
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "e15f80d0c0e595b2a3c3b73b1c17b53c",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-03-29T03:00:00Z",
+        "home_team": "Sebastian Fundora",
+        "away_team": "Keith Thurman",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Keith Thurman",
+                                "price": 280
+                            },
+                            {
+                                "name": "Sebastian Fundora",
+                                "price": -380
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Keith Thurman",
+                                "price": 280
+                            },
+                            {
+                                "name": "Sebastian Fundora",
+                                "price": -380
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Keith Thurman",
+                                "price": 300
+                            },
+                            {
+                                "name": "Sebastian Fundora",
+                                "price": -450
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Keith Thurman",
+                                "price": 284
+                            },
+                            {
+                                "name": "Sebastian Fundora",
+                                "price": -400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Keith Thurman",
+                                "price": 284
+                            },
+                            {
+                                "name": "Sebastian Fundora",
+                                "price": -400
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "f26285392d120335fb57c59a89b7d2da",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-03T21:00:00Z",
+        "home_team": "Pat Brown",
+        "away_team": "Vasil Ducar",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Pat Brown",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Vasil Ducar",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Pat Brown",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Vasil Ducar",
+                                "price": 850
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Pat Brown",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Vasil Ducar",
+                                "price": 730
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "fc8b926e0f5cd45ad5d749923a01efdc",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-04T19:00:00Z",
+        "home_team": "Denzel Bentley",
+        "away_team": "Endry Saavedra",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Denzel Bentley",
+                                "price": -180
+                            },
+                            {
+                                "name": "Endry Saavedra",
+                                "price": 140
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Denzel Bentley",
+                                "price": -175
+                            },
+                            {
+                                "name": "Endry Saavedra",
+                                "price": 145
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Denzel Bentley",
+                                "price": -250
+                            },
+                            {
+                                "name": "Endry Saavedra",
+                                "price": 182
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "6d9dbb8c6787cd15e69d52c048c717db",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-04T20:00:00Z",
+        "home_team": "Lauren Price",
+        "away_team": "Stephanie Pineiro Aquino",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Lauren Price",
+                                "price": -1400
+                            },
+                            {
+                                "name": "Stephanie Pineiro Aquino",
+                                "price": 700
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Lauren Price",
+                                "price": -1800
+                            },
+                            {
+                                "name": "Stephanie Pineiro Aquino",
+                                "price": 800
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Lauren Price",
+                                "price": -1600
+                            },
+                            {
+                                "name": "Stephanie Pineiro Aquino",
+                                "price": 830
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "3318a5f4a862c98b2c608e8548c79b9b",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-04T20:00:00Z",
+        "home_team": "Viddal Riley",
+        "away_team": "Mateusz Masternak",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Mateusz Masternak",
+                                "price": 200
+                            },
+                            {
+                                "name": "Viddal Riley",
+                                "price": -260
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Mateusz Masternak",
+                                "price": 220
+                            },
+                            {
+                                "name": "Viddal Riley",
+                                "price": -280
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "5ee51656dfd7233e05cd068df860d628",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-04T21:00:00Z",
+        "home_team": "Deontay Wilder",
+        "away_team": "Derek Chisora",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Deontay Wilder",
+                                "price": 170
+                            },
+                            {
+                                "name": "Derek Chisora",
+                                "price": -210
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:19Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:19Z",
+                        "outcomes": [
+                            {
+                                "name": "Deontay Wilder",
+                                "price": 170
+                            },
+                            {
+                                "name": "Derek Chisora",
+                                "price": -235
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Deontay Wilder",
+                                "price": 160
+                            },
+                            {
+                                "name": "Derek Chisora",
+                                "price": -210
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Deontay Wilder",
+                                "price": 160
+                            },
+                            {
+                                "name": "Derek Chisora",
+                                "price": -205
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Deontay Wilder",
+                                "price": 160
+                            },
+                            {
+                                "name": "Derek Chisora",
+                                "price": -210
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Deontay Wilder",
+                                "price": 160
+                            },
+                            {
+                                "name": "Derek Chisora",
+                                "price": -210
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "dd0ca4d2d15760e2f6b7de9d4f3fbf25",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-05T20:00:00Z",
+        "home_team": "Ellie Scotney",
+        "away_team": "Mayeli Flores",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Ellie Scotney",
+                                "price": -1600
+                            },
+                            {
+                                "name": "Mayeli Flores",
+                                "price": 800
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Ellie Scotney",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Mayeli Flores",
+                                "price": 850
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "f4ddafb0b763af196ebd89d84aeac2f1",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-05T21:00:00Z",
+        "home_team": "Caroline Dubois",
+        "away_team": "Terri Harper",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Caroline Dubois",
+                                "price": -500
+                            },
+                            {
+                                "name": "Terri Harper",
+                                "price": 350
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Caroline Dubois",
+                                "price": -600
+                            },
+                            {
+                                "name": "Terri Harper",
+                                "price": 400
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Caroline Dubois",
+                                "price": -480
+                            },
+                            {
+                                "name": "Terri Harper",
+                                "price": 330
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "4df490cb9daa012f8fa243080f9986a3",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-11T18:00:00Z",
+        "home_team": "Justis Huni",
+        "away_team": "Frazer Clarke",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Frazer Clarke",
+                                "price": 400
+                            },
+                            {
+                                "name": "Justis Huni",
+                                "price": -600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Frazer Clarke",
+                                "price": 450
+                            },
+                            {
+                                "name": "Justis Huni",
+                                "price": -700
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Frazer Clarke",
+                                "price": 400
+                            },
+                            {
+                                "name": "Justis Huni",
+                                "price": -650
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "28f6569fdc15d1980cea364885391b43",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-11T19:00:00Z",
+        "home_team": "Jeamie Tshikeva",
+        "away_team": "Richard Riakporhe",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Jeamie Tshikeva",
+                                "price": 170
+                            },
+                            {
+                                "name": "Richard Riakporhe",
+                                "price": -220
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Jeamie Tshikeva",
+                                "price": 140
+                            },
+                            {
+                                "name": "Richard Riakporhe",
+                                "price": -190
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Jeamie Tshikeva",
+                                "price": 185
+                            },
+                            {
+                                "name": "Richard Riakporhe",
+                                "price": -225
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "a4d74f6dce2ccf9d56755737861e4e31",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-11T20:00:00Z",
+        "home_team": "Conor Benn",
+        "away_team": "Regis Prograis",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Conor Benn",
+                                "price": -1000
+                            },
+                            {
+                                "name": "Regis Prograis",
+                                "price": 600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Conor Benn",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Regis Prograis",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Conor Benn",
+                                "price": -2000
+                            },
+                            {
+                                "name": "Regis Prograis",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Conor Benn",
+                                "price": -1200
+                            },
+                            {
+                                "name": "Regis Prograis",
+                                "price": 650
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:27Z",
+                        "outcomes": [
+                            {
+                                "name": "Conor Benn",
+                                "price": -1300
+                            },
+                            {
+                                "name": "Regis Prograis",
+                                "price": 700
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "6c778527411c53816d55074db0ff032d",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-11T21:30:00Z",
+        "home_team": "Tyson Fury",
+        "away_team": "Arslanbek Makhmudov",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Arslanbek Makhmudov",
+                                "price": 475
+                            },
+                            {
+                                "name": "Tyson Fury",
+                                "price": -750
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Arslanbek Makhmudov",
+                                "price": 410
+                            },
+                            {
+                                "name": "Tyson Fury",
+                                "price": -650
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Arslanbek Makhmudov",
+                                "price": 461
+                            },
+                            {
+                                "name": "Tyson Fury",
+                                "price": -750
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Arslanbek Makhmudov",
+                                "price": 461
+                            },
+                            {
+                                "name": "Tyson Fury",
+                                "price": -750
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Arslanbek Makhmudov",
+                                "price": 400
+                            },
+                            {
+                                "name": "Tyson Fury",
+                                "price": -600
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:40:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:40:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Arslanbek Makhmudov",
+                                "price": 425
+                            },
+                            {
+                                "name": "Tyson Fury",
+                                "price": -600
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "445186b9bb961ef61f47afc58a90cf53",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-12T02:00:00Z",
+        "home_team": "Brandon Adams",
+        "away_team": "Caoimhin Agyarko",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Brandon Adams",
+                                "price": -450
+                            },
+                            {
+                                "name": "Caoimhin Agyarko",
+                                "price": 320
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Brandon Adams",
+                                "price": -550
+                            },
+                            {
+                                "name": "Caoimhin Agyarko",
+                                "price": 330
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Brandon Adams",
+                                "price": -600
+                            },
+                            {
+                                "name": "Caoimhin Agyarko",
+                                "price": 400
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "07e9421d4a43e255f053ec6636491631",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-04-18T21:00:00Z",
+        "home_team": "Callum Smith",
+        "away_team": "David Morrell",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Callum Smith",
+                                "price": -125
+                            },
+                            {
+                                "name": "David Morrell",
+                                "price": 100
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Callum Smith",
+                                "price": -112
+                            },
+                            {
+                                "name": "David Morrell",
+                                "price": -112
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Callum Smith",
+                                "price": -115
+                            },
+                            {
+                                "name": "David Morrell",
+                                "price": -115
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Callum Smith",
+                                "price": -115
+                            },
+                            {
+                                "name": "David Morrell",
+                                "price": -115
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Callum Smith",
+                                "price": -115
+                            },
+                            {
+                                "name": "David Morrell",
+                                "price": -115
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "e132410edd29ffde6956a0ef39eff64e",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-05-02T11:00:00Z",
+        "home_team": "Naoya Inoue",
+        "away_team": "Junto Nakatani",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Junto Nakatani",
+                                "price": 225
+                            },
+                            {
+                                "name": "Naoya Inoue",
+                                "price": -295
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Junto Nakatani",
+                                "price": 298
+                            },
+                            {
+                                "name": "Naoya Inoue",
+                                "price": -425
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Junto Nakatani",
+                                "price": 298
+                            },
+                            {
+                                "name": "Naoya Inoue",
+                                "price": -425
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Junto Nakatani",
+                                "price": 325
+                            },
+                            {
+                                "name": "Naoya Inoue",
+                                "price": -425
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Junto Nakatani",
+                                "price": 310
+                            },
+                            {
+                                "name": "Naoya Inoue",
+                                "price": -450
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "a8ce0fa205d8229a211754eec386b61f",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-05-03T03:00:00Z",
+        "home_team": "Gilberto Ramirez",
+        "away_team": "David Benavidez",
+        "bookmakers": [
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "David Benavidez",
+                                "price": -300
+                            },
+                            {
+                                "name": "Gilberto Ramirez",
+                                "price": 230
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "David Benavidez",
+                                "price": -370
+                            },
+                            {
+                                "name": "Gilberto Ramirez",
+                                "price": 260
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "David Benavidez",
+                                "price": -325
+                            },
+                            {
+                                "name": "Gilberto Ramirez",
+                                "price": 235
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "David Benavidez",
+                                "price": -325
+                            },
+                            {
+                                "name": "Gilberto Ramirez",
+                                "price": 237
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "David Benavidez",
+                                "price": -325
+                            },
+                            {
+                                "name": "Gilberto Ramirez",
+                                "price": 237
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "1ed93073b06a6241b2682f46d00300c7",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-05-09T21:00:00Z",
+        "home_team": "Fabio Wardley",
+        "away_team": "Daniel Dubois",
+        "bookmakers": [
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Daniel Dubois",
+                                "price": -105
+                            },
+                            {
+                                "name": "Fabio Wardley",
+                                "price": -125
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "fanduel",
+                "title": "FanDuel",
+                "last_update": "2026-03-13T16:45:27Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:26Z",
+                        "outcomes": [
+                            {
+                                "name": "Daniel Dubois",
+                                "price": 112
+                            },
+                            {
+                                "name": "Fabio Wardley",
+                                "price": -142
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betrivers",
+                "title": "BetRivers",
+                "last_update": "2026-03-13T16:45:19Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:19Z",
+                        "outcomes": [
+                            {
+                                "name": "Daniel Dubois",
+                                "price": -109
+                            },
+                            {
+                                "name": "Fabio Wardley",
+                                "price": -121
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Daniel Dubois",
+                                "price": 105
+                            },
+                            {
+                                "name": "Fabio Wardley",
+                                "price": -130
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "bovada",
+                "title": "Bovada",
+                "last_update": "2026-03-13T16:40:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:40:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Daniel Dubois",
+                                "price": 105
+                            },
+                            {
+                                "name": "Fabio Wardley",
+                                "price": -125
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Daniel Dubois",
+                                "price": -110
+                            },
+                            {
+                                "name": "Fabio Wardley",
+                                "price": -120
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Daniel Dubois",
+                                "price": -110
+                            },
+                            {
+                                "name": "Fabio Wardley",
+                                "price": -120
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "6bda118b89728e831e51bf4ceb1af83c",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-05-23T21:00:00Z",
+        "home_team": "Oleksandr Usyk",
+        "away_team": "Rico Verhoeven",
+        "bookmakers": [
+            {
+                "key": "lowvig",
+                "title": "LowVig.ag",
+                "last_update": "2026-03-13T16:45:36Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:36Z",
+                        "outcomes": [
+                            {
+                                "name": "Oleksandr Usyk",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Rico Verhoeven",
+                                "price": 1100
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betonlineag",
+                "title": "BetOnline.ag",
+                "last_update": "2026-03-13T16:45:02Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:02Z",
+                        "outcomes": [
+                            {
+                                "name": "Oleksandr Usyk",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Rico Verhoeven",
+                                "price": 1100
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "betus",
+                "title": "BetUS",
+                "last_update": "2026-03-13T16:45:28Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:45:28Z",
+                        "outcomes": [
+                            {
+                                "name": "Oleksandr Usyk",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Rico Verhoeven",
+                                "price": 900
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": "draftkings",
+                "title": "DraftKings",
+                "last_update": "2026-03-13T16:44:56Z",
+                "markets": [
+                    {
+                        "key": "h2h",
+                        "last_update": "2026-03-13T16:44:56Z",
+                        "outcomes": [
+                            {
+                                "name": "Oleksandr Usyk",
+                                "price": -2500
+                            },
+                            {
+                                "name": "Rico Verhoeven",
+                                "price": 1000
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "58d68b92c8aed3589e10353cef31d60b",
+        "sport_key": "boxing_boxing",
+        "sport_title": "Boxing",
+        "commence_time": "2026-12-31T22:59:00Z",
+        "home_team": "Dalton Smith",
+        "away_team": "Adam Azim",
+        "bookmakers": []
+    }
+]

@@ -10,6 +10,13 @@ import Foundation
 var previewBasketball: [ResponseBody] = load("basketball_nba.json")
 var previewFootball: [ResponseBody] = load("americanfootball_nfl.json")
 var previewBaseball: [ResponseBody] = load("baseball_mlb.json")
+var previewHockey: [ResponseBody] = load("icehockey_nhl.json")
+var previewSoccer: [ResponseBody] = load("soccer_uefa_champs_league.json")
+var previewFighting: [ResponseBody] = loadOptional("mma_mixed_martial_arts.json") + loadOptional("boxing_boxing.json")
+var previewGolf: [ResponseBody] = loadOptional("golf_masters_tournament_winner.json")
+    + loadOptional("golf_pga_championship_winner.json")
+    + loadOptional("golf_the_open_championship_winner.json")
+    + loadOptional("golf_us_open_winner.json")
 
 // Backward compatibility
 var previewLines: [ResponseBody] = load("basketball_nba.json")
@@ -19,6 +26,10 @@ var previewDataService: OddsDataService = {
     service.eventsBySport[.basketball] = previewBasketball
     service.eventsBySport[.football] = previewFootball
     service.eventsBySport[.baseball] = previewBaseball
+    service.eventsBySport[.hockey] = previewHockey
+    service.eventsBySport[.soccer] = previewSoccer
+    service.eventsBySport[.fighting] = previewFighting
+    service.eventsBySport[.golf] = previewGolf
     return service
 }()
 
@@ -42,4 +53,13 @@ func load<T: Decodable>(_ filename: String) -> T {
     } catch {
         fatalError("Couldn't parse \(filename) as \(T.self):\n\(error)")
     }
+}
+
+/// Safe loader that returns an empty array if the file is missing
+func loadOptional(_ filename: String) -> [ResponseBody] {
+    guard let file = Bundle.main.url(forResource: filename, withExtension: nil) else {
+        return []
+    }
+    guard let data = try? Data(contentsOf: file) else { return [] }
+    return (try? JSONDecoder().decode([ResponseBody].self, from: data)) ?? []
 }
