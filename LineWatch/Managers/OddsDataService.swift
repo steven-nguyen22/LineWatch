@@ -14,6 +14,7 @@ class OddsDataService {
     var error: Error?
 
     private let linesManager = LinesManager()
+    private let supabaseService = SupabaseService()
 
     // Load from bundled JSON files (no API calls)
     func loadLocalData() {
@@ -32,6 +33,21 @@ class OddsDataService {
         isLoading = true
         defer { isLoading = false }
 
+        // Basketball: fetch from Supabase cache instead of the-odds-api directly
+        if sport == .basketball {
+            do {
+                let events = try await supabaseService.fetchCachedOdds(sportKey: "basketball_nba")
+                eventsBySport[sport] = events
+                saveToDocuments(events, filename: "basketball_nba.json")
+            } catch {
+                self.error = error
+                let local: [ResponseBody] = loadFromBundle("basketball_nba")
+                eventsBySport[sport] = local
+            }
+            return
+        }
+
+        // All other sports: fetch from the-odds-api directly
         var allEvents: [ResponseBody] = []
         for (index, key) in sport.sportKeys.enumerated() {
             do {
@@ -40,7 +56,6 @@ class OddsDataService {
                 saveToDocuments(events, filename: "\(sport.localFileNames[index]).json")
             } catch {
                 self.error = error
-                // Fall back to local data for this key
                 let local: [ResponseBody] = loadFromBundle(sport.localFileNames[index])
                 allEvents.append(contentsOf: local)
             }
@@ -54,6 +69,21 @@ class OddsDataService {
         defer { isLoading = false }
 
         for sport in SportCategory.allCases {
+            // Basketball: fetch from Supabase cache
+            if sport == .basketball {
+                do {
+                    let events = try await supabaseService.fetchCachedOdds(sportKey: "basketball_nba")
+                    eventsBySport[sport] = events
+                    saveToDocuments(events, filename: "basketball_nba.json")
+                } catch {
+                    self.error = error
+                    let local: [ResponseBody] = loadFromBundle("basketball_nba")
+                    eventsBySport[sport] = local
+                }
+                continue
+            }
+
+            // All other sports: fetch from the-odds-api directly
             var allEvents: [ResponseBody] = []
             for (index, key) in sport.sportKeys.enumerated() {
                 do {
