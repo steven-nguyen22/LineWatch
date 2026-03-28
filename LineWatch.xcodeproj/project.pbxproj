@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B087D42F2F77994B003E94B8 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = B087D42E2F77994B003E94B8 /* Supabase */; };
+		B087D4322F779981003E94B8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4312F779981003E94B8 /* GoogleSignIn */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B011433F2CE18D6C0054AA5B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B087D42F2F77994B003E94B8 /* Supabase in Frameworks */,
+				B087D4322F779981003E94B8 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +119,8 @@
 			);
 			name = LineWatch;
 			packageProductDependencies = (
+				B087D42E2F77994B003E94B8 /* Supabase */,
+				B087D4312F779981003E94B8 /* GoogleSignIn */,
 			);
 			productName = LineWatch;
 			productReference = B011432E2CE18D6B0054AA5B /* LineWatch.app */;
@@ -195,6 +204,10 @@
 			);
 			mainGroup = B01143252CE18D6B0054AA5B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B087D42D2F77994B003E94B8 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				B087D4302F779981003E94B8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B011432F2CE18D6B0054AA5B /* Products */;
 			projectDirPath = "";
@@ -558,6 +571,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B087D42D2F77994B003E94B8 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+		B087D4302F779981003E94B8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B087D42E2F77994B003E94B8 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B087D42D2F77994B003E94B8 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		B087D4312F779981003E94B8 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B087D4302F779981003E94B8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B01143262CE18D6B0054AA5B /* Project object */;
 }

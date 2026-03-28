@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var isLoading = true
     @State private var dataService = OddsDataService()
+    @Environment(AuthService.self) private var authService
 
     var body: some View {
         ZStack {
@@ -20,6 +21,9 @@ struct ContentView: View {
                     }
                 }
                 .transition(.opacity)
+            } else if !authService.isAuthenticated {
+                SignInView()
+                    .transition(.opacity)
             } else {
                 NavigationStack {
                     LandingPage()
@@ -37,6 +41,7 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.4), value: isLoading)
+        .animation(.easeInOut(duration: 0.4), value: authService.isAuthenticated)
         .onAppear {
             dataService.loadLocalData()
         }
@@ -45,4 +50,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(AuthService())
 }
