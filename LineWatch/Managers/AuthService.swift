@@ -41,6 +41,45 @@ class AuthService {
         }
     }
 
+    // MARK: - Email/Password Sign Up
+
+    func signUp(email: String, password: String, name: String) async {
+        do {
+            let session = try await supabase.auth.signUp(
+                email: email,
+                password: password,
+                data: ["full_name": .string(name)]
+            )
+            await MainActor.run {
+                isAuthenticated = true
+                authError = nil
+            }
+        } catch {
+            await MainActor.run {
+                authError = error.localizedDescription
+            }
+        }
+    }
+
+    // MARK: - Email/Password Sign In
+
+    func signIn(email: String, password: String) async {
+        do {
+            let session = try await supabase.auth.signIn(
+                email: email,
+                password: password
+            )
+            await MainActor.run {
+                isAuthenticated = true
+                authError = nil
+            }
+        } catch {
+            await MainActor.run {
+                authError = error.localizedDescription
+            }
+        }
+    }
+
     // MARK: - Sign In with Apple
 
     func signInWithApple(idToken: String, nonce: String) async {
