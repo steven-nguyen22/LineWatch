@@ -35,10 +35,20 @@ struct SignInView: View {
                     VStack(spacing: 0) {
                         Spacer().frame(height: 60)
 
-                        // Logo
-                        Text("LineWatch")
-                            .font(.system(size: 36, weight: .bold, design: .rounded))
-                            .foregroundStyle(AppColors.primaryGreen)
+                        // App logo
+                        Image("AppLogo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+
+                        // Logo text: "Line" in white, "Watch" in green
+                        HStack(spacing: 0) {
+                            Text("Line")
+                                .foregroundStyle(.white)
+                            Text("Watch")
+                                .foregroundStyle(AppColors.primaryGreen)
+                        }
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
 
                         Text("Sign in to your account")
                             .font(.body)

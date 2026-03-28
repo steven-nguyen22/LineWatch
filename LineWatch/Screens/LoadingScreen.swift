@@ -23,16 +23,27 @@ struct LoadingScreen: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 28) {
-                // Logo
-                Text("LineWatch")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppColors.primaryGreen)
+            VStack(spacing: 20) {
+                // App logo
+                Image("AppLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 120)
+
+                // Logo text: "Line" in white, "Watch" in green
+                HStack(spacing: 0) {
+                    Text("Line")
+                        .foregroundStyle(.white)
+                    Text("Watch")
+                        .foregroundStyle(AppColors.primaryGreen)
+                }
+                .font(.system(size: 36, weight: .bold, design: .rounded))
 
                 // Spinner
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: AppColors.primaryGreen))
                     .scaleEffect(1.3)
+                    .padding(.top, 8)
             }
         }
         .onAppear {
