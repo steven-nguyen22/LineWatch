@@ -241,7 +241,16 @@ struct SignUpView: View {
             return
         }
 
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+        // Generate a nonce — pass hashed to Google SDK, pass raw to Supabase (it hashes internally)
+        let rawNonce = AuthService.randomNonceString()
+        let hashedNonce = AuthService.sha256(rawNonce)
+
+        GIDSignIn.sharedInstance.signIn(
+            withPresenting: rootViewController,
+            hint: nil,
+            additionalScopes: nil,
+            nonce: hashedNonce
+        ) { result, error in
             if let error = error {
                 if (error as NSError).code != GIDSignInError.canceled.rawValue {
                     authService.authError = "Google sign-up failed: \(error.localizedDescription)"
@@ -255,10 +264,8 @@ struct SignUpView: View {
                 return
             }
 
-            let accessToken = user.accessToken.tokenString
-
             Task {
-                await authService.signInWithGoogle(idToken: idToken, accessToken: accessToken)
+                await authService.signInWithGoogle(idToken: idToken, rawNonce: rawNonce)
             }
         }
     }

@@ -104,12 +104,13 @@ class AuthService {
 
     // MARK: - Sign In with Google
 
-    func signInWithGoogle(idToken: String, accessToken: String) async {
+    func signInWithGoogle(idToken: String, rawNonce: String) async {
         do {
             let session = try await supabase.auth.signInWithIdToken(
                 credentials: OpenIDConnectCredentials(
                     provider: .google,
-                    idToken: idToken
+                    idToken: idToken,
+                    nonce: rawNonce
                 )
             )
             await MainActor.run {
@@ -138,9 +139,9 @@ class AuthService {
         }
     }
 
-    // MARK: - Nonce Helpers (for Apple Sign In)
+    // MARK: - Nonce Helpers (for Apple & Google Sign In)
 
-    /// Generate a random nonce string for Apple Sign In
+    /// Generate a random nonce string for Apple/Google Sign In
     static func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
         var randomBytes = [UInt8](repeating: 0, count: length)
