@@ -671,7 +671,7 @@ struct BetPage: View {
         guard let propsData = dataService.playerPropsByEvent[event.id] else { return [] }
 
         // Collect all (playerName, line) → [(bookmakerTitle, over, under)]
-        var playerMap: [String: (line: Double, bookmakers: [(title: String, over: Int?, under: Int?)])] = [:]
+        var playerMap: [String: (line: Double, bookmakers: [(bookmakerTitle: String, over: Int?, under: Int?)])] = [:]
 
         for bookmaker in propsData.bookmakers {
             guard let market = bookmaker.markets.first(where: { $0.key == propType.rawValue }) else { continue }
@@ -695,10 +695,10 @@ struct BetPage: View {
             for (playerName, outcomes) in playerOutcomes {
                 let line = outcomes.line ?? 0
                 if var existing = playerMap[playerName] {
-                    existing.bookmakers.append((title: bookmaker.title, over: outcomes.over, under: outcomes.under))
+                    existing.bookmakers.append((bookmakerTitle: bookmaker.title, over: outcomes.over, under: outcomes.under))
                     playerMap[playerName] = existing
                 } else {
-                    playerMap[playerName] = (line: line, bookmakers: [(title: bookmaker.title, over: outcomes.over, under: outcomes.under)])
+                    playerMap[playerName] = (line: line, bookmakers: [(bookmakerTitle: bookmaker.title, over: outcomes.over, under: outcomes.under)])
                 }
             }
         }
