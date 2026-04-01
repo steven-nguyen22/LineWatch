@@ -62,6 +62,53 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         sportKeys
     }
 
+    /// Season date range as (startMonth, startDay, endMonth, endDay).
+    /// Returns nil for year-round sports (always in season).
+    private var seasonRange: (startMonth: Int, startDay: Int, endMonth: Int, endDay: Int)? {
+        switch self {
+        case .basketball: return (10, 1, 6, 30)   // Oct 1 – Jun 30 (includes NBA playoffs/finals)
+        case .football:   return (9, 1, 2, 15)    // Sep 1 – Feb 15 (includes NFL playoffs/Super Bowl)
+        case .baseball:   return (3, 20, 11, 5)   // Mar 20 – Nov 5 (includes MLB postseason/World Series)
+        case .hockey:     return (10, 1, 6, 30)   // Oct 1 – Jun 30 (includes NHL playoffs/Stanley Cup)
+        case .soccer:     return (9, 1, 6, 15)    // Sep 1 – Jun 15 (UEFA CL group stage through final)
+        case .fighting:   return nil               // Year-round
+        case .golf:       return nil               // Year-round
+        }
+    }
+
+    /// Whether this sport is currently in season (based on today's date).
+    /// Year-round sports always return true.
+    var isInSeason: Bool {
+        guard let range = seasonRange else { return true }
+
+        let calendar = Calendar.current
+        let today = Date()
+        let month = calendar.component(.month, from: today)
+        let day = calendar.component(.day, from: today)
+        let todayValue = month * 100 + day  // e.g., March 31 = 331, October 1 = 1001
+
+        let startValue = range.startMonth * 100 + range.startDay
+        let endValue = range.endMonth * 100 + range.endDay
+
+        if startValue <= endValue {
+            // Season doesn't wrap around year (e.g., baseball Mar–Nov)
+            return todayValue >= startValue && todayValue <= endValue
+        } else {
+            // Season wraps around year (e.g., football Sep–Feb)
+            return todayValue >= startValue || todayValue <= endValue
+        }
+    }
+
+    /// Convenience: all sports currently in season
+    static var inSeason: [SportCategory] {
+        allCases.filter { $0.isInSeason }
+    }
+
+    /// Convenience: all sports currently off season
+    static var offSeason: [SportCategory] {
+        allCases.filter { !$0.isInSeason }
+    }
+
     /// Available market types for this sport
     var availableMarkets: [MarketType] {
         switch self {

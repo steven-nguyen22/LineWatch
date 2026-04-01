@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct LandingPage: View {
+    private var inSeasonSports: [SportCategory] { SportCategory.inSeason }
+    private var offSeasonSports: [SportCategory] { SportCategory.offSeason }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -24,24 +27,61 @@ struct LandingPage: View {
                 .padding(.top, 20)
                 .padding(.bottom, 8)
 
-                // Sport Category Cards
-                VStack(spacing: 16) {
-                    ForEach(SportCategory.allCases) { sport in
-                        NavigationLink(value: AppRoute.sportEvents(sport)) {
-                            SportCard(sport: sport)
+                // In Season
+                if !inSeasonSports.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        SectionHeader(title: "In Season", systemImage: "flame.fill")
+
+                        ForEach(inSeasonSports) { sport in
+                            NavigationLink(value: AppRoute.sportEvents(sport)) {
+                                SportCard(sport: sport)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 20)
+
+                // Off Season
+                if !offSeasonSports.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        SectionHeader(title: "Off Season", systemImage: "moon.zzz.fill")
+
+                        ForEach(offSeasonSports) { sport in
+                            OffSeasonCard(sport: sport)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                }
             }
+            .padding(.bottom, 20)
         }
         .background(AppColors.backgroundPrimary)
         .navigationBarHidden(true)
     }
 }
 
-// MARK: - Sport Card
+// MARK: - Section Header
+
+private struct SectionHeader: View {
+    let title: String
+    let systemImage: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: systemImage)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(title == "In Season" ? AppColors.primaryGreen : AppColors.textSecondary)
+
+            Text(title)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .foregroundStyle(AppColors.textPrimary)
+        }
+        .padding(.leading, 4)
+    }
+}
+
+// MARK: - Sport Card (In Season)
 
 private struct SportCard: View {
     let sport: SportCategory
@@ -75,6 +115,45 @@ private struct SportCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(AppColors.backgroundCard)
                 .shadow(color: AppColors.cardShadow, radius: 6, x: 0, y: 3)
+        )
+    }
+}
+
+// MARK: - Off Season Card (Grayed Out, Disabled)
+
+private struct OffSeasonCard: View {
+    let sport: SportCategory
+
+    var body: some View {
+        HStack(spacing: 16) {
+            // Grayed-out icon circle
+            ZStack {
+                Circle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 52, height: 52)
+
+                Image(systemName: sport.iconName)
+                    .font(.system(size: 24))
+                    .foregroundStyle(.gray)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(sport.displayName)
+                    .font(AppFonts.title)
+                    .foregroundStyle(AppColors.textSecondary)
+
+                Text("Off season")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.gray.opacity(0.7))
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.gray.opacity(0.06))
         )
     }
 }
