@@ -21,6 +21,8 @@ var previewGolf: [ResponseBody] = loadOptional("golf_masters_tournament_winner.j
 // Backward compatibility
 var previewLines: [ResponseBody] = load("basketball_nba.json")
 
+var previewPlayerProps: ResponseBody? = loadOptionalSingle("player_props_sample.json")
+
 var previewDataService: OddsDataService = {
     let service = OddsDataService()
     service.eventsBySport[.basketball] = previewBasketball
@@ -30,6 +32,14 @@ var previewDataService: OddsDataService = {
     service.eventsBySport[.soccer] = previewSoccer
     service.eventsBySport[.fighting] = previewFighting
     service.eventsBySport[.golf] = previewGolf
+
+    // Populate player props for all basketball events (uses sample data for preview)
+    if let props = previewPlayerProps {
+        for event in previewBasketball {
+            service.playerPropsByEvent[event.id] = props
+        }
+    }
+
     return service
 }()
 
@@ -62,4 +72,13 @@ func loadOptional(_ filename: String) -> [ResponseBody] {
     }
     guard let data = try? Data(contentsOf: file) else { return [] }
     return (try? JSONDecoder().decode([ResponseBody].self, from: data)) ?? []
+}
+
+/// Safe loader for a single object (e.g., player props per event)
+func loadOptionalSingle(_ filename: String) -> ResponseBody? {
+    guard let file = Bundle.main.url(forResource: filename, withExtension: nil) else {
+        return nil
+    }
+    guard let data = try? Data(contentsOf: file) else { return nil }
+    return try? JSONDecoder().decode(ResponseBody.self, from: data)
 }

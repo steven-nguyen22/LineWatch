@@ -10,6 +10,7 @@ import Foundation
 @Observable
 class OddsDataService {
     var eventsBySport: [SportCategory: [ResponseBody]] = [:]
+    var playerPropsByEvent: [String: ResponseBody] = [:]
     var isLoading = false
     var error: Error?
 
@@ -102,6 +103,36 @@ class OddsDataService {
 
     func events(for sport: SportCategory) -> [ResponseBody] {
         eventsBySport[sport] ?? []
+    }
+
+    // MARK: - Player Props
+
+    /// Fetch player props for a specific event (lazy-loaded on BetPage)
+    func fetchPlayerProps(eventId: String) async {
+        // Skip if already cached
+        if playerPropsByEvent[eventId] != nil { return }
+
+        do {
+            let props = try await supabaseService.fetchCachedPlayerProps(eventId: eventId)
+            await MainActor.run {
+                playerPropsByEvent[eventId] = props
+            }
+        } catch {
+            // Fallback: try loading from bundled sample data
+            let sample: ResponseBody? = loadPlayerPropsFromBundle("player_props_sample.json")
+            if let sample {
+                await MainActor.run {
+                    playerPropsByEvent[eventId] = sample
+                }
+            }
+        }
+    }
+
+    /// Load player props sample from bundle
+    private func loadPlayerPropsFromBundle(_ filename: String) -> ResponseBody? {
+        guard let url = Bundle.main.url(forResource: filename, withExtension: nil) else { return nil }
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        return try? JSONDecoder().decode(ResponseBody.self, from: data)
     }
 
     // MARK: - Private Helpers

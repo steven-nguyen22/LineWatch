@@ -37,9 +37,75 @@ class SupabaseService {
         }
         return events
     }
+    /// Fetches cached player props from Supabase for a specific event.
+    func fetchCachedPlayerProps(eventId: String) async throws -> ResponseBody {
+        let endpoint = "\(baseURL)/cached_player_props?event_id=eq.\(eventId)&select=data"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        let rows = try JSONDecoder().decode([CachedPlayerPropsRow].self, from: data)
+        guard let propsData = rows.first?.data else {
+            throw GHError.invalidData
+        }
+        return propsData
+    }
+
+    /// Fetches all cached player props for a sport, returns dict keyed by event ID.
+    func fetchAllCachedPlayerProps(sportKey: String) async throws -> [String: ResponseBody] {
+        let endpoint = "\(baseURL)/cached_player_props?sport_key=eq.\(sportKey)&select=event_id,data"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        let rows = try JSONDecoder().decode([CachedPlayerPropsRowWithId].self, from: data)
+        var result: [String: ResponseBody] = [:]
+        for row in rows {
+            result[row.eventId] = row.data
+        }
+        return result
+    }
 }
 
 /// Represents a single row from the cached_odds table (only the `data` column is selected).
 private struct CachedOddsRow: Codable {
     let data: [ResponseBody]
+}
+
+/// Represents a single row from cached_player_props (data column only).
+private struct CachedPlayerPropsRow: Codable {
+    let data: ResponseBody
+}
+
+/// Represents a row from cached_player_props with event_id and data.
+private struct CachedPlayerPropsRowWithId: Codable {
+    let eventId: String
+    let data: ResponseBody
+
+    enum CodingKeys: String, CodingKey {
+        case eventId = "event_id"
+        case data
+    }
 }

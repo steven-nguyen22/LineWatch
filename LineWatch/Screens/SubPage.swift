@@ -195,6 +195,16 @@ private struct EventCard: View {
                         .font(.system(size: 10))
                         .foregroundStyle(AppColors.textSecondary)
                 }
+
+            case .playerProps:
+                VStack(spacing: 2) {
+                    Image(systemName: "person.fill")
+                        .font(.system(size: 16))
+                        .foregroundStyle(AppColors.primaryGreen)
+                    Text("Props")
+                        .font(.system(size: 10))
+                        .foregroundStyle(AppColors.textSecondary)
+                }
             }
         } else {
             // Fallback: bookmaker count
