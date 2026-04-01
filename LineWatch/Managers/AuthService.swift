@@ -107,10 +107,9 @@ class AuthService {
     func signInWithGoogle(idToken: String, accessToken: String) async {
         do {
             let session = try await supabase.auth.signInWithIdToken(
-                credentials: .init(
+                credentials: OpenIDConnectCredentials(
                     provider: .google,
-                    idToken: idToken,
-                    accessToken: accessToken
+                    idToken: idToken
                 )
             )
             await MainActor.run {
