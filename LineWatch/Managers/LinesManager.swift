@@ -112,7 +112,9 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
     /// Available market types for this sport
     var availableMarkets: [MarketType] {
         switch self {
-        case .basketball, .football, .baseball, .hockey, .soccer:
+        case .basketball:
+            return [.h2h, .spreads, .totals, .playerProps]
+        case .football, .baseball, .hockey, .soccer:
             return [.h2h, .spreads, .totals]
         case .fighting:
             return [.h2h]
@@ -129,6 +131,7 @@ enum MarketType: String, CaseIterable, Identifiable, Hashable {
     case spreads = "spreads"
     case totals = "totals"
     case outrights = "outrights"
+    case playerProps = "player_props"
 
     var id: String { rawValue }
 
@@ -138,6 +141,7 @@ enum MarketType: String, CaseIterable, Identifiable, Hashable {
         case .spreads: return "Spreads"
         case .totals: return "Totals"
         case .outrights: return "Outrights"
+        case .playerProps: return "Player Props"
         }
     }
 
@@ -152,6 +156,38 @@ enum MarketType: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+// MARK: - Player Prop Types
+
+enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
+    case points = "player_points"
+    case rebounds = "player_rebounds"
+    case assists = "player_assists"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .points: return "Points"
+        case .rebounds: return "Rebounds"
+        case .assists: return "Assists"
+        }
+    }
+
+    /// Combined API markets parameter for all prop types
+    static var apiMarketsParam: String {
+        allCases.map(\.rawValue).joined(separator: ",")
+    }
+}
+
+// MARK: - Player Prop Line (grouped per player)
+
+struct PlayerPropLine: Identifiable {
+    let id = UUID()
+    let playerName: String
+    let line: Double
+    let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)]
+}
+
 // MARK: - API Manager
 
 class LinesManager {
@@ -161,6 +197,28 @@ class LinesManager {
     func getOdds(for sport: SportCategory, markets: [MarketType] = MarketType.standardMarkets) async throws -> [ResponseBody] {
         // For single-key sports, use the rawValue. For multi-key, caller should use getOdds(forKey:) instead.
         return try await getOdds(forKey: sport.sportKeys[0], markets: markets)
+    }
+
+    /// Fetch player props for a specific event (returns a single ResponseBody, not array)
+    func getPlayerProps(eventId: String, sportKey: String = "basketball_nba") async throws -> ResponseBody {
+        let marketsParam = PlayerPropType.apiMarketsParam
+        let endpoint = "\(baseURL)/\(sportKey)/events/\(eventId)/odds/?apiKey=\(apiKey)&regions=us&markets=\(marketsParam)&oddsFormat=american"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        do {
+            return try JSONDecoder().decode(ResponseBody.self, from: data)
+        } catch {
+            throw GHError.invalidData
+        }
     }
 
     func getOdds(forKey sportKey: String, markets: [MarketType] = MarketType.standardMarkets) async throws -> [ResponseBody] {
@@ -243,6 +301,7 @@ struct Outcome: Codable {
     let name: String
     let price: Int
     let point: Double?
+    let description: String?  // Player name for player props (e.g., "Jayson Tatum")
 }
 
 enum GHError: Error {

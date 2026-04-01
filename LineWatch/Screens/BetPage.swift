@@ -21,11 +21,14 @@ struct BetPage: View {
     let event: ResponseBody
     let marketType: MarketType
 
+    @Environment(OddsDataService.self) private var dataService
     @State private var selections: [BetSelection] = []
     @State private var betAmount1: Double = 50
     @State private var betAmount2: Double = 50
     @State private var betText1: String = "50"
     @State private var betText2: String = "50"
+    @State private var selectedPropType: PlayerPropType = .points
+    @State private var isLoadingProps = false
     @FocusState private var focusedBet: Int?
 
     var body: some View {
@@ -35,28 +38,11 @@ struct BetPage: View {
                     // Header
                     headerSection
 
-                    // Market type badge
-                    Text(marketType.displayName)
-                        .font(AppFonts.caption)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(AppColors.darkGreen)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(AppColors.lightGreen.opacity(0.3))
-                        )
-                        .padding(.top, 8)
-                        .padding(.bottom, 12)
-
-                    // Column Headers
-                    columnHeaders
-
-                    // Sportsbook Rows
-                    bookmakerRows
-
-                    // Legend
-                    legend
+                    if marketType == .playerProps {
+                        playerPropsContent
+                    } else {
+                        standardMarketContent
+                    }
 
                     // Extra padding so content isn't hidden behind the panel
                     if !selections.isEmpty {
@@ -83,6 +69,42 @@ struct BetPage: View {
                 }
                 .fontWeight(.semibold)
             }
+        }
+        .task {
+            if marketType == .playerProps {
+                isLoadingProps = true
+                await dataService.fetchPlayerProps(eventId: event.id)
+                isLoadingProps = false
+            }
+        }
+    }
+
+    // MARK: - Standard Market Content
+
+    private var standardMarketContent: some View {
+        VStack(spacing: 0) {
+            // Market type badge
+            Text(marketType.displayName)
+                .font(AppFonts.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(AppColors.darkGreen)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule()
+                        .fill(AppColors.lightGreen.opacity(0.3))
+                )
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+
+            // Column Headers
+            columnHeaders
+
+            // Sportsbook Rows
+            bookmakerRows
+
+            // Legend
+            legend
         }
     }
 
@@ -153,6 +175,9 @@ struct BetPage: View {
             case .outrights:
                 Text("Odds")
                     .frame(width: 80, alignment: .center)
+
+            case .playerProps:
+                EmptyView()  // Player props has its own layout
             }
         }
         .font(AppFonts.caption)
@@ -188,6 +213,8 @@ struct BetPage: View {
                         totalCells(market: mkt, bookmakerTitle: bookmaker.title)
                     case .outrights:
                         outrightCells(market: mkt)
+                    case .playerProps:
+                        EmptyView()  // Player props has its own layout
                     }
                 }
                 .padding(.horizontal, 16)
@@ -476,6 +503,213 @@ struct BetPage: View {
         }
     }
 
+    // MARK: - Player Props Content
+
+    private var playerPropsContent: some View {
+        VStack(spacing: 0) {
+            // Sub-picker: Points | Rebounds | Assists
+            Picker("Prop Type", selection: $selectedPropType) {
+                ForEach(PlayerPropType.allCases) { propType in
+                    Text(propType.displayName).tag(propType)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 16)
+
+            if isLoadingProps {
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .scaleEffect(1.2)
+                    Text("Loading player props...")
+                        .font(AppFonts.caption)
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+                .padding(.top, 60)
+            } else {
+                let lines = buildPlayerPropLines(for: selectedPropType)
+
+                if lines.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "person.crop.circle.badge.questionmark")
+                            .font(.system(size: 40))
+                            .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                        Text("No player props available")
+                            .font(AppFonts.body)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+                    .padding(.top, 60)
+                } else {
+                    LazyVStack(spacing: 12) {
+                        ForEach(lines) { line in
+                            playerPropCard(line: line)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
+                }
+            }
+        }
+    }
+
+    // MARK: - Player Prop Card
+
+    private func playerPropCard(line: PlayerPropLine) -> some View {
+        VStack(spacing: 0) {
+            // Player header
+            HStack {
+                Text(line.playerName)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Spacer()
+
+                Text(formatPoint(line.line))
+                    .font(.system(size: 15, weight: .bold, design: .monospaced))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.primaryGreen)
+                    )
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(AppColors.backgroundPrimary.opacity(0.6))
+
+            // Mini column headers
+            HStack(spacing: 0) {
+                Text("Sportsbook")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text("Over")
+                    .frame(width: 80, alignment: .center)
+                Text("Under")
+                    .frame(width: 80, alignment: .center)
+            }
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundStyle(AppColors.textSecondary)
+            .textCase(.uppercase)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 6)
+
+            // Bookmaker rows
+            let allOverPrices = line.bookmakerOdds.compactMap(\.over)
+            let allUnderPrices = line.bookmakerOdds.compactMap(\.under)
+
+            ForEach(Array(line.bookmakerOdds.enumerated()), id: \.offset) { index, bm in
+                HStack(spacing: 0) {
+                    Text(bm.bookmakerTitle)
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppColors.textPrimary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    // Over cell
+                    propOddsCell(
+                        odds: bm.over,
+                        outcomeName: "\(line.playerName) O \(formatPoint(line.line))",
+                        bookmakerTitle: bm.bookmakerTitle,
+                        allPrices: allOverPrices,
+                        width: 80
+                    )
+
+                    // Under cell
+                    propOddsCell(
+                        odds: bm.under,
+                        outcomeName: "\(line.playerName) U \(formatPoint(line.line))",
+                        bookmakerTitle: bm.bookmakerTitle,
+                        allPrices: allUnderPrices,
+                        width: 80
+                    )
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(index % 2 == 0 ? AppColors.backgroundCard : AppColors.backgroundPrimary.opacity(0.3))
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(AppColors.backgroundCard)
+                .shadow(color: AppColors.cardShadow, radius: 4, x: 0, y: 2)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    // MARK: - Prop Odds Cell
+
+    @ViewBuilder
+    private func propOddsCell(odds: Int?, outcomeName: String, bookmakerTitle: String, allPrices: [Int], width: CGFloat) -> some View {
+        let selected = isSelected(bookmakerTitle: bookmakerTitle, outcomeName: outcomeName)
+
+        Text(formatOdds(odds))
+            .font(.system(size: 13, weight: .medium, design: .monospaced))
+            .foregroundStyle(AppColors.textPrimary)
+            .frame(width: width, height: 32, alignment: .center)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(oddsBackground(price: odds, allPrices: allPrices))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(selected ? AppColors.primaryGreen : Color.clear, lineWidth: 2.5)
+            )
+            .onTapGesture {
+                if let odds {
+                    toggleSelection(BetSelection(
+                        bookmakerTitle: bookmakerTitle,
+                        outcomeName: outcomeName,
+                        odds: odds
+                    ))
+                }
+            }
+    }
+
+    // MARK: - Build Player Prop Lines
+
+    private func buildPlayerPropLines(for propType: PlayerPropType) -> [PlayerPropLine] {
+        guard let propsData = dataService.playerPropsByEvent[event.id] else { return [] }
+
+        // Collect all (playerName, line) → [(bookmakerTitle, over, under)]
+        var playerMap: [String: (line: Double, bookmakers: [(title: String, over: Int?, under: Int?)])] = [:]
+
+        for bookmaker in propsData.bookmakers {
+            guard let market = bookmaker.markets.first(where: { $0.key == propType.rawValue }) else { continue }
+
+            // Group outcomes by player (description field)
+            var playerOutcomes: [String: (over: Int?, under: Int?, line: Double?)] = [:]
+            for outcome in market.outcomes {
+                guard let playerName = outcome.description else { continue }
+                var entry = playerOutcomes[playerName] ?? (over: nil, under: nil, line: nil)
+                if outcome.name == "Over" {
+                    entry.over = outcome.price
+                    entry.line = outcome.point
+                } else if outcome.name == "Under" {
+                    entry.under = outcome.price
+                    if entry.line == nil { entry.line = outcome.point }
+                }
+                playerOutcomes[playerName] = entry
+            }
+
+            // Merge into playerMap
+            for (playerName, outcomes) in playerOutcomes {
+                let line = outcomes.line ?? 0
+                if var existing = playerMap[playerName] {
+                    existing.bookmakers.append((title: bookmaker.title, over: outcomes.over, under: outcomes.under))
+                    playerMap[playerName] = existing
+                } else {
+                    playerMap[playerName] = (line: line, bookmakers: [(title: bookmaker.title, over: outcomes.over, under: outcomes.under)])
+                }
+            }
+        }
+
+        // Convert to array and sort by line descending (star players first)
+        return playerMap.map { name, data in
+            PlayerPropLine(playerName: name, line: data.line, bookmakerOdds: data.bookmakers)
+        }
+        .sorted { $0.line > $1.line }
+    }
+
     // MARK: - Legend
 
     private var legend: some View {
@@ -596,17 +830,27 @@ struct BetPage: View {
 #Preview("Moneyline") {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .h2h)
+            .environment(previewDataService)
     }
 }
 
 #Preview("Spreads") {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .spreads)
+            .environment(previewDataService)
     }
 }
 
 #Preview("Totals") {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .totals)
+            .environment(previewDataService)
+    }
+}
+
+#Preview("Player Props") {
+    NavigationStack {
+        BetPage(event: previewBasketball[0], marketType: .playerProps)
+            .environment(previewDataService)
     }
 }
