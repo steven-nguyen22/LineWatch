@@ -34,9 +34,26 @@ var previewDataService: OddsDataService = {
     service.eventsBySport[.golf] = previewGolf
 
     // Populate player props for all basketball events (uses sample data for preview)
+    let sampleTeamMap: [String: String] = [
+        "Jaylen Brown": "Boston Celtics",
+        "Jayson Tatum": "Boston Celtics",
+        "Derrick White": "Boston Celtics",
+        "Payton Pritchard": "Boston Celtics",
+        "Sam Hauser": "Boston Celtics",
+        "Neemias Queta": "Boston Celtics",
+        "Baylor Scheierman": "Boston Celtics",
+        "Bam Adebayo": "Miami Heat",
+        "Tyler Herro": "Miami Heat",
+        "Jaime Jaquez Jr": "Miami Heat",
+        "Pelle Larsson": "Miami Heat",
+        "Davion Mitchell": "Miami Heat",
+        "Andrew Wiggins": "Miami Heat",
+    ]
+
     if let props = previewPlayerProps {
         for event in previewBasketball {
             service.playerPropsByEvent[event.id] = props
+            service.playerTeamsByEvent[event.id] = sampleTeamMap
         }
     }
 

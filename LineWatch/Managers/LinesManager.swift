@@ -185,6 +185,7 @@ struct PlayerPropLine: Identifiable {
     let id = UUID()
     let playerName: String
     let line: Double
+    let teamName: String?
     let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)]
 }
 

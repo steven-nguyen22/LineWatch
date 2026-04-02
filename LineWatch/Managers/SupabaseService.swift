@@ -38,8 +38,9 @@ class SupabaseService {
         return events
     }
     /// Fetches cached player props from Supabase for a specific event.
-    func fetchCachedPlayerProps(eventId: String) async throws -> ResponseBody {
-        let endpoint = "\(baseURL)/cached_player_props?event_id=eq.\(eventId)&select=data"
+    /// Returns the props data and a player-to-team mapping.
+    func fetchCachedPlayerProps(eventId: String) async throws -> (props: ResponseBody, playerTeams: [String: String]) {
+        let endpoint = "\(baseURL)/cached_player_props?event_id=eq.\(eventId)&select=data,player_teams"
 
         guard let url = URL(string: endpoint) else {
             throw GHError.invalidURL
@@ -56,15 +57,15 @@ class SupabaseService {
         }
 
         let rows = try JSONDecoder().decode([CachedPlayerPropsRow].self, from: data)
-        guard let propsData = rows.first?.data else {
+        guard let row = rows.first else {
             throw GHError.invalidData
         }
-        return propsData
+        return (props: row.data, playerTeams: row.playerTeams ?? [:])
     }
 
     /// Fetches all cached player props for a sport, returns dict keyed by event ID.
-    func fetchAllCachedPlayerProps(sportKey: String) async throws -> [String: ResponseBody] {
-        let endpoint = "\(baseURL)/cached_player_props?sport_key=eq.\(sportKey)&select=event_id,data"
+    func fetchAllCachedPlayerProps(sportKey: String) async throws -> [String: (props: ResponseBody, playerTeams: [String: String])] {
+        let endpoint = "\(baseURL)/cached_player_props?sport_key=eq.\(sportKey)&select=event_id,data,player_teams"
 
         guard let url = URL(string: endpoint) else {
             throw GHError.invalidURL
@@ -81,9 +82,9 @@ class SupabaseService {
         }
 
         let rows = try JSONDecoder().decode([CachedPlayerPropsRowWithId].self, from: data)
-        var result: [String: ResponseBody] = [:]
+        var result: [String: (props: ResponseBody, playerTeams: [String: String])] = [:]
         for row in rows {
-            result[row.eventId] = row.data
+            result[row.eventId] = (props: row.data, playerTeams: row.playerTeams ?? [:])
         }
         return result
     }
@@ -94,18 +95,26 @@ private struct CachedOddsRow: Codable {
     let data: [ResponseBody]
 }
 
-/// Represents a single row from cached_player_props (data column only).
+/// Represents a single row from cached_player_props (data + player_teams).
 private struct CachedPlayerPropsRow: Codable {
     let data: ResponseBody
+    let playerTeams: [String: String]?
+
+    enum CodingKeys: String, CodingKey {
+        case data
+        case playerTeams = "player_teams"
+    }
 }
 
-/// Represents a row from cached_player_props with event_id and data.
+/// Represents a row from cached_player_props with event_id, data, and player_teams.
 private struct CachedPlayerPropsRowWithId: Codable {
     let eventId: String
     let data: ResponseBody
+    let playerTeams: [String: String]?
 
     enum CodingKeys: String, CodingKey {
         case eventId = "event_id"
         case data
+        case playerTeams = "player_teams"
     }
 }
