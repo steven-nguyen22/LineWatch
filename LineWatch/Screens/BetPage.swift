@@ -541,9 +541,27 @@ struct BetPage: View {
                     }
                     .padding(.top, 60)
                 } else {
+                    let awayLines = lines.filter { $0.teamName == event.awayTeam }
+                    let homeLines = lines.filter { $0.teamName == event.homeTeam }
+                    let otherLines = lines.filter { $0.teamName == nil }
+
                     LazyVStack(spacing: 12) {
-                        ForEach(lines) { line in
-                            playerPropCard(line: line)
+                        if !awayLines.isEmpty {
+                            teamSectionHeader(teamName: event.awayTeam ?? "Away")
+                            ForEach(awayLines) { line in
+                                playerPropCard(line: line)
+                            }
+                        }
+                        if !homeLines.isEmpty {
+                            teamSectionHeader(teamName: event.homeTeam ?? "Home")
+                            ForEach(homeLines) { line in
+                                playerPropCard(line: line)
+                            }
+                        }
+                        if !otherLines.isEmpty {
+                            ForEach(otherLines) { line in
+                                playerPropCard(line: line)
+                            }
                         }
                     }
                     .padding(.horizontal, 16)
@@ -551,6 +569,21 @@ struct BetPage: View {
                 }
             }
         }
+    }
+
+    // MARK: - Team Section Header
+
+    private func teamSectionHeader(teamName: String) -> some View {
+        HStack(spacing: 10) {
+            Text(teamName)
+                .font(AppFonts.subheadline.bold())
+                .foregroundStyle(AppColors.textPrimary)
+            Rectangle()
+                .fill(AppColors.textSecondary.opacity(0.2))
+                .frame(height: 1)
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 4)
     }
 
     // MARK: - Player Prop Card
@@ -703,9 +736,12 @@ struct BetPage: View {
             }
         }
 
+        // Look up player-to-team mapping
+        let teamMap = dataService.playerTeamsByEvent[event.id] ?? [:]
+
         // Convert to array and sort by line descending (star players first)
         return playerMap.map { name, data in
-            PlayerPropLine(playerName: name, line: data.line, bookmakerOdds: data.bookmakers)
+            PlayerPropLine(playerName: name, line: data.line, teamName: teamMap[name], bookmakerOdds: data.bookmakers)
         }
         .sorted { $0.line > $1.line }
     }

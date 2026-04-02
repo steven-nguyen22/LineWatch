@@ -11,6 +11,7 @@ import Foundation
 class OddsDataService {
     var eventsBySport: [SportCategory: [ResponseBody]] = [:]
     var playerPropsByEvent: [String: ResponseBody] = [:]
+    var playerTeamsByEvent: [String: [String: String]] = [:]
     var isLoading = false
     var error: Error?
 
@@ -113,9 +114,10 @@ class OddsDataService {
         if playerPropsByEvent[eventId] != nil { return }
 
         do {
-            let props = try await supabaseService.fetchCachedPlayerProps(eventId: eventId)
+            let result = try await supabaseService.fetchCachedPlayerProps(eventId: eventId)
             await MainActor.run {
-                playerPropsByEvent[eventId] = props
+                playerPropsByEvent[eventId] = result.props
+                playerTeamsByEvent[eventId] = result.playerTeams
             }
         } catch {
             // Fallback: try loading from bundled sample data
@@ -123,6 +125,22 @@ class OddsDataService {
             if let sample {
                 await MainActor.run {
                     playerPropsByEvent[eventId] = sample
+                    // Hardcoded fallback mapping for sample data
+                    playerTeamsByEvent[eventId] = [
+                        "Jaylen Brown": "Boston Celtics",
+                        "Jayson Tatum": "Boston Celtics",
+                        "Derrick White": "Boston Celtics",
+                        "Payton Pritchard": "Boston Celtics",
+                        "Sam Hauser": "Boston Celtics",
+                        "Neemias Queta": "Boston Celtics",
+                        "Baylor Scheierman": "Boston Celtics",
+                        "Bam Adebayo": "Miami Heat",
+                        "Tyler Herro": "Miami Heat",
+                        "Jaime Jaquez Jr": "Miami Heat",
+                        "Pelle Larsson": "Miami Heat",
+                        "Davion Mitchell": "Miami Heat",
+                        "Andrew Wiggins": "Miami Heat",
+                    ]
                 }
             }
         }
