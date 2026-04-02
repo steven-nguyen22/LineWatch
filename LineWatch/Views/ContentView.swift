@@ -45,6 +45,9 @@ struct ContentView: View {
         .onAppear {
             dataService.loadLocalData()
         }
+        .task {
+            await dataService.fetchAndCacheAll()
+        }
     }
 }
 
