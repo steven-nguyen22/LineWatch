@@ -576,7 +576,7 @@ struct BetPage: View {
     private func teamSectionHeader(teamName: String) -> some View {
         HStack(spacing: 10) {
             Text(teamName)
-                .font(AppFonts.subheadline.bold())
+                .font(AppFonts.headline)
                 .foregroundStyle(AppColors.textPrimary)
             Rectangle()
                 .fill(AppColors.textSecondary.opacity(0.2))
