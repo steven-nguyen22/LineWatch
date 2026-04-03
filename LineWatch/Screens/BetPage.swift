@@ -111,7 +111,7 @@ struct BetPage: View {
     // MARK: - Header
 
     private var headerSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Text(event.sportTitle)
                 .font(AppFonts.caption)
                 .fontWeight(.semibold)
@@ -123,17 +123,48 @@ struct BetPage: View {
                         .fill(AppColors.primaryGreen.opacity(0.12))
                 )
 
-            Text(event.awayDisplay)
-                .font(AppFonts.title)
-                .foregroundStyle(AppColors.textPrimary)
+            HStack(spacing: 0) {
+                // Away team (left)
+                VStack(spacing: 8) {
+                    if let logoURL = dataService.teamLogoURLs[event.awayTeam ?? ""],
+                       let url = URL(string: logoURL) {
+                        AsyncImage(url: url) { image in
+                            image.resizable().scaledToFit()
+                        } placeholder: {
+                            Color.clear.frame(width: 56, height: 56)
+                        }
+                        .frame(width: 56, height: 56)
+                    }
+                    Text(event.awayDisplay)
+                        .font(AppFonts.headline)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
 
-            Text("@")
-                .font(AppFonts.body)
-                .foregroundStyle(AppColors.textSecondary)
+                Text("@")
+                    .font(AppFonts.body)
+                    .foregroundStyle(AppColors.textSecondary)
 
-            Text(event.homeDisplay)
-                .font(AppFonts.title)
-                .foregroundStyle(AppColors.textPrimary)
+                // Home team (right)
+                VStack(spacing: 8) {
+                    if let logoURL = dataService.teamLogoURLs[event.homeTeam ?? ""],
+                       let url = URL(string: logoURL) {
+                        AsyncImage(url: url) { image in
+                            image.resizable().scaledToFit()
+                        } placeholder: {
+                            Color.clear.frame(width: 56, height: 56)
+                        }
+                        .frame(width: 56, height: 56)
+                    }
+                    Text(event.homeDisplay)
+                        .font(AppFonts.headline)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 20)
 
             if let time = event.commenceTime {
                 Text(formatGameTime(time))
