@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B087D42F2F77994B003E94B8 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = B087D42E2F77994B003E94B8 /* Supabase */; };
 		B087D4322F779981003E94B8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4312F779981003E94B8 /* GoogleSignIn */; };
+		B087D4352F7E0001003E94B8 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4342F7E0001003E94B8 /* NukeUI */; };
+		B087D4372F7E0001003E94B8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4362F7E0001003E94B8 /* Nuke */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 			files = (
 				B087D42F2F77994B003E94B8 /* Supabase in Frameworks */,
 				B087D4322F779981003E94B8 /* GoogleSignIn in Frameworks */,
+				B087D4352F7E0001003E94B8 /* NukeUI in Frameworks */,
+				B087D4372F7E0001003E94B8 /* Nuke in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,6 +125,8 @@
 			packageProductDependencies = (
 				B087D42E2F77994B003E94B8 /* Supabase */,
 				B087D4312F779981003E94B8 /* GoogleSignIn */,
+				B087D4342F7E0001003E94B8 /* NukeUI */,
+				B087D4362F7E0001003E94B8 /* Nuke */,
 			);
 			productName = LineWatch;
 			productReference = B011432E2CE18D6B0054AA5B /* LineWatch.app */;
@@ -207,6 +213,7 @@
 			packageReferences = (
 				B087D42D2F77994B003E94B8 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				B087D4302F779981003E94B8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				B087D4332F7E0001003E94B8 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B011432F2CE18D6B0054AA5B /* Products */;
@@ -589,6 +596,14 @@
 				minimumVersion = 9.1.0;
 			};
 		};
+		B087D4332F7E0001003E94B8 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -601,6 +616,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B087D4302F779981003E94B8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
+		};
+		B087D4342F7E0001003E94B8 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B087D4332F7E0001003E94B8 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
+		};
+		B087D4362F7E0001003E94B8 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B087D4332F7E0001003E94B8 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
