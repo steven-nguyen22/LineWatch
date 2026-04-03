@@ -116,7 +116,9 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
             return [.h2h, .spreads, .totals, .playerProps]
         case .baseball:
             return [.h2h, .spreads, .totals, .playerProps]
-        case .football, .hockey, .soccer:
+        case .hockey:
+            return [.h2h, .spreads, .totals, .playerProps]
+        case .football, .soccer:
             return [.h2h, .spreads, .totals]
         case .fighting:
             return [.h2h]
@@ -169,8 +171,20 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
     case hits = "batter_hits"
     case strikeouts = "pitcher_strikeouts"
     case homeRuns = "batter_home_runs"
+    // Hockey
+    case goals = "player_goals"
+    case shotsOnGoal = "player_shots_on_goal"
+    case hockeyPoints = "hockey_player_points" // unique raw value; API key is "player_points"
 
     var id: String { rawValue }
+
+    /// The Odds API market key (differs from rawValue for hockeyPoints)
+    var marketKey: String {
+        switch self {
+        case .hockeyPoints: return "player_points"
+        default: return rawValue
+        }
+    }
 
     var displayName: String {
         switch self {
@@ -180,6 +194,9 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .hits: return "Hits"
         case .strikeouts: return "Strikeouts"
         case .homeRuns: return "Home Runs"
+        case .goals: return "Goals"
+        case .shotsOnGoal: return "Shots on Goal"
+        case .hockeyPoints: return "Points"
         }
     }
 
@@ -188,6 +205,7 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .points, .rebounds, .assists: return .basketball
         case .hits, .strikeouts, .homeRuns: return .baseball
+        case .goals, .shotsOnGoal, .hockeyPoints: return .hockey
         }
     }
 
@@ -198,12 +216,12 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
 
     /// Combined API markets parameter for all prop types
     static var apiMarketsParam: String {
-        allCases.map(\.rawValue).joined(separator: ",")
+        allCases.map(\.marketKey).joined(separator: ",")
     }
 
     /// API markets parameter for a specific sport
     static func apiMarketsParam(for sport: SportCategory) -> String {
-        cases(for: sport).map(\.rawValue).joined(separator: ",")
+        cases(for: sport).map(\.marketKey).joined(separator: ",")
     }
 }
 
