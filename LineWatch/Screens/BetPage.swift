@@ -31,6 +31,11 @@ struct BetPage: View {
     @State private var isLoadingProps = false
     @FocusState private var focusedBet: Int?
 
+    /// Resolve the sport category from the event's sport key
+    private var sportCategory: SportCategory {
+        SportCategory.allCases.first { $0.rawValue == event.sportKey } ?? .basketball
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -72,6 +77,11 @@ struct BetPage: View {
         }
         .task {
             if marketType == .playerProps {
+                // Set the correct default prop type for this sport
+                let validCases = PlayerPropType.cases(for: sportCategory)
+                if !validCases.contains(selectedPropType), let first = validCases.first {
+                    selectedPropType = first
+                }
                 isLoadingProps = true
                 await dataService.fetchPlayerProps(eventId: event.id)
                 isLoadingProps = false
@@ -538,9 +548,9 @@ struct BetPage: View {
 
     private var playerPropsContent: some View {
         VStack(spacing: 0) {
-            // Sub-picker: Points | Rebounds | Assists
+            // Sub-picker: sport-specific prop types
             Picker("Prop Type", selection: $selectedPropType) {
-                ForEach(PlayerPropType.allCases) { propType in
+                ForEach(PlayerPropType.cases(for: sportCategory)) { propType in
                     Text(propType.displayName).tag(propType)
                 }
             }
