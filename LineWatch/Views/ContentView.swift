@@ -47,8 +47,9 @@ struct ContentView: View {
         }
         .task {
             async let odds: () = dataService.fetchAndCacheAll()
-            async let assets: () = dataService.fetchNBAAssets()
-            _ = await (odds, assets)
+            async let nbaAssets: () = dataService.fetchNBAAssets()
+            async let mlbAssets: () = dataService.fetchMLBAssets()
+            _ = await (odds, nbaAssets, mlbAssets)
         }
     }
 }

@@ -131,6 +131,50 @@ class SupabaseService {
 
         return try JSONDecoder().decode([NBAPlayerRow].self, from: data)
     }
+
+    // MARK: - MLB Assets (Logos & Headshots)
+
+    /// Fetches all MLB team logo URLs.
+    func fetchMLBTeamLogos() async throws -> [MLBTeamRow] {
+        let endpoint = "\(baseURL)/mlb_teams?select=team_name,logo_url"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        return try JSONDecoder().decode([MLBTeamRow].self, from: data)
+    }
+
+    /// Fetches all MLB player headshot URLs.
+    func fetchMLBPlayerHeadshots() async throws -> [MLBPlayerRow] {
+        let endpoint = "\(baseURL)/mlb_players?select=player_name,headshot_url,team_name"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        return try JSONDecoder().decode([MLBPlayerRow].self, from: data)
+    }
 }
 
 struct NBATeamRow: Codable {
@@ -144,6 +188,28 @@ struct NBATeamRow: Codable {
 }
 
 struct NBAPlayerRow: Codable {
+    let playerName: String
+    let headshotUrl: String
+    let teamName: String
+
+    enum CodingKeys: String, CodingKey {
+        case playerName = "player_name"
+        case headshotUrl = "headshot_url"
+        case teamName = "team_name"
+    }
+}
+
+struct MLBTeamRow: Codable {
+    let teamName: String
+    let logoUrl: String
+
+    enum CodingKeys: String, CodingKey {
+        case teamName = "team_name"
+        case logoUrl = "logo_url"
+    }
+}
+
+struct MLBPlayerRow: Codable {
     let playerName: String
     let headshotUrl: String
     let teamName: String
