@@ -38,7 +38,7 @@ class OddsDataService {
         defer { isLoading = false }
 
         // Basketball & Baseball: fetch from Supabase cache
-        if sport == .basketball || sport == .baseball {
+        if sport == .basketball || sport == .baseball || sport == .hockey {
             do {
                 let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                 eventsBySport[sport] = events
@@ -74,7 +74,7 @@ class OddsDataService {
 
         for sport in SportCategory.allCases {
             // Basketball & Baseball: fetch from Supabase cache
-            if sport == .basketball || sport == .baseball {
+            if sport == .basketball || sport == .baseball || sport == .hockey {
                 do {
                     let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                     eventsBySport[sport] = events

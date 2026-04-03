@@ -768,7 +768,7 @@ struct BetPage: View {
         var playerMap: [String: (line: Double, bookmakers: [(bookmakerTitle: String, over: Int?, under: Int?)])] = [:]
 
         for bookmaker in propsData.bookmakers {
-            guard let market = bookmaker.markets.first(where: { $0.key == propType.rawValue }) else { continue }
+            guard let market = bookmaker.markets.first(where: { $0.key == propType.marketKey }) else { continue }
 
             // Group outcomes by player (description field)
             var playerOutcomes: [String: (over: Int?, under: Int?, line: Double?)] = [:]
