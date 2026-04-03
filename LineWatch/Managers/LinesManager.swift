@@ -114,7 +114,9 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .basketball:
             return [.h2h, .spreads, .totals, .playerProps]
-        case .football, .baseball, .hockey, .soccer:
+        case .baseball:
+            return [.h2h, .spreads, .totals, .playerProps]
+        case .football, .hockey, .soccer:
             return [.h2h, .spreads, .totals]
         case .fighting:
             return [.h2h]
@@ -159,9 +161,14 @@ enum MarketType: String, CaseIterable, Identifiable, Hashable {
 // MARK: - Player Prop Types
 
 enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
+    // Basketball
     case points = "player_points"
     case rebounds = "player_rebounds"
     case assists = "player_assists"
+    // Baseball
+    case hits = "batter_hits"
+    case strikeouts = "pitcher_strikeouts"
+    case homeRuns = "batter_home_runs"
 
     var id: String { rawValue }
 
@@ -170,12 +177,33 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .points: return "Points"
         case .rebounds: return "Rebounds"
         case .assists: return "Assists"
+        case .hits: return "Hits"
+        case .strikeouts: return "Strikeouts"
+        case .homeRuns: return "Home Runs"
         }
+    }
+
+    /// Which sport this prop type belongs to
+    var sport: SportCategory {
+        switch self {
+        case .points, .rebounds, .assists: return .basketball
+        case .hits, .strikeouts, .homeRuns: return .baseball
+        }
+    }
+
+    /// Prop types for a specific sport
+    static func cases(for sport: SportCategory) -> [PlayerPropType] {
+        allCases.filter { $0.sport == sport }
     }
 
     /// Combined API markets parameter for all prop types
     static var apiMarketsParam: String {
         allCases.map(\.rawValue).joined(separator: ",")
+    }
+
+    /// API markets parameter for a specific sport
+    static func apiMarketsParam(for sport: SportCategory) -> String {
+        cases(for: sport).map(\.rawValue).joined(separator: ",")
     }
 }
 

@@ -37,15 +37,15 @@ class OddsDataService {
         isLoading = true
         defer { isLoading = false }
 
-        // Basketball: fetch from Supabase cache instead of the-odds-api directly
-        if sport == .basketball {
+        // Basketball & Baseball: fetch from Supabase cache
+        if sport == .basketball || sport == .baseball {
             do {
-                let events = try await supabaseService.fetchCachedOdds(sportKey: "basketball_nba")
+                let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                 eventsBySport[sport] = events
-                saveToDocuments(events, filename: "basketball_nba.json")
+                saveToDocuments(events, filename: "\(sport.rawValue).json")
             } catch {
                 self.error = error
-                let local: [ResponseBody] = loadFromBundle("basketball_nba")
+                let local: [ResponseBody] = loadFromBundle(sport.rawValue)
                 eventsBySport[sport] = local
             }
             return
@@ -73,15 +73,15 @@ class OddsDataService {
         defer { isLoading = false }
 
         for sport in SportCategory.allCases {
-            // Basketball: fetch from Supabase cache
-            if sport == .basketball {
+            // Basketball & Baseball: fetch from Supabase cache
+            if sport == .basketball || sport == .baseball {
                 do {
-                    let events = try await supabaseService.fetchCachedOdds(sportKey: "basketball_nba")
+                    let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                     eventsBySport[sport] = events
-                    saveToDocuments(events, filename: "basketball_nba.json")
+                    saveToDocuments(events, filename: "\(sport.rawValue).json")
                 } catch {
                     self.error = error
-                    let local: [ResponseBody] = loadFromBundle("basketball_nba")
+                    let local: [ResponseBody] = loadFromBundle(sport.rawValue)
                     eventsBySport[sport] = local
                 }
                 continue
