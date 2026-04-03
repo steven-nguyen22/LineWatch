@@ -46,7 +46,9 @@ struct ContentView: View {
             dataService.loadLocalData()
         }
         .task {
-            await dataService.fetchAndCacheAll()
+            async let odds: () = dataService.fetchAndCacheAll()
+            async let assets: () = dataService.fetchNBAAssets()
+            _ = await (odds, assets)
         }
     }
 }

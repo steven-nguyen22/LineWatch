@@ -88,6 +88,71 @@ class SupabaseService {
         }
         return result
     }
+    // MARK: - NBA Assets (Logos & Headshots)
+
+    /// Fetches all NBA team logo URLs.
+    func fetchNBATeamLogos() async throws -> [NBATeamRow] {
+        let endpoint = "\(baseURL)/nba_teams?select=team_name,logo_url"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        return try JSONDecoder().decode([NBATeamRow].self, from: data)
+    }
+
+    /// Fetches all NBA player headshot URLs.
+    func fetchNBAPlayerHeadshots() async throws -> [NBAPlayerRow] {
+        let endpoint = "\(baseURL)/nba_players?select=player_name,headshot_url,team_name"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        return try JSONDecoder().decode([NBAPlayerRow].self, from: data)
+    }
+}
+
+struct NBATeamRow: Codable {
+    let teamName: String
+    let logoUrl: String
+
+    enum CodingKeys: String, CodingKey {
+        case teamName = "team_name"
+        case logoUrl = "logo_url"
+    }
+}
+
+struct NBAPlayerRow: Codable {
+    let playerName: String
+    let headshotUrl: String
+    let teamName: String
+
+    enum CodingKeys: String, CodingKey {
+        case playerName = "player_name"
+        case headshotUrl = "headshot_url"
+        case teamName = "team_name"
+    }
 }
 
 /// Represents a single row from the cached_odds table (only the `data` column is selected).

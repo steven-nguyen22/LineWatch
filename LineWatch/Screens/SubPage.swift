@@ -67,7 +67,12 @@ struct SubPage: View {
                     LazyVStack(spacing: 12) {
                         ForEach(events) { event in
                             NavigationLink(value: AppRoute.eventDetail(event, selectedMarket)) {
-                                EventCard(event: event, marketType: selectedMarket)
+                                EventCard(
+                                    event: event,
+                                    marketType: selectedMarket,
+                                    awayLogoURL: dataService.teamLogoURLs[event.awayTeam ?? ""],
+                                    homeLogoURL: dataService.teamLogoURLs[event.homeTeam ?? ""]
+                                )
                             }
                             .buttonStyle(.plain)
                         }
@@ -94,6 +99,8 @@ struct SubPage: View {
 private struct EventCard: View {
     let event: ResponseBody
     let marketType: MarketType
+    let awayLogoURL: String?
+    let homeLogoURL: String?
 
     var body: some View {
         HStack(spacing: 12) {
@@ -104,15 +111,20 @@ private struct EventCard: View {
 
             // Team info
             VStack(alignment: .leading, spacing: 6) {
-                Text(event.awayDisplay)
-                    .font(AppFonts.headline)
-                    .foregroundStyle(AppColors.textPrimary)
+                HStack(spacing: 6) {
+                    teamLogo(url: awayLogoURL)
+                    Text(event.awayDisplay)
+                        .font(AppFonts.headline)
+                        .foregroundStyle(AppColors.textPrimary)
+                }
 
                 HStack(spacing: 4) {
                     Text("@")
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
+                        .padding(.leading, 26)
 
+                    teamLogo(url: homeLogoURL)
                     Text(event.homeDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
@@ -122,6 +134,7 @@ private struct EventCard: View {
                     Text(formatGameTime(time))
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
+                        .padding(.leading, 26)
                 }
             }
 
@@ -141,6 +154,18 @@ private struct EventCard: View {
                 .fill(AppColors.backgroundCard)
                 .shadow(color: AppColors.cardShadow, radius: 4, x: 0, y: 2)
         )
+    }
+
+    @ViewBuilder
+    private func teamLogo(url: String?) -> some View {
+        if let urlString = url, let url = URL(string: urlString) {
+            AsyncImage(url: url) { image in
+                image.resizable().scaledToFit()
+            } placeholder: {
+                Color.clear.frame(width: 20, height: 20)
+            }
+            .frame(width: 20, height: 20)
+        }
     }
 
     @ViewBuilder
