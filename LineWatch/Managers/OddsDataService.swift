@@ -12,6 +12,8 @@ class OddsDataService {
     var eventsBySport: [SportCategory: [ResponseBody]] = [:]
     var playerPropsByEvent: [String: ResponseBody] = [:]
     var playerTeamsByEvent: [String: [String: String]] = [:]
+    var teamLogoURLs: [String: String] = [:]
+    var playerHeadshotURLs: [String: String] = [:]
     var isLoading = false
     var error: Error?
 
@@ -104,6 +106,29 @@ class OddsDataService {
 
     func events(for sport: SportCategory) -> [ResponseBody] {
         eventsBySport[sport] ?? []
+    }
+
+    // MARK: - NBA Assets (Logos & Headshots)
+
+    /// Fetch team logos and player headshots from Supabase (run once on launch)
+    func fetchNBAAssets() async {
+        do {
+            async let teamsTask = supabaseService.fetchNBATeamLogos()
+            async let playersTask = supabaseService.fetchNBAPlayerHeadshots()
+
+            let (teams, players) = try await (teamsTask, playersTask)
+
+            await MainActor.run {
+                for team in teams {
+                    teamLogoURLs[team.teamName] = team.logoUrl
+                }
+                for player in players {
+                    playerHeadshotURLs[player.playerName] = player.headshotUrl
+                }
+            }
+        } catch {
+            // Silent failure — UI will show placeholder icons
+        }
     }
 
     // MARK: - Player Props

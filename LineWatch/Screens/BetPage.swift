@@ -574,7 +574,16 @@ struct BetPage: View {
     // MARK: - Team Section Header
 
     private func teamSectionHeader(teamName: String) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
+            if let logoURL = dataService.teamLogoURLs[teamName],
+               let url = URL(string: logoURL) {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFit()
+                } placeholder: {
+                    Color.clear.frame(width: 24, height: 24)
+                }
+                .frame(width: 24, height: 24)
+            }
             Text(teamName)
                 .font(AppFonts.headline)
                 .foregroundStyle(AppColors.textPrimary)
@@ -591,7 +600,24 @@ struct BetPage: View {
     private func playerPropCard(line: PlayerPropLine) -> some View {
         VStack(spacing: 0) {
             // Player header
-            HStack {
+            HStack(spacing: 10) {
+                if let headshotURL = dataService.playerHeadshotURLs[line.playerName],
+                   let url = URL(string: headshotURL) {
+                    AsyncImage(url: url) { image in
+                        image.resizable().scaledToFill()
+                    } placeholder: {
+                        Image(systemName: "person.circle.fill")
+                            .font(.system(size: 36))
+                            .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                    }
+                    .frame(width: 36, height: 36)
+                    .clipShape(Circle())
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                }
+
                 Text(line.playerName)
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(AppColors.textPrimary)
