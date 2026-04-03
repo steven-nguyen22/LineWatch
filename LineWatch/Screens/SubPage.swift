@@ -116,25 +116,25 @@ private struct EventCard: View {
                     Text(event.awayDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(1)
                 }
 
                 HStack(spacing: 4) {
                     Text("@")
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
-                        .padding(.leading, 26)
 
                     teamLogo(url: homeLogoURL)
                     Text(event.homeDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(1)
                 }
 
                 if let time = event.commenceTime {
                     Text(formatGameTime(time))
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
-                        .padding(.leading, 26)
                 }
             }
 
