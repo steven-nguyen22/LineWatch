@@ -605,16 +605,7 @@ struct BetPage: View {
     // MARK: - Team Section Header
 
     private func teamSectionHeader(teamName: String) -> some View {
-        HStack(spacing: 8) {
-            if let logoURL = dataService.teamLogoURLs[teamName],
-               let url = URL(string: logoURL) {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFit()
-                } placeholder: {
-                    Color.clear.frame(width: 24, height: 24)
-                }
-                .frame(width: 24, height: 24)
-            }
+        HStack(spacing: 10) {
             Text(teamName)
                 .font(AppFonts.headline)
                 .foregroundStyle(AppColors.textPrimary)
