@@ -131,6 +131,29 @@ class OddsDataService {
         }
     }
 
+    // MARK: - MLB Assets (Logos & Headshots)
+
+    /// Fetch team logos and player headshots from Supabase for MLB (run once on launch)
+    func fetchMLBAssets() async {
+        do {
+            async let teamsTask = supabaseService.fetchMLBTeamLogos()
+            async let playersTask = supabaseService.fetchMLBPlayerHeadshots()
+
+            let (teams, players) = try await (teamsTask, playersTask)
+
+            await MainActor.run {
+                for team in teams {
+                    teamLogoURLs[team.teamName] = team.logoUrl
+                }
+                for player in players {
+                    playerHeadshotURLs[player.playerName] = player.headshotUrl
+                }
+            }
+        } catch {
+            // Silent failure — UI will show placeholder icons
+        }
+    }
+
     // MARK: - Player Props
 
     /// Fetch player props for a specific event (lazy-loaded on BetPage)
