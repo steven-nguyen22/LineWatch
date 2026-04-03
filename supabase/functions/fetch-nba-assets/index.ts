@@ -61,7 +61,7 @@ Deno.serve(async (_req) => {
     ].map(([name, espnId]) => ({
       team_name: name,
       espn_id: espnId,
-      logo_url: `https://a.espn.com/i/teamlogos/nba/500/${espnId}.png`,
+      logo_url: `https://a.espncdn.com/i/teamlogos/nba/500/${espnId}.png`,
     }));
 
     const { error: teamError } = await supabase
@@ -106,7 +106,7 @@ Deno.serve(async (_req) => {
 
           const headshotUrl =
             athlete.headshot?.href ||
-            `https://a.espn.com/i/headshots/nba/players/full/${athlete.id}.png`;
+            `https://a.espncdn.com/i/headshots/nba/players/full/${athlete.id}.png`;
 
           allPlayerRows.push({
             player_name: athlete.displayName,
