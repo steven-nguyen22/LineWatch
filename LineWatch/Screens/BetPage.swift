@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 
 // MARK: - Bet Selection Model
 
@@ -138,10 +139,10 @@ struct BetPage: View {
                 VStack(spacing: 8) {
                     if let logoURL = dataService.teamLogoURLs[event.awayTeam ?? ""],
                        let url = URL(string: logoURL) {
-                        AsyncImage(url: url) { image in
-                            image.resizable().scaledToFit()
-                        } placeholder: {
-                            Color.clear.frame(width: 56, height: 56)
+                        LazyImage(url: url) { state in
+                            if let image = state.image {
+                                image.resizable().scaledToFit()
+                            }
                         }
                         .frame(width: 56, height: 56)
                     }
@@ -160,10 +161,10 @@ struct BetPage: View {
                 VStack(spacing: 8) {
                     if let logoURL = dataService.teamLogoURLs[event.homeTeam ?? ""],
                        let url = URL(string: logoURL) {
-                        AsyncImage(url: url) { image in
-                            image.resizable().scaledToFit()
-                        } placeholder: {
-                            Color.clear.frame(width: 56, height: 56)
+                        LazyImage(url: url) { state in
+                            if let image = state.image {
+                                image.resizable().scaledToFit()
+                            }
                         }
                         .frame(width: 56, height: 56)
                     }
@@ -576,7 +577,7 @@ struct BetPage: View {
                         Image(systemName: "person.crop.circle.badge.questionmark")
                             .font(.system(size: 40))
                             .foregroundStyle(AppColors.textSecondary.opacity(0.5))
-                        Text("No player props available")
+                        Text("Props coming soon")
                             .font(AppFonts.body)
                             .foregroundStyle(AppColors.textSecondary)
                     }
@@ -635,12 +636,14 @@ struct BetPage: View {
             HStack(spacing: 10) {
                 if let headshotURL = dataService.playerHeadshotURLs[line.playerName],
                    let url = URL(string: headshotURL) {
-                    AsyncImage(url: url) { image in
-                        image.resizable().scaledToFill()
-                    } placeholder: {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 36))
-                            .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                    LazyImage(url: url) { state in
+                        if let image = state.image {
+                            image.resizable().scaledToFill()
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 36))
+                                .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                        }
                     }
                     .frame(width: 36, height: 36)
                     .clipShape(Circle())

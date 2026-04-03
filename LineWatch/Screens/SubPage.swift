@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct SubPage: View {
     let sport: SportCategory
@@ -159,10 +160,10 @@ private struct EventCard: View {
     @ViewBuilder
     private func teamLogo(url: String?) -> some View {
         if let urlString = url, let url = URL(string: urlString) {
-            AsyncImage(url: url) { image in
-                image.resizable().scaledToFit()
-            } placeholder: {
-                Color.clear.frame(width: 20, height: 20)
+            LazyImage(url: url) { state in
+                if let image = state.image {
+                    image.resizable().scaledToFit()
+                }
             }
             .frame(width: 20, height: 20)
         }

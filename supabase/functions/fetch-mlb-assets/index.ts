@@ -38,6 +38,11 @@ const MLB_TEAM_IDS: Record<string, number> = {
   "Washington Nationals": 20,
 };
 
+// Aliases used by The Odds API (e.g., "Athletics" after Oakland relocation)
+const TEAM_ALIASES: Record<string, number> = {
+  "Athletics": 11,
+};
+
 interface ESPNAthlete {
   id: string;
   displayName: string;
@@ -48,8 +53,11 @@ Deno.serve(async (_req) => {
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Step 1: Populate mlb_teams with all 30 teams
-    const teamRows = Object.entries(MLB_TEAM_IDS).map(([name, espnId]) => ({
+    // Step 1: Populate mlb_teams with all 30 teams + aliases
+    const teamRows = [
+      ...Object.entries(MLB_TEAM_IDS),
+      ...Object.entries(TEAM_ALIASES),
+    ].map(([name, espnId]) => ({
       team_name: name,
       espn_id: espnId,
       logo_url: `https://a.espncdn.com/i/teamlogos/mlb/500/${espnId}.png`,
