@@ -56,11 +56,12 @@ Deno.serve(async (_req) => {
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // NHL official CDN — ESPN does not host logos for these franchise IDs
+    // ESPN doesn't host logos at the /nhl/500/{numericId}.png URL for these
+    // franchises, but it does host them at /nhl/500/{abbrev}.png.
     const LOGO_OVERRIDES: Record<string, string> = {
-      "Utah Hockey Club": "https://assets.nhle.com/logos/nhl/svg/UTA_light.svg",
-      "Utah Mammoth":     "https://assets.nhle.com/logos/nhl/svg/UTA_light.svg",
-      "Seattle Kraken":   "https://assets.nhle.com/logos/nhl/svg/SEA_light.svg",
+      "Utah Hockey Club": "https://a.espncdn.com/i/teamlogos/nhl/500/uta.png",
+      "Utah Mammoth":     "https://a.espncdn.com/i/teamlogos/nhl/500/uta.png",
+      "Seattle Kraken":   "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png",
     };
 
     // Step 1: Populate nhl_teams with all 32 teams + aliases
