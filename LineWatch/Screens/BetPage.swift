@@ -804,7 +804,7 @@ struct BetPage: View {
         return playerMap.map { name, data in
             PlayerPropLine(playerName: name, line: data.line, teamName: teamMap[name], bookmakerOdds: data.bookmakers)
         }
-        .sorted { $0.line > $1.line }
+        .sorted { $0.playerName.localizedCaseInsensitiveCompare($1.playerName) == .orderedAscending }
     }
 
     // MARK: - Legend
