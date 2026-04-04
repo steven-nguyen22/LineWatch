@@ -154,6 +154,29 @@ class OddsDataService {
         }
     }
 
+    // MARK: - NHL Assets (Logos & Headshots)
+
+    /// Fetch team logos and player headshots from Supabase for NHL (run once on launch)
+    func fetchNHLAssets() async {
+        do {
+            async let teamsTask = supabaseService.fetchNHLTeamLogos()
+            async let playersTask = supabaseService.fetchNHLPlayerHeadshots()
+
+            let (teams, players) = try await (teamsTask, playersTask)
+
+            await MainActor.run {
+                for team in teams {
+                    teamLogoURLs[team.teamName] = team.logoUrl
+                }
+                for player in players {
+                    playerHeadshotURLs[player.playerName] = player.headshotUrl
+                }
+            }
+        } catch {
+            // Silent failure — UI will show placeholder icons
+        }
+    }
+
     // MARK: - Player Props
 
     /// Fetch player props for a specific event (lazy-loaded on BetPage)
