@@ -398,6 +398,9 @@ verify_jwt = false
 [functions.fetch-golf-odds]
 verify_jwt = false
 
+[functions.fetch-soccer-player-props]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

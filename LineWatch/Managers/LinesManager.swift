@@ -121,7 +121,7 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         case .football:
             return [.h2h, .spreads, .totals, .playerProps]
         case .soccer:
-            return [.h2h, .spreads, .totals]
+            return [.h2h, .spreads, .totals, .playerProps]
         case .fighting:
             return [.h2h]
         case .golf:
@@ -197,14 +197,27 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
     case passingYards = "player_pass_yds"
     case rushingYards = "player_rush_yds"
     case receivingYards = "player_reception_yds"
+    // Soccer
+    case soccerGoalScorer = "player_goal_scorer_anytime"
+    case soccerShotsOnTarget = "player_shots_on_target"
+    case soccerAssists = "soccer_player_assists" // marketKey overridden to "player_assists"
 
     var id: String { rawValue }
 
-    /// The Odds API market key (differs from rawValue for hockeyPoints)
+    /// The Odds API market key (differs from rawValue for some cases)
     var marketKey: String {
         switch self {
         case .hockeyPoints: return "player_points"
+        case .soccerAssists: return "player_assists"
         default: return rawValue
+        }
+    }
+
+    /// Whether this prop uses Yes/No outcomes instead of Over/Under
+    var isYesNo: Bool {
+        switch self {
+        case .soccerGoalScorer: return true
+        default: return false
         }
     }
 
@@ -222,6 +235,9 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .passingYards: return "Passing Yards"
         case .rushingYards: return "Rushing Yards"
         case .receivingYards: return "Receiving Yards"
+        case .soccerGoalScorer: return "Goal Scorer"
+        case .soccerShotsOnTarget: return "Shots on Target"
+        case .soccerAssists: return "Assists"
         }
     }
 
@@ -232,6 +248,7 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .hits, .strikeouts, .homeRuns: return .baseball
         case .goals, .shotsOnGoal, .hockeyPoints: return .hockey
         case .passingYards, .rushingYards, .receivingYards: return .football
+        case .soccerGoalScorer, .soccerShotsOnTarget, .soccerAssists: return .soccer
         }
     }
 
@@ -256,7 +273,7 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
 struct PlayerPropLine: Identifiable {
     var id: String { playerName }
     let playerName: String
-    let line: Double
+    let line: Double?
     let teamName: String?
     let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)]
 }
