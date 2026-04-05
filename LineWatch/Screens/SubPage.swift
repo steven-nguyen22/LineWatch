@@ -82,8 +82,8 @@ struct SubPage: View {
                                 EventCard(
                                     event: event,
                                     marketType: selectedMarket,
-                                    awayLogoURL: dataService.teamLogoURLs[event.awayTeam ?? ""],
-                                    homeLogoURL: dataService.teamLogoURLs[event.homeTeam ?? ""]
+                                    awayLogoURL: imageURL(for: event.awayTeam, isFighting: event.isFighting),
+                                    homeLogoURL: imageURL(for: event.homeTeam, isFighting: event.isFighting)
                                 )
                             }
                             .buttonStyle(.plain)
@@ -110,6 +110,13 @@ struct SubPage: View {
         guard sport == .fighting else { return all }
         return all.filter { $0.sportKey == selectedLeague.rawValue }
     }
+
+    private func imageURL(for name: String?, isFighting: Bool) -> String? {
+        guard let name = name else { return nil }
+        return isFighting
+            ? dataService.playerHeadshotURLs[name]
+            : dataService.teamLogoURLs[name]
+    }
 }
 
 // MARK: - Event Card
@@ -130,7 +137,7 @@ private struct EventCard: View {
             // Team info
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
-                    teamLogo(url: awayLogoURL)
+                    competitorImage(url: awayLogoURL)
                     Text(event.awayDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
@@ -138,11 +145,11 @@ private struct EventCard: View {
                 }
 
                 HStack(spacing: 4) {
-                    Text("@")
+                    Text(event.isFighting ? "vs" : "@")
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
 
-                    teamLogo(url: homeLogoURL)
+                    competitorImage(url: homeLogoURL)
                     Text(event.homeDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
@@ -175,8 +182,10 @@ private struct EventCard: View {
     }
 
     @ViewBuilder
-    private func teamLogo(url: String?) -> some View {
-        if let urlString = url, let url = URL(string: urlString) {
+    private func competitorImage(url: String?) -> some View {
+        if event.isFighting {
+            FighterCircle(url: url, size: 24)
+        } else if let urlString = url, let url = URL(string: urlString) {
             LazyImage(url: url) { state in
                 if let image = state.image {
                     image.resizable().scaledToFit()
@@ -280,6 +289,36 @@ private struct EventCard: View {
         let display = DateFormatter()
         display.dateFormat = "MMM d, h:mm a"
         return display.string(from: date)
+    }
+}
+
+// MARK: - Fighter Circle (shared)
+
+struct FighterCircle: View {
+    let url: String?
+    let size: CGFloat
+
+    var body: some View {
+        ZStack {
+            Circle().fill(Color.gray.opacity(0.3))
+            if let urlString = url, let imageURL = URL(string: urlString) {
+                LazyImage(url: imageURL) { state in
+                    if let image = state.image {
+                        image.resizable().scaledToFill()
+                    } else {
+                        Image(systemName: "figure.boxing")
+                            .font(.system(size: size * 0.5))
+                            .foregroundStyle(.gray)
+                    }
+                }
+                .clipShape(Circle())
+            } else {
+                Image(systemName: "figure.boxing")
+                    .font(.system(size: size * 0.5))
+                    .foregroundStyle(.gray)
+            }
+        }
+        .frame(width: size, height: size)
     }
 }
 

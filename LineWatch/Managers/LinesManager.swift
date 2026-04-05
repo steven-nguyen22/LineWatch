@@ -341,6 +341,11 @@ struct ResponseBody: Codable, Identifiable {
     var homeDisplay: String { homeTeam ?? sportTitle }
     /// Display name for the away side (falls back to empty for outrights)
     var awayDisplay: String { awayTeam ?? "" }
+
+    /// True when this event is an MMA or boxing bout (names are fighters, not teams).
+    var isFighting: Bool {
+        sportKey == "mma_mixed_martial_arts" || sportKey == "boxing_boxing"
+    }
 }
 
 extension ResponseBody: Hashable {

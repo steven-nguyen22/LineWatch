@@ -135,17 +135,9 @@ struct BetPage: View {
                 )
 
             HStack(spacing: 0) {
-                // Away team (left)
+                // Away team / fighter (left)
                 VStack(spacing: 8) {
-                    if let logoURL = dataService.teamLogoURLs[event.awayTeam ?? ""],
-                       let url = URL(string: logoURL) {
-                        LazyImage(url: url) { state in
-                            if let image = state.image {
-                                image.resizable().scaledToFit()
-                            }
-                        }
-                        .frame(width: 56, height: 56)
-                    }
+                    competitorImage(name: event.awayTeam)
                     Text(event.awayDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
@@ -153,21 +145,13 @@ struct BetPage: View {
                 }
                 .frame(maxWidth: .infinity)
 
-                Text("@")
+                Text(event.isFighting ? "vs" : "@")
                     .font(AppFonts.body)
                     .foregroundStyle(AppColors.textSecondary)
 
-                // Home team (right)
+                // Home team / fighter (right)
                 VStack(spacing: 8) {
-                    if let logoURL = dataService.teamLogoURLs[event.homeTeam ?? ""],
-                       let url = URL(string: logoURL) {
-                        LazyImage(url: url) { state in
-                            if let image = state.image {
-                                image.resizable().scaledToFit()
-                            }
-                        }
-                        .frame(width: 56, height: 56)
-                    }
+                    competitorImage(name: event.homeTeam)
                     Text(event.homeDisplay)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
@@ -186,6 +170,22 @@ struct BetPage: View {
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
         .background(AppColors.backgroundCard)
+    }
+
+    @ViewBuilder
+    private func competitorImage(name: String?) -> some View {
+        let key = name ?? ""
+        if event.isFighting {
+            FighterCircle(url: dataService.playerHeadshotURLs[key], size: 56)
+        } else if let logoURL = dataService.teamLogoURLs[key],
+                  let url = URL(string: logoURL) {
+            LazyImage(url: url) { state in
+                if let image = state.image {
+                    image.resizable().scaledToFit()
+                }
+            }
+            .frame(width: 56, height: 56)
+        }
     }
 
     // MARK: - Column Headers

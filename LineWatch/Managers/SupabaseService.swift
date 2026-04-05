@@ -220,6 +220,13 @@ class SupabaseService {
         return try JSONDecoder().decode([NHLPlayerRow].self, from: data)
     }
 
+    // MARK: - Fighting Assets
+
+    /// Fetches all fighter headshot URLs (null entries are negative cache markers).
+    func fetchFighterHeadshots() async throws -> [FighterHeadshotRow] {
+        return try await fetchRows(path: "fighter_headshots?select=fighter_name,headshot_url")
+    }
+
     // MARK: - NFL Assets
 
     /// Fetches all NFL team logo URLs.
@@ -320,6 +327,16 @@ struct NHLPlayerRow: Codable {
         case playerName = "player_name"
         case headshotUrl = "headshot_url"
         case teamName = "team_name"
+    }
+}
+
+struct FighterHeadshotRow: Codable {
+    let fighterName: String
+    let headshotUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case fighterName = "fighter_name"
+        case headshotUrl = "headshot_url"
     }
 }
 
