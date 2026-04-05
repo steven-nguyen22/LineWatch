@@ -17,7 +17,6 @@ class OddsDataService {
     var isLoading = false
     var error: Error?
 
-    private let linesManager = LinesManager()
     private let supabaseService = SupabaseService()
 
     // Load from bundled JSON files (no API calls)

@@ -11,7 +11,16 @@ const SPORT_KEYS = [
   "golf_us_open_winner",
 ] as const;
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  const auth = req.headers.get("authorization") ?? "";
+  const token = auth.replace(/^Bearer\s+/i, "");
+  if (token !== SUPABASE_SERVICE_ROLE_KEY) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
     const tournaments: Record<string, number> = {};
