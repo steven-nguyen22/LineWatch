@@ -37,8 +37,8 @@ class OddsDataService {
         isLoading = true
         defer { isLoading = false }
 
-        // Basketball & Baseball: fetch from Supabase cache
-        if sport == .basketball || sport == .baseball || sport == .hockey || sport == .football {
+        // Single-key sports via Supabase cache
+        if sport == .basketball || sport == .baseball || sport == .hockey || sport == .football || sport == .soccer {
             do {
                 let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                 eventsBySport[sport] = events
@@ -51,8 +51,8 @@ class OddsDataService {
             return
         }
 
-        // Fighting: fetch both leagues from Supabase cache
-        if sport == .fighting {
+        // Multi-key sports via Supabase cache (fighting + golf)
+        if sport == .fighting || sport == .golf {
             var allEvents: [ResponseBody] = []
             for key in sport.sportKeys {
                 do {
@@ -68,21 +68,6 @@ class OddsDataService {
             eventsBySport[sport] = allEvents
             return
         }
-
-        // All other sports: fetch from the-odds-api directly
-        var allEvents: [ResponseBody] = []
-        for (index, key) in sport.sportKeys.enumerated() {
-            do {
-                let events = try await linesManager.getOdds(forKey: key, markets: sport.availableMarkets)
-                allEvents.append(contentsOf: events)
-                saveToDocuments(events, filename: "\(sport.localFileNames[index]).json")
-            } catch {
-                self.error = error
-                let local: [ResponseBody] = loadFromBundle(sport.localFileNames[index])
-                allEvents.append(contentsOf: local)
-            }
-        }
-        eventsBySport[sport] = allEvents
     }
 
     // Fetch all sports from API
@@ -91,8 +76,8 @@ class OddsDataService {
         defer { isLoading = false }
 
         for sport in SportCategory.allCases {
-            // Basketball & Baseball: fetch from Supabase cache
-            if sport == .basketball || sport == .baseball || sport == .hockey || sport == .football {
+            // Single-key sports via Supabase cache
+            if sport == .basketball || sport == .baseball || sport == .hockey || sport == .football || sport == .soccer {
                 do {
                     let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                     eventsBySport[sport] = events
@@ -105,38 +90,23 @@ class OddsDataService {
                 continue
             }
 
-            // Fighting: fetch both leagues from Supabase cache
-            if sport == .fighting {
-                var allFightingEvents: [ResponseBody] = []
+            // Multi-key sports via Supabase cache (fighting + golf)
+            if sport == .fighting || sport == .golf {
+                var allEvents: [ResponseBody] = []
                 for key in sport.sportKeys {
                     do {
                         let events = try await supabaseService.fetchCachedOdds(sportKey: key)
-                        allFightingEvents.append(contentsOf: events)
+                        allEvents.append(contentsOf: events)
                         saveToDocuments(events, filename: "\(key).json")
                     } catch {
                         self.error = error
                         let local: [ResponseBody] = loadFromBundle(key)
-                        allFightingEvents.append(contentsOf: local)
+                        allEvents.append(contentsOf: local)
                     }
                 }
-                eventsBySport[sport] = allFightingEvents
+                eventsBySport[sport] = allEvents
                 continue
             }
-
-            // All other sports: fetch from the-odds-api directly
-            var allEvents: [ResponseBody] = []
-            for (index, key) in sport.sportKeys.enumerated() {
-                do {
-                    let events = try await linesManager.getOdds(forKey: key, markets: sport.availableMarkets)
-                    allEvents.append(contentsOf: events)
-                    saveToDocuments(events, filename: "\(sport.localFileNames[index]).json")
-                } catch {
-                    self.error = error
-                    let local: [ResponseBody] = loadFromBundle(sport.localFileNames[index])
-                    allEvents.append(contentsOf: local)
-                }
-            }
-            eventsBySport[sport] = allEvents
         }
     }
 
