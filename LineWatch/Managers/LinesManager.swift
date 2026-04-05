@@ -261,61 +261,6 @@ struct PlayerPropLine: Identifiable {
     let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)]
 }
 
-// MARK: - API Manager
-
-class LinesManager {
-    private let apiKey = "38362e374889c29da9e8c1692d5c133d"
-    private let baseURL = "https://api.the-odds-api.com/v4/sports"
-
-    func getOdds(for sport: SportCategory, markets: [MarketType] = MarketType.standardMarkets) async throws -> [ResponseBody] {
-        // For single-key sports, use the rawValue. For multi-key, caller should use getOdds(forKey:) instead.
-        return try await getOdds(forKey: sport.sportKeys[0], markets: markets)
-    }
-
-    /// Fetch player props for a specific event (returns a single ResponseBody, not array)
-    func getPlayerProps(eventId: String, sportKey: String = "basketball_nba") async throws -> ResponseBody {
-        let marketsParam = PlayerPropType.apiMarketsParam
-        let endpoint = "\(baseURL)/\(sportKey)/events/\(eventId)/odds/?apiKey=\(apiKey)&regions=us&markets=\(marketsParam)&oddsFormat=american"
-
-        guard let url = URL(string: endpoint) else {
-            throw GHError.invalidURL
-        }
-
-        let (data, response) = try await URLSession.shared.data(from: url)
-
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw GHError.invalidResponse
-        }
-
-        do {
-            return try JSONDecoder().decode(ResponseBody.self, from: data)
-        } catch {
-            throw GHError.invalidData
-        }
-    }
-
-    func getOdds(forKey sportKey: String, markets: [MarketType] = MarketType.standardMarkets) async throws -> [ResponseBody] {
-        let marketsParam = MarketType.apiMarketsParam(markets)
-        let endpoint = "\(baseURL)/\(sportKey)/odds/?apiKey=\(apiKey)&regions=us&markets=\(marketsParam)&oddsFormat=american"
-
-        guard let url = URL(string: endpoint) else {
-            throw GHError.invalidURL
-        }
-
-        let (data, response) = try await URLSession.shared.data(from: url)
-
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw GHError.invalidResponse
-        }
-
-        do {
-            return try JSONDecoder().decode([ResponseBody].self, from: data)
-        } catch {
-            throw GHError.invalidData
-        }
-    }
-}
-
 // MARK: - Models
 
 struct ResponseBody: Codable, Identifiable {

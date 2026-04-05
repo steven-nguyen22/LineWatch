@@ -364,6 +364,40 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# Lock down all Odds-API-spending functions so only the service-role key can invoke them.
+# The iOS client never calls these — they're triggered manually via curl or a server-side cron.
+# Disabling verify_jwt prevents Supabase from accepting the anon key at the platform layer;
+# each function adds its own service-role auth check at the top of the handler.
+[functions.fetch-odds]
+verify_jwt = false
+
+[functions.fetch-player-props]
+verify_jwt = false
+
+[functions.fetch-baseball-odds]
+verify_jwt = false
+
+[functions.fetch-baseball-player-props]
+verify_jwt = false
+
+[functions.fetch-hockey-odds]
+verify_jwt = false
+
+[functions.fetch-hockey-player-props]
+verify_jwt = false
+
+[functions.fetch-football-player-props]
+verify_jwt = false
+
+[functions.fetch-fighting-odds]
+verify_jwt = false
+
+[functions.fetch-soccer-odds]
+verify_jwt = false
+
+[functions.fetch-golf-odds]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327
