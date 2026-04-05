@@ -51,6 +51,24 @@ class OddsDataService {
             return
         }
 
+        // Fighting: fetch both leagues from Supabase cache
+        if sport == .fighting {
+            var allEvents: [ResponseBody] = []
+            for key in sport.sportKeys {
+                do {
+                    let events = try await supabaseService.fetchCachedOdds(sportKey: key)
+                    allEvents.append(contentsOf: events)
+                    saveToDocuments(events, filename: "\(key).json")
+                } catch {
+                    self.error = error
+                    let local: [ResponseBody] = loadFromBundle(key)
+                    allEvents.append(contentsOf: local)
+                }
+            }
+            eventsBySport[sport] = allEvents
+            return
+        }
+
         // All other sports: fetch from the-odds-api directly
         var allEvents: [ResponseBody] = []
         for (index, key) in sport.sportKeys.enumerated() {
@@ -84,6 +102,24 @@ class OddsDataService {
                     let local: [ResponseBody] = loadFromBundle(sport.rawValue)
                     eventsBySport[sport] = local
                 }
+                continue
+            }
+
+            // Fighting: fetch both leagues from Supabase cache
+            if sport == .fighting {
+                var allFightingEvents: [ResponseBody] = []
+                for key in sport.sportKeys {
+                    do {
+                        let events = try await supabaseService.fetchCachedOdds(sportKey: key)
+                        allFightingEvents.append(contentsOf: events)
+                        saveToDocuments(events, filename: "\(key).json")
+                    } catch {
+                        self.error = error
+                        let local: [ResponseBody] = loadFromBundle(key)
+                        allFightingEvents.append(contentsOf: local)
+                    }
+                }
+                eventsBySport[sport] = allFightingEvents
                 continue
             }
 
