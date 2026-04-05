@@ -12,58 +12,69 @@ struct SubPage: View {
     let sport: SportCategory
     @Environment(OddsDataService.self) private var dataService
     @State private var selectedMarket: MarketType = .h2h
+    @State private var selectedLeague: FightingLeague = .mma
 
     var body: some View {
-        let events = dataService.events(for: sport)
+        let events = displayedEvents
 
         ScrollView {
-            if events.isEmpty {
-                // Empty state
-                VStack(spacing: 16) {
-                    Image(systemName: "sportscourt")
-                        .font(.system(size: 48))
-                        .foregroundStyle(AppColors.textSecondary.opacity(0.5))
-
-                    Text("No events available")
-                        .font(AppFonts.title)
-                        .foregroundStyle(AppColors.textSecondary)
-
-                    Text("Check back later for upcoming \(sport.displayName.lowercased()) games.")
-                        .font(AppFonts.body)
-                        .foregroundStyle(AppColors.textSecondary.opacity(0.7))
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.top, 100)
-                .padding(.horizontal, 40)
-            } else {
-                VStack(spacing: 0) {
-                    // Market type picker (only show if more than 1 market available)
-                    if sport.availableMarkets.count > 1 {
-                        Picker("Market", selection: $selectedMarket) {
-                            ForEach(sport.availableMarkets) { market in
-                                Text(market.displayName).tag(market)
-                            }
+            VStack(spacing: 0) {
+                // Header picker: fighting → league tabs; else → market tabs or single badge
+                if sport == .fighting {
+                    Picker("League", selection: $selectedLeague) {
+                        ForEach(FightingLeague.allCases) { league in
+                            Text(league.displayName).tag(league)
                         }
-                        .pickerStyle(.segmented)
-                        .padding(.horizontal, 16)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 16)
+                } else if sport.availableMarkets.count > 1 {
+                    Picker("Market", selection: $selectedMarket) {
+                        ForEach(sport.availableMarkets) { market in
+                            Text(market.displayName).tag(market)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 16)
+                } else {
+                    // Single market badge (e.g., "Outrights" for golf)
+                    Text(sport.availableMarkets.first?.displayName ?? "")
+                        .font(AppFonts.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AppColors.darkGreen)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(AppColors.lightGreen.opacity(0.3))
+                        )
                         .padding(.top, 12)
                         .padding(.bottom, 16)
-                    } else {
-                        // Single market badge (e.g., "Moneyline" for fighting, "Outrights" for golf)
-                        Text(sport.availableMarkets.first?.displayName ?? "")
-                            .font(AppFonts.caption)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(AppColors.darkGreen)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 4)
-                            .background(
-                                Capsule()
-                                    .fill(AppColors.lightGreen.opacity(0.3))
-                            )
-                            .padding(.top, 12)
-                            .padding(.bottom, 16)
-                    }
+                }
 
+                if events.isEmpty {
+                    // Empty state
+                    VStack(spacing: 16) {
+                        Image(systemName: "sportscourt")
+                            .font(.system(size: 48))
+                            .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+
+                        Text("No events available")
+                            .font(AppFonts.title)
+                            .foregroundStyle(AppColors.textSecondary)
+
+                        Text("Check back later for upcoming \(sport.displayName.lowercased()) events.")
+                            .font(AppFonts.body)
+                            .foregroundStyle(AppColors.textSecondary.opacity(0.7))
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.top, 80)
+                    .padding(.horizontal, 40)
+                } else {
                     // Event list
                     LazyVStack(spacing: 12) {
                         ForEach(events) { event in
@@ -92,6 +103,12 @@ struct SubPage: View {
                 selectedMarket = sport.availableMarkets.first ?? .h2h
             }
         }
+    }
+
+    private var displayedEvents: [ResponseBody] {
+        let all = dataService.events(for: sport)
+        guard sport == .fighting else { return all }
+        return all.filter { $0.sportKey == selectedLeague.rawValue }
     }
 }
 

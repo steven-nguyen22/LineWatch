@@ -130,6 +130,22 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+// MARK: - Fighting Leagues
+
+enum FightingLeague: String, CaseIterable, Identifiable, Hashable {
+    case mma = "mma_mixed_martial_arts"
+    case boxing = "boxing_boxing"
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .mma: return "MMA"
+        case .boxing: return "Boxing"
+        }
+    }
+}
+
 // MARK: - Market Types
 
 enum MarketType: String, CaseIterable, Identifiable, Hashable {
