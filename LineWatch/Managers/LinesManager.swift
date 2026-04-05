@@ -238,7 +238,7 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
 // MARK: - Player Prop Line (grouped per player)
 
 struct PlayerPropLine: Identifiable {
-    let id = UUID()
+    var id: String { playerName }
     let playerName: String
     let line: Double
     let teamName: String?
