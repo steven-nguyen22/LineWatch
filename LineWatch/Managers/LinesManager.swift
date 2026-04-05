@@ -118,7 +118,9 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
             return [.h2h, .spreads, .totals, .playerProps]
         case .hockey:
             return [.h2h, .spreads, .totals, .playerProps]
-        case .football, .soccer:
+        case .football:
+            return [.h2h, .spreads, .totals, .playerProps]
+        case .soccer:
             return [.h2h, .spreads, .totals]
         case .fighting:
             return [.h2h]
@@ -175,6 +177,10 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
     case goals = "player_goals"
     case shotsOnGoal = "player_shots_on_goal"
     case hockeyPoints = "hockey_player_points" // unique raw value; API key is "player_points"
+    // Football
+    case passingYards = "player_pass_yds"
+    case rushingYards = "player_rush_yds"
+    case receivingYards = "player_reception_yds"
 
     var id: String { rawValue }
 
@@ -197,6 +203,9 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .goals: return "Goals"
         case .shotsOnGoal: return "Shots on Goal"
         case .hockeyPoints: return "Points"
+        case .passingYards: return "Passing Yards"
+        case .rushingYards: return "Rushing Yards"
+        case .receivingYards: return "Receiving Yards"
         }
     }
 
@@ -206,6 +215,7 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .points, .rebounds, .assists: return .basketball
         case .hits, .strikeouts, .homeRuns: return .baseball
         case .goals, .shotsOnGoal, .hockeyPoints: return .hockey
+        case .passingYards, .rushingYards, .receivingYards: return .football
         }
     }
 

@@ -8,8 +8,21 @@
 import SwiftUI
 
 struct LandingPage: View {
-    private var inSeasonSports: [SportCategory] { SportCategory.inSeason }
-    private var offSeasonSports: [SportCategory] { SportCategory.offSeason }
+    // TEMP: force Football clickable during off-season to test NFL player props.
+    // Delete once NFL preseason (Aug) brings the real season back online.
+    private let footballForceOn = true
+
+    private var inSeasonSports: [SportCategory] {
+        var sports = SportCategory.inSeason
+        if footballForceOn && !sports.contains(.football) {
+            sports.append(.football)
+        }
+        return sports
+    }
+
+    private var offSeasonSports: [SportCategory] {
+        SportCategory.offSeason.filter { !(footballForceOn && $0 == .football) }
+    }
 
     var body: some View {
         ScrollView {
