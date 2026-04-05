@@ -238,6 +238,24 @@ class OddsDataService {
         }
     }
 
+    // MARK: - Fighting Assets (Fighter Headshots)
+
+    /// Fetch fighter headshots from Supabase (run once on launch)
+    func fetchFightingAssets() async {
+        do {
+            let rows = try await supabaseService.fetchFighterHeadshots()
+            await MainActor.run {
+                for row in rows {
+                    if let url = row.headshotUrl {
+                        playerHeadshotURLs[row.fighterName] = url
+                    }
+                }
+            }
+        } catch {
+            // Silent failure — UI will show silhouette fallback
+        }
+    }
+
     // MARK: - Player Props
 
     /// Fetch player props for a specific event (lazy-loaded on BetPage)
