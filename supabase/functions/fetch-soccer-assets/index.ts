@@ -71,7 +71,8 @@ const TEAM_ALIASES: Record<string, number> = {
   "Sparta Praha": 2962,
 };
 
-// Each team's domestic league ESPN endpoint slug (used as fallback when UCL endpoint fails)
+// Each team's domestic league ESPN endpoint slug
+// NOTE: ESPN uses "esp.1" for La Liga (not "spa.1")
 const TEAM_LEAGUE: Record<string, string> = {
   // England
   "Arsenal": "eng.1",
@@ -81,11 +82,11 @@ const TEAM_LEAGUE: Record<string, string> = {
   "Manchester United": "eng.1",
   "Chelsea": "eng.1",
   "Tottenham Hotspur": "eng.1",
-  // Spain
-  "Barcelona": "spa.1",
-  "Real Madrid": "spa.1",
-  "Atletico Madrid": "spa.1",
-  "Girona": "spa.1",
+  // Spain (ESPN uses "esp.1")
+  "Barcelona": "esp.1",
+  "Real Madrid": "esp.1",
+  "Atletico Madrid": "esp.1",
+  "Girona": "esp.1",
   // Germany
   "Bayern Munich": "ger.1",
   "Borussia Dortmund": "ger.1",
@@ -127,6 +128,25 @@ interface ESPNAthlete {
   id: string;
   displayName: string;
   headshot?: { href: string };
+}
+
+/** Search TheSportsDB for a player headshot (cutout or thumb). */
+async function searchHeadshot(playerName: string): Promise<string | null> {
+  try {
+    const url = `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(playerName)}`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    // deno-lint-ignore no-explicit-any
+    const players: any[] = data.player || [];
+    if (players.length === 0) return null;
+
+    // Prefer cutout (transparent background) over thumb (full photo)
+    return players[0].strCutout || players[0].strThumb || null;
+  } catch {
+    return null;
+  }
 }
 
 Deno.serve(async (req) => {
@@ -188,13 +208,12 @@ Deno.serve(async (req) => {
 
     for (const [teamName, espnId] of uniqueTeamEntries) {
       try {
-        // Try UEFA Champions League roster first, fall back to league-specific endpoint
+        // Try UEFA Champions League roster first, fall back to domestic league
         let res = await fetch(
           `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/teams/${espnId}/roster`
         );
 
         if (!res.ok) {
-          // Fallback: try the team's domestic league endpoint
           const league = TEAM_LEAGUE[teamName] ?? "eng.1";
           res = await fetch(
             `https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/teams/${espnId}/roster`
@@ -208,7 +227,7 @@ Deno.serve(async (req) => {
 
         const data = await res.json();
 
-        // ESPN soccer rosters use nested position groups (Forwards, Midfielders, Defenders, Goalkeepers)
+        // ESPN soccer rosters: nested position groups or flat array
         const athletes: ESPNAthlete[] = [];
         if (Array.isArray(data.athletes)) {
           for (const item of data.athletes) {
@@ -223,7 +242,6 @@ Deno.serve(async (req) => {
                 }
               }
             } else if (item.id && item.displayName) {
-              // Flat array of athletes (fallback)
               athletes.push({
                 id: String(item.id),
                 displayName: item.displayName,
@@ -234,14 +252,14 @@ Deno.serve(async (req) => {
         }
 
         for (const athlete of athletes) {
-          const headshotUrl =
-            athlete.headshot?.href ||
-            `https://a.espncdn.com/i/headshots/soccer/players/full/${athlete.id}.png`;
+          // Use ESPN headshot if available (rare for soccer)
+          const espnHeadshot = athlete.headshot?.href || null;
 
           allPlayerRows.push({
             player_name: athlete.displayName,
             espn_id: parseInt(athlete.id, 10),
-            headshot_url: headshotUrl,
+            // Placeholder — will be resolved in Step 3 via TheSportsDB
+            headshot_url: espnHeadshot || "",
             team_name: teamName,
           });
         }
@@ -253,7 +271,33 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Step 3: Upsert all players in batches of 100
+    // Step 3: Fetch headshots from TheSportsDB for players missing ESPN headshots.
+    // ESPN doesn't host headshots for most soccer players, so we use TheSportsDB
+    // (free API with cutout images for virtually all professional players).
+    let theSportsDbHits = 0;
+    let theSportsDbMisses = 0;
+
+    for (const player of allPlayerRows) {
+      if (player.headshot_url) {
+        // Already has ESPN headshot — skip
+        continue;
+      }
+
+      const headshotUrl = await searchHeadshot(player.player_name);
+      if (headshotUrl) {
+        player.headshot_url = headshotUrl;
+        theSportsDbHits++;
+      } else {
+        // Final fallback: ESPN CDN pattern (usually 404 for soccer, but worth trying)
+        player.headshot_url = `https://a.espncdn.com/i/headshots/soccer/players/full/${player.espn_id}.png`;
+        theSportsDbMisses++;
+      }
+
+      // Rate limit courtesy — 200ms between TheSportsDB requests
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+
+    // Step 4: Upsert all players in batches of 100
     if (allPlayerRows.length > 0) {
       for (let i = 0; i < allPlayerRows.length; i += 100) {
         const batch = allPlayerRows.slice(i, i + 100);
@@ -268,7 +312,7 @@ Deno.serve(async (req) => {
       totalPlayers = allPlayerRows.length;
     }
 
-    // Step 4: Clean up players no longer on any roster
+    // Step 5: Clean up players no longer on any roster
     const currentPlayerKeys = new Set(
       allPlayerRows.map((p) => `${p.player_name}|${p.team_name}`)
     );
@@ -293,6 +337,8 @@ Deno.serve(async (req) => {
         teams: teamRows.length,
         players: totalPlayers,
         failed_teams: failedTeams,
+        headshots_from_thesportsdb: theSportsDbHits,
+        headshots_missing: theSportsDbMisses,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
