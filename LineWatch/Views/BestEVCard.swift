@@ -9,12 +9,13 @@ import SwiftUI
 
 struct BestEVCard: View {
     let bet: BestEVBet
+    var sportLabel: String? = nil
 
-    /// Resolve sport category for the icon
-    private var sport: SportCategory? {
-        SportCategory.allCases.first { category in
-            category.sportKeys.contains(bet.event.sportKey)
+    private var headerText: String {
+        if let label = sportLabel {
+            return "Best Value Bet - \(label)"
         }
+        return "Best Value Bet"
     }
 
     var body: some View {
@@ -27,7 +28,7 @@ struct BestEVCard: View {
                             .font(.system(size: 12))
                             .foregroundStyle(AppColors.primaryGreen)
 
-                        Text("Best Value Bet")
+                        Text(headerText)
                             .font(.system(size: 13, weight: .bold, design: .rounded))
                             .foregroundStyle(AppColors.primaryGreen)
                     }
@@ -47,16 +48,14 @@ struct BestEVCard: View {
 
                 // Matchup row: sport icon + teams
                 HStack(spacing: 10) {
-                    if let sport = sport {
-                        ZStack {
-                            Circle()
-                                .fill(AppColors.primaryGreen.opacity(0.15))
-                                .frame(width: 36, height: 36)
+                    ZStack {
+                        Circle()
+                            .fill(AppColors.primaryGreen.opacity(0.15))
+                            .frame(width: 36, height: 36)
 
-                            Image(systemName: sport.iconName)
-                                .font(.system(size: 16))
-                                .foregroundStyle(AppColors.primaryGreen)
-                        }
+                        Image(systemName: bet.sport.iconName)
+                            .font(.system(size: 16))
+                            .foregroundStyle(AppColors.primaryGreen)
                     }
 
                     VStack(alignment: .leading, spacing: 2) {

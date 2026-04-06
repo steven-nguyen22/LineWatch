@@ -33,6 +33,8 @@ struct ContentView: View {
                                 SubPage(sport: sport)
                             case .eventDetail(let event, let marketType):
                                 BetPage(event: event, marketType: marketType)
+                            case .bestEV:
+                                BestEVPage()
                             }
                         }
                 }

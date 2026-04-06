@@ -14,10 +14,6 @@ struct LandingPage: View {
     private var inSeasonSports: [SportCategory] { SportCategory.inSeason }
     private var offSeasonSports: [SportCategory] { SportCategory.offSeason }
 
-    private var bestEV: BestEVBet? {
-        EVCalculator.findBestEV(eventsBySport: dataService.eventsBySport)
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -34,11 +30,39 @@ struct LandingPage: View {
                 .padding(.top, 20)
                 .padding(.bottom, 8)
 
-                // Best EV Bet card
-                if let bestEV = bestEV {
-                    BestEVCard(bet: bestEV)
-                        .padding(.horizontal, 20)
+                // Best EV section entry
+                NavigationLink(value: AppRoute.bestEV) {
+                    HStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(AppColors.primaryGreen)
+                                .frame(width: 52, height: 52)
+
+                            Image(systemName: "bolt.fill")
+                                .font(.system(size: 24))
+                                .foregroundStyle(AppColors.textOnGreen)
+                        }
+
+                        Text("Best EV")
+                            .font(AppFonts.title)
+                            .foregroundStyle(AppColors.textPrimary)
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColors.backgroundCard)
+                            .shadow(color: AppColors.cardShadow, radius: 6, x: 0, y: 3)
+                    )
                 }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 20)
 
                 // In Season
                 if !inSeasonSports.isEmpty {

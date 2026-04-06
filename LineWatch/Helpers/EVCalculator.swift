@@ -9,7 +9,9 @@ import Foundation
 
 // MARK: - Best EV Bet Model
 
-struct BestEVBet {
+struct BestEVBet: Identifiable {
+    var id: String { "\(event.id)-\(bookmakerTitle)-\(outcomeName)" }
+
     let event: ResponseBody
     let outcomeName: String        // e.g., "Boston Celtics"
     let bookmakerTitle: String     // e.g., "DraftKings"
@@ -20,6 +22,7 @@ struct BestEVBet {
     let consensusOdds: Int         // average American odds across all books
     let bookmakerCount: Int        // how many books were used in consensus
     let marketType: MarketType     // always .h2h for now
+    let sport: SportCategory       // which sport this bet belongs to
 }
 
 // MARK: - EV Calculator
@@ -30,94 +33,124 @@ enum EVCalculator {
     /// Returns nil if no +EV opportunity exists.
     static func findBestEV(eventsBySport: [SportCategory: [ResponseBody]]) -> BestEVBet? {
         var best: BestEVBet?
-
-        for (_, events) in eventsBySport {
-            for event in events {
-                // Skip golf outrights — too many outcomes, not a clean 2-way market
-                guard !event.isGolf else { continue }
-
-                // Collect all h2h markets across bookmakers
-                let bookmakerMarkets: [(bookmakerTitle: String, outcomes: [Outcome])] = event.bookmakers.compactMap { bookmaker in
-                    guard let market = bookmaker.markets.first(where: { $0.key == MarketType.h2h.rawValue }) else {
-                        return nil
+        for (sport, events) in eventsBySport {
+            if let candidate = findBestEV(for: sport, events: events) {
+                if let current = best {
+                    if candidate.evPercent > current.evPercent {
+                        best = candidate
                     }
-                    guard market.outcomes.count >= 2 else { return nil }
-                    return (bookmaker.title, market.outcomes)
+                } else {
+                    best = candidate
                 }
+            }
+        }
+        return best
+    }
 
-                // Need at least 3 bookmakers for a reliable consensus
-                guard bookmakerMarkets.count >= 3 else { continue }
+    /// Find the best EV bet for a single sport's events.
+    /// Returns nil if no +EV opportunity exists.
+    static func findBestEV(for sport: SportCategory, events: [ResponseBody]) -> BestEVBet? {
+        var best: BestEVBet?
 
-                // Get all unique outcome names (e.g., ["Boston Celtics", "Miami Heat"])
-                let outcomeNames = uniqueOutcomeNames(from: bookmakerMarkets.map(\.outcomes))
-                guard outcomeNames.count >= 2 else { continue }
+        for event in events {
+            // Skip golf outrights — too many outcomes, not a clean 2-way market
+            guard !event.isGolf else { continue }
 
-                // Step 1: Calculate average implied probability for each outcome
-                var avgImplied: [String: Double] = [:]
-                for name in outcomeNames {
-                    var probabilities: [Double] = []
-                    for (_, outcomes) in bookmakerMarkets {
-                        if let outcome = outcomes.first(where: { $0.name == name }) {
-                            probabilities.append(impliedProbability(americanOdds: outcome.price))
-                        }
+            // Collect all h2h markets across bookmakers
+            let bookmakerMarkets: [(bookmakerTitle: String, outcomes: [Outcome])] = event.bookmakers.compactMap { bookmaker in
+                guard let market = bookmaker.markets.first(where: { $0.key == MarketType.h2h.rawValue }) else {
+                    return nil
+                }
+                guard market.outcomes.count >= 2 else { return nil }
+                return (bookmaker.title, market.outcomes)
+            }
+
+            // Need at least 3 bookmakers for a reliable consensus
+            guard bookmakerMarkets.count >= 3 else { continue }
+
+            // Get all unique outcome names (e.g., ["Boston Celtics", "Miami Heat"])
+            let outcomeNames = uniqueOutcomeNames(from: bookmakerMarkets.map(\.outcomes))
+            guard outcomeNames.count >= 2 else { continue }
+
+            // Step 1: Calculate average implied probability for each outcome
+            var avgImplied: [String: Double] = [:]
+            for name in outcomeNames {
+                var probabilities: [Double] = []
+                for (_, outcomes) in bookmakerMarkets {
+                    if let outcome = outcomes.first(where: { $0.name == name }) {
+                        probabilities.append(impliedProbability(americanOdds: outcome.price))
                     }
-                    guard !probabilities.isEmpty else { continue }
-                    avgImplied[name] = probabilities.reduce(0, +) / Double(probabilities.count)
                 }
+                guard !probabilities.isEmpty else { continue }
+                avgImplied[name] = probabilities.reduce(0, +) / Double(probabilities.count)
+            }
 
-                // Step 2: Normalize to remove vig (sum to 1.0)
-                let totalImplied = avgImplied.values.reduce(0, +)
-                guard totalImplied > 0 else { continue }
+            // Step 2: Normalize to remove vig (sum to 1.0)
+            let totalImplied = avgImplied.values.reduce(0, +)
+            guard totalImplied > 0 else { continue }
 
-                var trueProbabilities: [String: Double] = [:]
-                for (name, prob) in avgImplied {
-                    trueProbabilities[name] = prob / totalImplied
-                }
+            var trueProbabilities: [String: Double] = [:]
+            for (name, prob) in avgImplied {
+                trueProbabilities[name] = prob / totalImplied
+            }
 
-                // Step 3: Calculate EV for each bookmaker × outcome combination
-                for (bookmakerTitle, outcomes) in bookmakerMarkets {
-                    for outcome in outcomes {
-                        guard let trueProb = trueProbabilities[outcome.name] else { continue }
+            // Step 3: Calculate EV for each bookmaker × outcome combination
+            for (bookmakerTitle, outcomes) in bookmakerMarkets {
+                for outcome in outcomes {
+                    guard let trueProb = trueProbabilities[outcome.name] else { continue }
 
-                        let decimalPayout = decimalOdds(americanOdds: outcome.price)
-                        let ev = (trueProb * decimalPayout) - 1.0
-                        let evPercent = ev * 100.0
+                    let decimalPayout = decimalOdds(americanOdds: outcome.price)
+                    let ev = (trueProb * decimalPayout) - 1.0
+                    let evPercent = ev * 100.0
 
-                        // Only consider positive EV
-                        guard evPercent > 0 else { continue }
+                    // Only consider positive EV
+                    guard evPercent > 0 else { continue }
 
-                        // Calculate consensus odds for display
-                        let consensusOdds = averageAmericanOdds(
-                            for: outcome.name,
-                            across: bookmakerMarkets.map(\.outcomes)
-                        )
+                    // Calculate consensus odds for display
+                    let consensusOdds = averageAmericanOdds(
+                        for: outcome.name,
+                        across: bookmakerMarkets.map(\.outcomes)
+                    )
 
-                        let candidate = BestEVBet(
-                            event: event,
-                            outcomeName: outcome.name,
-                            bookmakerTitle: bookmakerTitle,
-                            odds: outcome.price,
-                            evPercent: evPercent,
-                            trueProbability: trueProb,
-                            impliedProbability: impliedProbability(americanOdds: outcome.price),
-                            consensusOdds: consensusOdds,
-                            bookmakerCount: bookmakerMarkets.count,
-                            marketType: .h2h
-                        )
+                    let candidate = BestEVBet(
+                        event: event,
+                        outcomeName: outcome.name,
+                        bookmakerTitle: bookmakerTitle,
+                        odds: outcome.price,
+                        evPercent: evPercent,
+                        trueProbability: trueProb,
+                        impliedProbability: impliedProbability(americanOdds: outcome.price),
+                        consensusOdds: consensusOdds,
+                        bookmakerCount: bookmakerMarkets.count,
+                        marketType: .h2h,
+                        sport: sport
+                    )
 
-                        if let current = best {
-                            if evPercent > current.evPercent {
-                                best = candidate
-                            }
-                        } else {
+                    if let current = best {
+                        if evPercent > current.evPercent {
                             best = candidate
                         }
+                    } else {
+                        best = candidate
                     }
                 }
             }
         }
 
         return best
+    }
+
+    /// Find best EV bet for each in-season sport (one per sport, ordered by sport).
+    /// Skips sports that have no +EV opportunity.
+    static func findBestEVPerSport(eventsBySport: [SportCategory: [ResponseBody]]) -> [BestEVBet] {
+        var results: [BestEVBet] = []
+        for sport in SportCategory.inSeason {
+            guard let events = eventsBySport[sport] else { continue }
+            if let best = findBestEV(for: sport, events: events) {
+                results.append(best)
+            }
+        }
+        return results
     }
 
     // MARK: - Math Helpers
