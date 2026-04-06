@@ -71,6 +71,58 @@ const TEAM_ALIASES: Record<string, number> = {
   "Sparta Praha": 2962,
 };
 
+// Each team's domestic league ESPN endpoint slug (used as fallback when UCL endpoint fails)
+const TEAM_LEAGUE: Record<string, string> = {
+  // England
+  "Arsenal": "eng.1",
+  "Aston Villa": "eng.1",
+  "Liverpool": "eng.1",
+  "Manchester City": "eng.1",
+  "Manchester United": "eng.1",
+  "Chelsea": "eng.1",
+  "Tottenham Hotspur": "eng.1",
+  // Spain
+  "Barcelona": "spa.1",
+  "Real Madrid": "spa.1",
+  "Atletico Madrid": "spa.1",
+  "Girona": "spa.1",
+  // Germany
+  "Bayern Munich": "ger.1",
+  "Borussia Dortmund": "ger.1",
+  "RB Leipzig": "ger.1",
+  "Bayer Leverkusen": "ger.1",
+  "VfB Stuttgart": "ger.1",
+  // Italy
+  "AC Milan": "ita.1",
+  "Inter Milan": "ita.1",
+  "Juventus": "ita.1",
+  "Atalanta": "ita.1",
+  "Bologna": "ita.1",
+  // France
+  "Paris Saint-Germain": "fra.1",
+  "Monaco": "fra.1",
+  "Brest": "fra.1",
+  "Lille": "fra.1",
+  // Portugal
+  "Benfica": "por.1",
+  "Sporting CP": "por.1",
+  "Porto": "por.1",
+  // Netherlands
+  "PSV Eindhoven": "ned.1",
+  "Feyenoord": "ned.1",
+  // Others
+  "Celtic": "sco.1",
+  "Club Brugge": "bel.1",
+  "Red Star Belgrade": "srb.1",
+  "Young Boys": "sui.1",
+  "Salzburg": "aut.1",
+  "Shakhtar Donetsk": "ukr.1",
+  "Dinamo Zagreb": "cro.1",
+  "Slovan Bratislava": "svk.1",
+  "Sturm Graz": "aut.1",
+  "Sparta Prague": "cze.1",
+};
+
 interface ESPNAthlete {
   id: string;
   displayName: string;
@@ -142,9 +194,10 @@ Deno.serve(async (req) => {
         );
 
         if (!res.ok) {
-          // Fallback: try the generic football endpoint
+          // Fallback: try the team's domestic league endpoint
+          const league = TEAM_LEAGUE[teamName] ?? "eng.1";
           res = await fetch(
-            `https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams/${espnId}/roster`
+            `https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/teams/${espnId}/roster`
           );
         }
 
