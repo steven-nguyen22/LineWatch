@@ -14,6 +14,7 @@ struct SubPage: View {
     @State private var selectedMarket: MarketType = .h2h
     @State private var selectedLeague: FightingLeague = .mma
     @State private var searchText: String = ""
+    @State private var showDisclaimer = false
 
     var body: some View {
         let events = displayedEvents
@@ -125,6 +126,21 @@ struct SubPage: View {
         .navigationTitle(sport.displayName)
         .navigationBarTitleDisplayMode(.large)
         .tint(AppColors.primaryGreen)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showDisclaimer = true
+                } label: {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+            }
+        }
+        .alert("Disclaimer", isPresented: $showDisclaimer) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
+        }
         .onAppear {
             if !sport.availableMarkets.contains(selectedMarket) {
                 selectedMarket = sport.availableMarkets.first ?? .h2h
