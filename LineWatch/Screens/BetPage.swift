@@ -90,10 +90,13 @@ struct BetPage: View {
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
-                Button("Done") {
-                    focusedBet = nil
+                // Only show Done for number-pad bet amount fields (no return key)
+                if focusedBet != nil {
+                    Button("Done") {
+                        focusedBet = nil
+                    }
+                    .fontWeight(.semibold)
                 }
-                .fontWeight(.semibold)
             }
         }
         .task {
