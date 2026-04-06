@@ -278,6 +278,19 @@ class OddsDataService {
 
     // MARK: - Player Props
 
+    /// Prefetch player props for all events (used by BestEVPage to scan all props for EV)
+    func prefetchAllPlayerProps() async {
+        await withTaskGroup(of: Void.self) { group in
+            for sport in SportCategory.allCases where sport.availableMarkets.contains(.playerProps) {
+                for event in events(for: sport) {
+                    group.addTask {
+                        await self.fetchPlayerProps(eventId: event.id)
+                    }
+                }
+            }
+        }
+    }
+
     /// Fetch player props for a specific event (lazy-loaded on BetPage)
     func fetchPlayerProps(eventId: String) async {
         // Skip if already cached
