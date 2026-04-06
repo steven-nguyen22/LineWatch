@@ -386,6 +386,9 @@ verify_jwt = true
 [functions.fetch-hockey-player-props]
 verify_jwt = true
 
+[functions.fetch-football-odds]
+verify_jwt = true
+
 [functions.fetch-football-player-props]
 verify_jwt = true
 
