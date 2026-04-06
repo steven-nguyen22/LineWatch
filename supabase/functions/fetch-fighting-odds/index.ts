@@ -7,9 +7,20 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const SPORT_KEYS = ["mma_mixed_martial_arts", "boxing_boxing"] as const;
 
 Deno.serve(async (req) => {
+  // Supabase validates the JWT signature (verify_jwt = true in config.toml).
+  // We additionally check the role claim so anon-key callers are blocked.
   const auth = req.headers.get("authorization") ?? "";
   const token = auth.replace(/^Bearer\s+/i, "");
-  if (token !== SUPABASE_SERVICE_ROLE_KEY) {
+  try {
+    const [, payloadB64] = token.split(".");
+    const payload = JSON.parse(atob(payloadB64.replace(/-/g, "+").replace(/_/g, "/")));
+    if (payload.role !== "service_role") {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  } catch {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
