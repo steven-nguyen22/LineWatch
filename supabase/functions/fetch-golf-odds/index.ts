@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
     // deno-lint-ignore no-explicit-any
     const allSports: any[] = await sportsRes.json();
     const activeGolfKeys: string[] = allSports
-      .filter((s) => s.group === "Golf" && s.active === true)
+      .filter((s) => s.group === "Golf" && s.has_outrights === true)
       .map((s) => s.key);
 
     // Clean up legacy individual tournament rows (one-time migration, harmless to keep)
