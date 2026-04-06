@@ -13,6 +13,7 @@ struct SubPage: View {
     @Environment(OddsDataService.self) private var dataService
     @State private var selectedMarket: MarketType = .h2h
     @State private var selectedLeague: FightingLeague = .mma
+    @State private var searchText: String = ""
 
     var body: some View {
         let events = displayedEvents
@@ -55,6 +56,32 @@ struct SubPage: View {
                         .padding(.top, 12)
                         .padding(.bottom, 16)
                 }
+
+                // Search bar
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(AppColors.textSecondary)
+                    TextField("Search teams...", text: $searchText)
+                        .font(AppFonts.body)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .autocorrectionDisabled()
+                    if !searchText.isEmpty {
+                        Button {
+                            searchText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(AppColors.textSecondary)
+                        }
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(AppColors.backgroundCard)
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
 
                 if events.isEmpty {
                     // Empty state
@@ -106,9 +133,17 @@ struct SubPage: View {
     }
 
     private var displayedEvents: [ResponseBody] {
-        let all = dataService.events(for: sport)
-        guard sport == .fighting else { return all }
-        return all.filter { $0.sportKey == selectedLeague.rawValue }
+        var all = dataService.events(for: sport)
+        if sport == .fighting {
+            all = all.filter { $0.sportKey == selectedLeague.rawValue }
+        }
+        guard !searchText.isEmpty else { return all }
+        let query = searchText.lowercased()
+        return all.filter {
+            ($0.homeTeam?.lowercased().contains(query) ?? false) ||
+            ($0.awayTeam?.lowercased().contains(query) ?? false) ||
+            $0.sportTitle.lowercased().contains(query)
+        }
     }
 
     private func imageURL(for name: String?, isFighting: Bool) -> String? {
