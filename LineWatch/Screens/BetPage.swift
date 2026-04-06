@@ -659,15 +659,27 @@ struct BetPage: View {
 
                 Spacer()
 
-                Text(formatPoint(line.line))
-                    .font(.system(size: 15, weight: .bold, design: .monospaced))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(
-                        Capsule()
-                            .fill(AppColors.primaryGreen)
-                    )
+                if let lineValue = line.line {
+                    Text(formatPoint(lineValue))
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(AppColors.primaryGreen)
+                        )
+                } else {
+                    Text("Anytime")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(AppColors.primaryGreen)
+                        )
+                }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
@@ -677,9 +689,9 @@ struct BetPage: View {
             HStack(spacing: 0) {
                 Text("Sportsbook")
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text("Over")
+                Text(selectedPropType.isYesNo ? "Yes" : "Over")
                     .frame(width: 80, alignment: .center)
-                Text("Under")
+                Text(selectedPropType.isYesNo ? "No" : "Under")
                     .frame(width: 80, alignment: .center)
             }
             .font(.system(size: 11, weight: .semibold))
@@ -699,19 +711,23 @@ struct BetPage: View {
                         .foregroundStyle(AppColors.textPrimary)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // Over cell
+                    // Over / Yes cell
                     propOddsCell(
                         odds: bm.over,
-                        outcomeName: "\(line.playerName) O \(formatPoint(line.line))",
+                        outcomeName: selectedPropType.isYesNo
+                            ? "\(line.playerName) Yes"
+                            : "\(line.playerName) O \(formatPoint(line.line))",
                         bookmakerTitle: bm.bookmakerTitle,
                         allPrices: allOverPrices,
                         width: 80
                     )
 
-                    // Under cell
+                    // Under / No cell
                     propOddsCell(
                         odds: bm.under,
-                        outcomeName: "\(line.playerName) U \(formatPoint(line.line))",
+                        outcomeName: selectedPropType.isYesNo
+                            ? "\(line.playerName) No"
+                            : "\(line.playerName) U \(formatPoint(line.line))",
                         bookmakerTitle: bm.bookmakerTitle,
                         allPrices: allUnderPrices,
                         width: 80
@@ -764,8 +780,10 @@ struct BetPage: View {
     private func buildPlayerPropLines(for propType: PlayerPropType) -> [PlayerPropLine] {
         guard let propsData = dataService.playerPropsByEvent[event.id] else { return [] }
 
-        // Collect all (playerName, line) → [(bookmakerTitle, over, under)]
-        var playerMap: [String: (line: Double, bookmakers: [(bookmakerTitle: String, over: Int?, under: Int?)])] = [:]
+        let isYesNo = propType.isYesNo
+
+        // Collect all (playerName, line) → [(bookmakerTitle, over/yes, under/no)]
+        var playerMap: [String: (line: Double?, bookmakers: [(bookmakerTitle: String, over: Int?, under: Int?)])] = [:]
 
         for bookmaker in propsData.bookmakers {
             guard let market = bookmaker.markets.first(where: { $0.key == propType.marketKey }) else { continue }
@@ -775,19 +793,31 @@ struct BetPage: View {
             for outcome in market.outcomes {
                 guard let playerName = outcome.description else { continue }
                 var entry = playerOutcomes[playerName] ?? (over: nil, under: nil, line: nil)
-                if outcome.name == "Over" {
-                    entry.over = outcome.price
-                    entry.line = outcome.point
-                } else if outcome.name == "Under" {
-                    entry.under = outcome.price
-                    if entry.line == nil { entry.line = outcome.point }
+
+                if isYesNo {
+                    // Yes/No market (e.g., Anytime Goal Scorer): map Yes→over, No→under
+                    if outcome.name == "Yes" {
+                        entry.over = outcome.price
+                    } else if outcome.name == "No" {
+                        entry.under = outcome.price
+                    }
+                    // No line/point for Yes/No markets
+                } else {
+                    // Standard Over/Under market
+                    if outcome.name == "Over" {
+                        entry.over = outcome.price
+                        entry.line = outcome.point
+                    } else if outcome.name == "Under" {
+                        entry.under = outcome.price
+                        if entry.line == nil { entry.line = outcome.point }
+                    }
                 }
                 playerOutcomes[playerName] = entry
             }
 
             // Merge into playerMap
             for (playerName, outcomes) in playerOutcomes {
-                let line = outcomes.line ?? 0
+                let line: Double? = isYesNo ? nil : (outcomes.line ?? 0)
                 if var existing = playerMap[playerName] {
                     existing.bookmakers.append((bookmakerTitle: bookmaker.title, over: outcomes.over, under: outcomes.under))
                     playerMap[playerName] = existing
@@ -800,7 +830,7 @@ struct BetPage: View {
         // Look up player-to-team mapping
         let teamMap = dataService.playerTeamsByEvent[event.id] ?? [:]
 
-        // Convert to array and sort by line descending (star players first)
+        // Convert to array and sort alphabetically
         return playerMap.map { name, data in
             PlayerPropLine(playerName: name, line: data.line, teamName: teamMap[name], bookmakerOdds: data.bookmakers)
         }
