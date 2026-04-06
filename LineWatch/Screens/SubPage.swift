@@ -135,31 +135,47 @@ private struct EventCard: View {
                 .frame(width: 4)
 
             // Team info
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    competitorImage(url: awayLogoURL)
-                    Text(event.awayDisplay)
+            if event.isGolf {
+                // Golf: just tournament name + time (no teams)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(event.sportTitle)
                         .font(AppFonts.headline)
                         .foregroundStyle(AppColors.textPrimary)
                         .lineLimit(1)
+
+                    if let time = event.commenceTime {
+                        Text(formatGameTime(time))
+                            .font(AppFonts.caption)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
                 }
+            } else {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 6) {
+                        competitorImage(url: awayLogoURL)
+                        Text(event.awayDisplay)
+                            .font(AppFonts.headline)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .lineLimit(1)
+                    }
 
-                HStack(spacing: 4) {
-                    Text(event.isFighting ? "vs" : "@")
-                        .font(AppFonts.caption)
-                        .foregroundStyle(AppColors.textSecondary)
+                    HStack(spacing: 4) {
+                        Text(event.isFighting ? "vs" : "@")
+                            .font(AppFonts.caption)
+                            .foregroundStyle(AppColors.textSecondary)
 
-                    competitorImage(url: homeLogoURL)
-                    Text(event.homeDisplay)
-                        .font(AppFonts.headline)
-                        .foregroundStyle(AppColors.textPrimary)
-                        .lineLimit(1)
-                }
+                        competitorImage(url: homeLogoURL)
+                        Text(event.homeDisplay)
+                            .font(AppFonts.headline)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .lineLimit(1)
+                    }
 
-                if let time = event.commenceTime {
-                    Text(formatGameTime(time))
-                        .font(AppFonts.caption)
-                        .foregroundStyle(AppColors.textSecondary)
+                    if let time = event.commenceTime {
+                        Text(formatGameTime(time))
+                            .font(AppFonts.caption)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
                 }
             }
 
