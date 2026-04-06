@@ -220,6 +220,18 @@ class SupabaseService {
         return try JSONDecoder().decode([NHLPlayerRow].self, from: data)
     }
 
+    // MARK: - Soccer Assets (Logos & Headshots)
+
+    /// Fetches all soccer team logo URLs.
+    func fetchSoccerTeamLogos() async throws -> [SoccerTeamRow] {
+        return try await fetchRows(path: "soccer_teams?select=team_name,logo_url")
+    }
+
+    /// Fetches all soccer player headshot URLs.
+    func fetchSoccerPlayerHeadshots() async throws -> [SoccerPlayerRow] {
+        return try await fetchRows(path: "soccer_players?select=player_name,headshot_url,team_name")
+    }
+
     // MARK: - Fighting Assets
 
     /// Fetches all fighter headshot URLs (null entries are negative cache markers).
@@ -319,6 +331,28 @@ struct NHLTeamRow: Codable {
 }
 
 struct NHLPlayerRow: Codable {
+    let playerName: String
+    let headshotUrl: String
+    let teamName: String
+
+    enum CodingKeys: String, CodingKey {
+        case playerName = "player_name"
+        case headshotUrl = "headshot_url"
+        case teamName = "team_name"
+    }
+}
+
+struct SoccerTeamRow: Codable {
+    let teamName: String
+    let logoUrl: String
+
+    enum CodingKeys: String, CodingKey {
+        case teamName = "team_name"
+        case logoUrl = "logo_url"
+    }
+}
+
+struct SoccerPlayerRow: Codable {
     let playerName: String
     let headshotUrl: String
     let teamName: String

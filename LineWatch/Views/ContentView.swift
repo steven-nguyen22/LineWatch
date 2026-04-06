@@ -52,7 +52,8 @@ struct ContentView: View {
             async let nhlAssets: () = dataService.fetchNHLAssets()
             async let nflAssets: () = dataService.fetchNFLAssets()
             async let fightingAssets: () = dataService.fetchFightingAssets()
-            _ = await (odds, nbaAssets, mlbAssets, nhlAssets, nflAssets, fightingAssets)
+            async let soccerAssets: () = dataService.fetchSoccerAssets()
+            _ = await (odds, nbaAssets, mlbAssets, nhlAssets, nflAssets, fightingAssets, soccerAssets)
         }
     }
 }
