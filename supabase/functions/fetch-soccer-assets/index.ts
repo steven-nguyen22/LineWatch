@@ -130,6 +130,9 @@ interface ESPNAthlete {
   headshot?: { href: string };
 }
 
+// Headshot URLs starting with this prefix are broken ESPN fallbacks that need replacing
+const ESPN_HEADSHOT_PREFIX = "https://a.espncdn.com/i/headshots/soccer/players/full/";
+
 /** Search TheSportsDB for a player headshot (cutout or thumb). */
 async function searchHeadshot(playerName: string): Promise<string | null> {
   try {
@@ -150,8 +153,7 @@ async function searchHeadshot(playerName: string): Promise<string | null> {
 }
 
 Deno.serve(async (req) => {
-  // Supabase validates the JWT signature (verify_jwt = true in config.toml).
-  // We additionally check the role claim so anon-key callers are blocked.
+  // Auth check
   const auth = req.headers.get("authorization") ?? "";
   const token = auth.replace(/^Bearer\s+/i, "");
   try {
@@ -170,177 +172,234 @@ Deno.serve(async (req) => {
     });
   }
 
+  const url = new URL(req.url);
+  const step = url.searchParams.get("step") || "rosters";
+
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Step 1: Populate soccer_teams with all teams + aliases
-    const teamRows = [
-      ...Object.entries(SOCCER_TEAM_IDS),
-      ...Object.entries(TEAM_ALIASES),
-    ].map(([name, espnId]) => ({
-      team_name: name,
-      espn_id: espnId,
-      logo_url: `https://a.espncdn.com/i/teamlogos/soccer/500/${espnId}.png`,
-    }));
+    // ─── STEP 1: "rosters" (default) ───────────────────────────────────
+    // Fetches ESPN rosters, upserts teams + players.
+    // Headshot URLs are set to ESPN fallback (which are mostly broken for soccer).
+    // Run this first, then run step=headshots to fix them.
+    if (step === "rosters") {
+      // Upsert teams
+      const teamRows = [
+        ...Object.entries(SOCCER_TEAM_IDS),
+        ...Object.entries(TEAM_ALIASES),
+      ].map(([name, espnId]) => ({
+        team_name: name,
+        espn_id: espnId,
+        logo_url: `https://a.espncdn.com/i/teamlogos/soccer/500/${espnId}.png`,
+      }));
 
-    const { error: teamError } = await supabase
-      .from("soccer_teams")
-      .upsert(teamRows, { onConflict: "team_name" });
+      const { error: teamError } = await supabase
+        .from("soccer_teams")
+        .upsert(teamRows, { onConflict: "team_name" });
 
-    if (teamError) {
+      if (teamError) {
+        return new Response(
+          JSON.stringify({ error: "Failed to upsert teams", detail: teamError.message }),
+          { status: 500, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      // Fetch rosters from ESPN
+      const uniqueTeamEntries = Object.entries(SOCCER_TEAM_IDS);
+      let totalPlayers = 0;
+      let failedTeams = 0;
+
+      const allPlayerRows: {
+        player_name: string;
+        espn_id: number;
+        headshot_url: string;
+        team_name: string;
+      }[] = [];
+
+      for (const [teamName, espnId] of uniqueTeamEntries) {
+        try {
+          let res = await fetch(
+            `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/teams/${espnId}/roster`
+          );
+
+          if (!res.ok) {
+            const league = TEAM_LEAGUE[teamName] ?? "eng.1";
+            res = await fetch(
+              `https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/teams/${espnId}/roster`
+            );
+          }
+
+          if (!res.ok) {
+            failedTeams++;
+            continue;
+          }
+
+          const data = await res.json();
+
+          const athletes: ESPNAthlete[] = [];
+          if (Array.isArray(data.athletes)) {
+            for (const item of data.athletes) {
+              if (Array.isArray(item.items)) {
+                for (const athlete of item.items) {
+                  if (athlete.id && athlete.displayName) {
+                    athletes.push({
+                      id: String(athlete.id),
+                      displayName: athlete.displayName,
+                      headshot: athlete.headshot,
+                    });
+                  }
+                }
+              } else if (item.id && item.displayName) {
+                athletes.push({
+                  id: String(item.id),
+                  displayName: item.displayName,
+                  headshot: item.headshot,
+                });
+              }
+            }
+          }
+
+          for (const athlete of athletes) {
+            const espnHeadshot = athlete.headshot?.href || null;
+            allPlayerRows.push({
+              player_name: athlete.displayName,
+              espn_id: parseInt(athlete.id, 10),
+              headshot_url: espnHeadshot || `${ESPN_HEADSHOT_PREFIX}${athlete.id}.png`,
+              team_name: teamName,
+            });
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        } catch {
+          failedTeams++;
+        }
+      }
+
+      // Upsert players in batches of 100
+      if (allPlayerRows.length > 0) {
+        for (let i = 0; i < allPlayerRows.length; i += 100) {
+          const batch = allPlayerRows.slice(i, i + 100);
+          await supabase
+            .from("soccer_players")
+            .upsert(batch, { onConflict: "player_name,team_name" });
+        }
+        totalPlayers = allPlayerRows.length;
+      }
+
+      // Clean up stale players
+      const currentPlayerKeys = new Set(
+        allPlayerRows.map((p) => `${p.player_name}|${p.team_name}`)
+      );
+      const { data: existingPlayers } = await supabase
+        .from("soccer_players")
+        .select("id,player_name,team_name");
+
+      if (existingPlayers) {
+        const staleIds = existingPlayers
+          .filter((p) => !currentPlayerKeys.has(`${p.player_name}|${p.team_name}`))
+          .map((p) => p.id);
+        if (staleIds.length > 0) {
+          await supabase.from("soccer_players").delete().in("id", staleIds);
+        }
+      }
+
+      // Count how many players still need headshots
+      const { count: needHeadshots } = await supabase
+        .from("soccer_players")
+        .select("id", { count: "exact", head: true })
+        .like("headshot_url", `${ESPN_HEADSHOT_PREFIX}%`);
+
       return new Response(
-        JSON.stringify({ error: "Failed to upsert teams", detail: teamError.message }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({
+          success: true,
+          step: "rosters",
+          teams: teamRows.length,
+          players: totalPlayers,
+          failed_teams: failedTeams,
+          players_needing_headshots: needHeadshots ?? 0,
+          next: "Run again with ?step=headshots to fetch images from TheSportsDB (call repeatedly until remaining=0)",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Step 2: Fetch rosters from ESPN for all teams (unique IDs only)
-    const uniqueTeamEntries = Object.entries(SOCCER_TEAM_IDS);
-    let totalPlayers = 0;
-    let failedTeams = 0;
+    // ─── STEP 2: "headshots" ──────────────────────────────────────────
+    // Reads up to 100 players with broken ESPN headshot URLs from the DB,
+    // searches TheSportsDB for each, and updates the row.
+    // Call repeatedly until remaining = 0.
+    if (step === "headshots") {
+      const BATCH_SIZE = 100;
 
-    const allPlayerRows: {
-      player_name: string;
-      espn_id: number;
-      headshot_url: string;
-      team_name: string;
-    }[] = [];
+      // Get players that still have the broken ESPN CDN headshot URL
+      const { data: players, error: fetchError } = await supabase
+        .from("soccer_players")
+        .select("id,player_name,espn_id")
+        .like("headshot_url", `${ESPN_HEADSHOT_PREFIX}%`)
+        .limit(BATCH_SIZE);
 
-    for (const [teamName, espnId] of uniqueTeamEntries) {
-      try {
-        // Try UEFA Champions League roster first, fall back to domestic league
-        let res = await fetch(
-          `https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/teams/${espnId}/roster`
+      if (fetchError) {
+        return new Response(
+          JSON.stringify({ error: "Failed to fetch players", detail: fetchError.message }),
+          { status: 500, headers: { "Content-Type": "application/json" } }
         );
+      }
 
-        if (!res.ok) {
-          const league = TEAM_LEAGUE[teamName] ?? "eng.1";
-          res = await fetch(
-            `https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/teams/${espnId}/roster`
-          );
+      if (!players || players.length === 0) {
+        return new Response(
+          JSON.stringify({ success: true, step: "headshots", updated: 0, remaining: 0, done: true }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      let updated = 0;
+      let missed = 0;
+
+      for (const player of players) {
+        const headshotUrl = await searchHeadshot(player.player_name);
+
+        if (headshotUrl) {
+          await supabase
+            .from("soccer_players")
+            .update({ headshot_url: headshotUrl })
+            .eq("id", player.id);
+          updated++;
+        } else {
+          // Mark as "no headshot available" so we don't retry endlessly.
+          // Use a distinct prefix so the LIKE query no longer matches.
+          await supabase
+            .from("soccer_players")
+            .update({ headshot_url: "none" })
+            .eq("id", player.id);
+          missed++;
         }
 
-        if (!res.ok) {
-          failedTeams++;
-          continue;
-        }
-
-        const data = await res.json();
-
-        // ESPN soccer rosters: nested position groups or flat array
-        const athletes: ESPNAthlete[] = [];
-        if (Array.isArray(data.athletes)) {
-          for (const item of data.athletes) {
-            if (Array.isArray(item.items)) {
-              for (const athlete of item.items) {
-                if (athlete.id && athlete.displayName) {
-                  athletes.push({
-                    id: String(athlete.id),
-                    displayName: athlete.displayName,
-                    headshot: athlete.headshot,
-                  });
-                }
-              }
-            } else if (item.id && item.displayName) {
-              athletes.push({
-                id: String(item.id),
-                displayName: item.displayName,
-                headshot: item.headshot,
-              });
-            }
-          }
-        }
-
-        for (const athlete of athletes) {
-          // Use ESPN headshot if available (rare for soccer)
-          const espnHeadshot = athlete.headshot?.href || null;
-
-          allPlayerRows.push({
-            player_name: athlete.displayName,
-            espn_id: parseInt(athlete.id, 10),
-            // Placeholder — will be resolved in Step 3 via TheSportsDB
-            headshot_url: espnHeadshot || "",
-            team_name: teamName,
-          });
-        }
-
-        // Rate limit courtesy — 200ms between ESPN requests
+        // Rate limit — 200ms between TheSportsDB requests
         await new Promise((resolve) => setTimeout(resolve, 200));
-      } catch {
-        failedTeams++;
-      }
-    }
-
-    // Step 3: Fetch headshots from TheSportsDB for players missing ESPN headshots.
-    // ESPN doesn't host headshots for most soccer players, so we use TheSportsDB
-    // (free API with cutout images for virtually all professional players).
-    let theSportsDbHits = 0;
-    let theSportsDbMisses = 0;
-
-    for (const player of allPlayerRows) {
-      if (player.headshot_url) {
-        // Already has ESPN headshot — skip
-        continue;
       }
 
-      const headshotUrl = await searchHeadshot(player.player_name);
-      if (headshotUrl) {
-        player.headshot_url = headshotUrl;
-        theSportsDbHits++;
-      } else {
-        // Final fallback: ESPN CDN pattern (usually 404 for soccer, but worth trying)
-        player.headshot_url = `https://a.espncdn.com/i/headshots/soccer/players/full/${player.espn_id}.png`;
-        theSportsDbMisses++;
-      }
+      // Count how many still remain
+      const { count: remaining } = await supabase
+        .from("soccer_players")
+        .select("id", { count: "exact", head: true })
+        .like("headshot_url", `${ESPN_HEADSHOT_PREFIX}%`);
 
-      // Rate limit courtesy — 200ms between TheSportsDB requests
-      await new Promise((resolve) => setTimeout(resolve, 200));
-    }
-
-    // Step 4: Upsert all players in batches of 100
-    if (allPlayerRows.length > 0) {
-      for (let i = 0; i < allPlayerRows.length; i += 100) {
-        const batch = allPlayerRows.slice(i, i + 100);
-        const { error: playerError } = await supabase
-          .from("soccer_players")
-          .upsert(batch, { onConflict: "player_name,team_name" });
-
-        if (playerError) {
-          console.error(`Player upsert batch error: ${playerError.message}`);
-        }
-      }
-      totalPlayers = allPlayerRows.length;
-    }
-
-    // Step 5: Clean up players no longer on any roster
-    const currentPlayerKeys = new Set(
-      allPlayerRows.map((p) => `${p.player_name}|${p.team_name}`)
-    );
-
-    const { data: existingPlayers } = await supabase
-      .from("soccer_players")
-      .select("id,player_name,team_name");
-
-    if (existingPlayers) {
-      const staleIds = existingPlayers
-        .filter((p) => !currentPlayerKeys.has(`${p.player_name}|${p.team_name}`))
-        .map((p) => p.id);
-
-      if (staleIds.length > 0) {
-        await supabase.from("soccer_players").delete().in("id", staleIds);
-      }
+      return new Response(
+        JSON.stringify({
+          success: true,
+          step: "headshots",
+          processed: players.length,
+          updated,
+          missed,
+          remaining: remaining ?? 0,
+          done: (remaining ?? 0) === 0,
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        teams: teamRows.length,
-        players: totalPlayers,
-        failed_teams: failedTeams,
-        headshots_from_thesportsdb: theSportsDbHits,
-        headshots_missing: theSportsDbMisses,
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ error: "Unknown step. Use ?step=rosters or ?step=headshots" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
     );
   } catch (err) {
     return new Response(
