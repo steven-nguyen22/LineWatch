@@ -337,11 +337,11 @@ Deno.serve(async (req) => {
     }
 
     // ─── STEP 2: "headshots" ──────────────────────────────────────────
-    // Reads up to 50 players with broken ESPN headshot URLs from the DB,
+    // Reads up to 25 players with broken ESPN headshot URLs from the DB,
     // searches TheSportsDB for each, and updates the row.
     // Call repeatedly until remaining = 0.
     if (step === "headshots") {
-      const BATCH_SIZE = 50;
+      const BATCH_SIZE = 25;
 
       // Get players that still have the broken ESPN CDN headshot URL
       const { data: players, error: fetchError } = await supabase
@@ -390,8 +390,8 @@ Deno.serve(async (req) => {
           rateLimited++;
         }
 
-        // Rate limit — 500ms between TheSportsDB requests to avoid throttling
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // Rate limit — 1s between TheSportsDB requests to avoid throttling
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
       // Count how many still remain
