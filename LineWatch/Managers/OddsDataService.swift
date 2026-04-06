@@ -223,6 +223,12 @@ class OddsDataService {
                 }
                 for player in players {
                     playerHeadshotURLs[player.playerName] = player.headshotUrl
+                    // Also store under accent-stripped name so Odds API names
+                    // like "Julian Alvarez" match ESPN's "Julián Álvarez"
+                    let normalized = normalizedName(player.playerName)
+                    if normalized != player.playerName {
+                        playerHeadshotURLs[normalized] = player.headshotUrl
+                    }
                 }
             }
         } catch {
@@ -304,6 +310,11 @@ class OddsDataService {
         if let data = try? encoder.encode(events) {
             try? data.write(to: url)
         }
+    }
+
+    /// Strip diacritics/accents for fuzzy name matching (e.g. "Julián Álvarez" → "Julian Alvarez")
+    private func normalizedName(_ name: String) -> String {
+        name.applyingTransform(.stripDiacritics, reverse: false) ?? name
     }
 
     private func loadFromBundle(_ filename: String) -> [ResponseBody] {
