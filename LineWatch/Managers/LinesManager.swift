@@ -308,6 +308,11 @@ struct ResponseBody: Codable, Identifiable {
     var isFighting: Bool {
         sportKey == "mma_mixed_martial_arts" || sportKey == "boxing_boxing"
     }
+
+    /// True when this event is a golf tournament (no home/away teams).
+    var isGolf: Bool {
+        sportKey.hasPrefix("golf_")
+    }
 }
 
 extension ResponseBody: Hashable {

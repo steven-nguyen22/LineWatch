@@ -16,6 +16,24 @@ struct BetSelection: Equatable {
     let odds: Int
 }
 
+// MARK: - Golf Outright Line Model
+
+struct GolfOutrightLine: Identifiable {
+    let id = UUID()
+    let playerName: String
+    let bookmakerOdds: [(bookmakerTitle: String, price: Int)]
+
+    /// Best (most favorable) odds across all sportsbooks — highest positive value
+    var bestPrice: Int? {
+        bookmakerOdds.map(\.price).max()
+    }
+
+    /// Lowest odds value for sorting (favorites first)
+    var sortPrice: Int {
+        bookmakerOdds.map(\.price).min() ?? Int.max
+    }
+}
+
 // MARK: - BetPage
 
 struct BetPage: View {
@@ -94,82 +112,123 @@ struct BetPage: View {
 
     private var standardMarketContent: some View {
         VStack(spacing: 0) {
-            // Market type badge
-            Text(marketType.displayName)
-                .font(AppFonts.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(AppColors.darkGreen)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(AppColors.lightGreen.opacity(0.3))
-                )
-                .padding(.top, 8)
-                .padding(.bottom, 12)
+            if event.isGolf && marketType == .outrights {
+                golfOutrightsContent
+            } else {
+                // Market type badge
+                Text(marketType.displayName)
+                    .font(AppFonts.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AppColors.darkGreen)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.lightGreen.opacity(0.3))
+                    )
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
 
-            // Column Headers
-            columnHeaders
+                // Column Headers
+                columnHeaders
 
-            // Sportsbook Rows
-            bookmakerRows
+                // Sportsbook Rows
+                bookmakerRows
 
-            // Legend
-            legend
+                // Legend
+                legend
+            }
         }
     }
 
     // MARK: - Header
 
+    @ViewBuilder
     private var headerSection: some View {
-        VStack(spacing: 10) {
-            Text(event.sportTitle)
-                .font(AppFonts.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(AppColors.primaryGreen)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(AppColors.primaryGreen.opacity(0.12))
-                )
-
-            HStack(spacing: 0) {
-                // Away team / fighter (left)
-                VStack(spacing: 8) {
-                    competitorImage(name: event.awayTeam)
-                    Text(event.awayDisplay)
-                        .font(AppFonts.headline)
-                        .foregroundStyle(AppColors.textPrimary)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity)
-
-                Text(event.isFighting ? "vs" : "@")
-                    .font(AppFonts.body)
-                    .foregroundStyle(AppColors.textSecondary)
-
-                // Home team / fighter (right)
-                VStack(spacing: 8) {
-                    competitorImage(name: event.homeTeam)
-                    Text(event.homeDisplay)
-                        .font(AppFonts.headline)
-                        .foregroundStyle(AppColors.textPrimary)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .padding(.horizontal, 20)
-
-            if let time = event.commenceTime {
-                Text(formatGameTime(time))
+        if event.isGolf {
+            // Golf header: tournament name centered, no team logos
+            VStack(spacing: 10) {
+                Text("Golf")
                     .font(AppFonts.caption)
-                    .foregroundStyle(AppColors.textSecondary)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AppColors.primaryGreen)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.primaryGreen.opacity(0.12))
+                    )
+
+                Image(systemName: "figure.golf")
+                    .font(.system(size: 36))
+                    .foregroundStyle(AppColors.primaryGreen)
+
+                Text(event.sportTitle)
+                    .font(AppFonts.title)
+                    .foregroundStyle(AppColors.textPrimary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+
+                if let time = event.commenceTime {
+                    Text(formatGameTime(time))
+                        .font(AppFonts.caption)
+                        .foregroundStyle(AppColors.textSecondary)
+                }
             }
+            .padding(.vertical, 20)
+            .frame(maxWidth: .infinity)
+            .background(AppColors.backgroundCard)
+        } else {
+            // Standard header: away @ home with logos
+            VStack(spacing: 10) {
+                Text(event.sportTitle)
+                    .font(AppFonts.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AppColors.primaryGreen)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.primaryGreen.opacity(0.12))
+                    )
+
+                HStack(spacing: 0) {
+                    // Away team / fighter (left)
+                    VStack(spacing: 8) {
+                        competitorImage(name: event.awayTeam)
+                        Text(event.awayDisplay)
+                            .font(AppFonts.headline)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Text(event.isFighting ? "vs" : "@")
+                        .font(AppFonts.body)
+                        .foregroundStyle(AppColors.textSecondary)
+
+                    // Home team / fighter (right)
+                    VStack(spacing: 8) {
+                        competitorImage(name: event.homeTeam)
+                        Text(event.homeDisplay)
+                            .font(AppFonts.headline)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .padding(.horizontal, 20)
+
+                if let time = event.commenceTime {
+                    Text(formatGameTime(time))
+                        .font(AppFonts.caption)
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+            }
+            .padding(.vertical, 20)
+            .frame(maxWidth: .infinity)
+            .background(AppColors.backgroundCard)
         }
-        .padding(.vertical, 20)
-        .frame(maxWidth: .infinity)
-        .background(AppColors.backgroundCard)
     }
 
     @ViewBuilder
@@ -355,6 +414,181 @@ struct BetPage: View {
                 .foregroundStyle(AppColors.textSecondary)
                 .frame(width: 80, height: 36, alignment: .center)
         }
+    }
+
+    // MARK: - Golf Outrights Content
+
+    private var golfOutrightsContent: some View {
+        let lines = buildGolfOutrightLines()
+
+        return VStack(spacing: 0) {
+            // Market type badge + participant count
+            HStack(spacing: 8) {
+                Text("Outrights")
+                    .font(AppFonts.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(AppColors.darkGreen)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.lightGreen.opacity(0.3))
+                    )
+
+                Text("\(lines.count) players")
+                    .font(AppFonts.caption)
+                    .foregroundStyle(AppColors.textSecondary)
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 12)
+
+            if lines.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "figure.golf")
+                        .font(.system(size: 40))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                    Text("No outrights available")
+                        .font(AppFonts.body)
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+                .padding(.top, 60)
+            } else {
+                LazyVStack(spacing: 12) {
+                    ForEach(lines) { line in
+                        golfOutrightCard(line: line)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
+
+            // Legend
+            legend
+        }
+    }
+
+    // MARK: - Golf Outright Card
+
+    private func golfOutrightCard(line: GolfOutrightLine) -> some View {
+        let allPrices = line.bookmakerOdds.map(\.price)
+
+        return VStack(spacing: 0) {
+            // Player header
+            HStack(spacing: 10) {
+                Image(systemName: "figure.golf")
+                    .font(.system(size: 20))
+                    .foregroundStyle(AppColors.primaryGreen.opacity(0.6))
+                    .frame(width: 36, height: 36)
+
+                Text(line.playerName)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Spacer()
+
+                if let best = line.bestPrice {
+                    Text(formatOdds(best))
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(AppColors.primaryGreen)
+                        )
+                }
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(AppColors.backgroundPrimary.opacity(0.6))
+
+            // Mini column headers
+            HStack(spacing: 0) {
+                Text("Sportsbook")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text("Odds")
+                    .frame(width: 80, alignment: .center)
+            }
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundStyle(AppColors.textSecondary)
+            .textCase(.uppercase)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 6)
+
+            // Bookmaker rows
+            ForEach(Array(line.bookmakerOdds.enumerated()), id: \.offset) { index, bm in
+                HStack(spacing: 0) {
+                    Text(bm.bookmakerTitle)
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppColors.textPrimary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    golfOddsCell(
+                        price: bm.price,
+                        playerName: line.playerName,
+                        bookmakerTitle: bm.bookmakerTitle,
+                        allPrices: allPrices,
+                        width: 80
+                    )
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(index % 2 == 0 ? AppColors.backgroundCard : AppColors.backgroundPrimary.opacity(0.3))
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(AppColors.backgroundCard)
+                .shadow(color: AppColors.cardShadow, radius: 4, x: 0, y: 2)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    // MARK: - Golf Odds Cell
+
+    @ViewBuilder
+    private func golfOddsCell(price: Int, playerName: String, bookmakerTitle: String, allPrices: [Int], width: CGFloat) -> some View {
+        let selected = isSelected(bookmakerTitle: bookmakerTitle, outcomeName: playerName)
+
+        Text(formatOdds(price))
+            .font(.system(size: 13, weight: .medium, design: .monospaced))
+            .foregroundStyle(AppColors.textPrimary)
+            .frame(width: width, height: 32, alignment: .center)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(oddsBackground(price: price, allPrices: allPrices))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(selected ? AppColors.primaryGreen : Color.clear, lineWidth: 2.5)
+            )
+            .onTapGesture {
+                toggleSelection(BetSelection(
+                    bookmakerTitle: bookmakerTitle,
+                    outcomeName: playerName,
+                    odds: price
+                ))
+            }
+    }
+
+    // MARK: - Build Golf Outright Lines
+
+    private func buildGolfOutrightLines() -> [GolfOutrightLine] {
+        var playerMap: [String: [(bookmakerTitle: String, price: Int)]] = [:]
+
+        for bookmaker in event.bookmakers {
+            guard let market = bookmaker.markets.first(where: { $0.key == "outrights" }) else { continue }
+            for outcome in market.outcomes {
+                playerMap[outcome.name, default: []].append(
+                    (bookmakerTitle: bookmaker.title, price: outcome.price)
+                )
+            }
+        }
+
+        return playerMap.map { name, odds in
+            GolfOutrightLine(playerName: name, bookmakerOdds: odds)
+        }
+        .sorted { $0.sortPrice < $1.sortPrice }
     }
 
     // MARK: - Selectable Odds Cell (H2H)
