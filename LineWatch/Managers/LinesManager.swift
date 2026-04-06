@@ -53,7 +53,7 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         case .hockey: return ["icehockey_nhl"]
         case .soccer: return ["soccer_uefa_champs_league"]
         case .fighting: return ["mma_mixed_martial_arts", "boxing_boxing"]
-        case .golf: return ["golf_masters_tournament_winner", "golf_pga_championship_winner", "golf_the_open_championship_winner", "golf_us_open_winner"]
+        case .golf: return ["golf"]
         }
     }
 
