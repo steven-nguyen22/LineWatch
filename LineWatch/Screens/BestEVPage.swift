@@ -10,15 +10,30 @@ import SwiftUI
 struct BestEVPage: View {
     @Environment(OddsDataService.self) private var dataService
     @State private var showDisclaimer = false
+    @State private var isLoadingProps = false
 
     private var bestBets: [BestEVBet] {
-        EVCalculator.findBestEVPerSport(eventsBySport: dataService.eventsBySport)
+        EVCalculator.findBestEVPerSport(
+            eventsBySport: dataService.eventsBySport,
+            playerPropsByEvent: dataService.playerPropsByEvent
+        )
     }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                if bestBets.isEmpty {
+                if isLoadingProps {
+                    VStack(spacing: 12) {
+                        ProgressView()
+                            .scaleEffect(1.2)
+                        Text("Scanning all markets for value...")
+                            .font(AppFonts.caption)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+                    .padding(.top, 40)
+                }
+
+                if bestBets.isEmpty && !isLoadingProps {
                     // Empty state
                     VStack(spacing: 16) {
                         Image(systemName: "chart.line.downtrend.xyaxis")
@@ -62,6 +77,11 @@ struct BestEVPage: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
+        }
+        .task {
+            isLoadingProps = true
+            await dataService.prefetchAllPlayerProps()
+            isLoadingProps = false
         }
     }
 }

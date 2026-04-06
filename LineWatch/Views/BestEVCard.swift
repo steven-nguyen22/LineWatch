@@ -71,7 +71,7 @@ struct BestEVCard: View {
                                 .lineLimit(1)
                         }
 
-                        Text("\(bet.outcomeName) ML \(formatOdds(bet.odds)) on \(bet.bookmakerTitle)")
+                        Text(bet.betDescription)
                             .font(AppFonts.body)
                             .foregroundStyle(AppColors.textSecondary)
                             .lineLimit(1)
