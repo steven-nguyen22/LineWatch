@@ -222,6 +222,8 @@ class OddsDataService {
                     teamLogoURLs[team.teamName] = team.logoUrl
                 }
                 for player in players {
+                    // Skip players with no headshot available (marked "none" by the Edge Function)
+                    guard player.headshotUrl != "none" else { continue }
                     playerHeadshotURLs[player.playerName] = player.headshotUrl
                     // Also store under accent-stripped name so Odds API names
                     // like "Julian Alvarez" match ESPN's "Julián Álvarez"
