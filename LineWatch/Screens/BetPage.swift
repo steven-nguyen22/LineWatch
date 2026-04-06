@@ -48,6 +48,8 @@ struct BetPage: View {
     @State private var betText2: String = "50"
     @State private var selectedPropType: PlayerPropType = .points
     @State private var isLoadingProps = false
+    @State private var propSearchText: String = ""
+    @State private var golfSearchText: String = ""
     @FocusState private var focusedBet: Int?
 
     /// Resolve the sport category from the event's sport key
@@ -420,6 +422,7 @@ struct BetPage: View {
 
     private var golfOutrightsContent: some View {
         let lines = buildGolfOutrightLines()
+            .filter { golfSearchText.isEmpty || $0.playerName.lowercased().contains(golfSearchText.lowercased()) }
 
         return VStack(spacing: 0) {
             // Market type badge + participant count
@@ -441,6 +444,9 @@ struct BetPage: View {
             }
             .padding(.top, 8)
             .padding(.bottom, 12)
+
+            // Search bar
+            playerSearchBar(text: $golfSearchText)
 
             if lines.isEmpty {
                 VStack(spacing: 12) {
@@ -809,6 +815,9 @@ struct BetPage: View {
             .padding(.top, 12)
             .padding(.bottom, 16)
 
+            // Search bar
+            playerSearchBar(text: $propSearchText)
+
             if isLoadingProps {
                 VStack(spacing: 12) {
                     ProgressView()
@@ -820,6 +829,7 @@ struct BetPage: View {
                 .padding(.top, 60)
             } else {
                 let lines = buildPlayerPropLines(for: selectedPropType)
+                    .filter { propSearchText.isEmpty || $0.playerName.lowercased().contains(propSearchText.lowercased()) }
 
                 if lines.isEmpty {
                     VStack(spacing: 12) {
@@ -1084,6 +1094,35 @@ struct BetPage: View {
             PlayerPropLine(playerName: name, line: data.line, teamName: teamMap[name], bookmakerOdds: data.bookmakers)
         }
         .sorted { $0.playerName.localizedCaseInsensitiveCompare($1.playerName) == .orderedAscending }
+    }
+
+    // MARK: - Player Search Bar
+
+    private func playerSearchBar(text: Binding<String>) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(AppColors.textSecondary)
+            TextField("Search players...", text: text)
+                .font(AppFonts.body)
+                .foregroundStyle(AppColors.textPrimary)
+                .autocorrectionDisabled()
+            if !text.wrappedValue.isEmpty {
+                Button {
+                    text.wrappedValue = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(AppColors.backgroundCard)
+        )
+        .padding(.horizontal, 16)
+        .padding(.bottom, 12)
     }
 
     // MARK: - Legend
