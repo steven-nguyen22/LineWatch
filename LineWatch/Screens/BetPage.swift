@@ -41,7 +41,9 @@ struct BetPage: View {
     let marketType: MarketType
 
     @Environment(OddsDataService.self) private var dataService
+    @Environment(\.openURL) private var openURL
     @State private var selections: [BetSelection] = []
+    @State private var showDisclaimer = false
     @State private var betAmount1: Double = 50
     @State private var betAmount2: Double = 50
     @State private var betText1: String = "50"
@@ -88,6 +90,14 @@ struct BetPage: View {
         .background(AppColors.backgroundPrimary)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showDisclaimer = true
+                } label: {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+            }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 // Only show Done for number-pad bet amount fields (no return key)
@@ -98,6 +108,11 @@ struct BetPage: View {
                     .fontWeight(.semibold)
                 }
             }
+        }
+        .alert("Disclaimer", isPresented: $showDisclaimer) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
         }
         .task {
             if marketType == .playerProps {
@@ -799,6 +814,24 @@ struct BetPage: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
                     .frame(width: 90, alignment: .trailing)
+            }
+
+            // Place Bet button
+            if let urlString = sportsbookURLs[selection.bookmakerTitle],
+               let url = URL(string: urlString) {
+                Button {
+                    openURL(url)
+                } label: {
+                    Text("Place Bet")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(AppColors.primaryGreen)
+                        )
+                }
             }
         }
     }
