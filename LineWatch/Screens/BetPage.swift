@@ -475,10 +475,25 @@ struct BetPage: View {
         return VStack(spacing: 0) {
             // Player header
             HStack(spacing: 10) {
-                Image(systemName: "figure.golf")
-                    .font(.system(size: 20))
-                    .foregroundStyle(AppColors.primaryGreen.opacity(0.6))
+                if let headshotURL = dataService.playerHeadshotURLs[line.playerName],
+                   let url = URL(string: headshotURL) {
+                    LazyImage(url: url) { state in
+                        if let image = state.image {
+                            image.resizable().scaledToFill()
+                        } else {
+                            Image(systemName: "figure.golf")
+                                .font(.system(size: 20))
+                                .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                        }
+                    }
                     .frame(width: 36, height: 36)
+                    .clipShape(Circle())
+                } else {
+                    Image(systemName: "figure.golf")
+                        .font(.system(size: 20))
+                        .foregroundStyle(AppColors.primaryGreen.opacity(0.6))
+                        .frame(width: 36, height: 36)
+                }
 
                 Text(line.playerName)
                     .font(.system(size: 16, weight: .bold))

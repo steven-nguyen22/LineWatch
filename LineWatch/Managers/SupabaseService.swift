@@ -239,6 +239,13 @@ class SupabaseService {
         return try await fetchRows(path: "fighter_headshots?select=fighter_name,headshot_url")
     }
 
+    // MARK: - Golf Assets
+
+    /// Fetches all golfer headshot URLs.
+    func fetchGolferHeadshots() async throws -> [GolferHeadshotRow] {
+        return try await fetchRows(path: "golfer_headshots?select=golfer_name,headshot_url")
+    }
+
     // MARK: - NFL Assets
 
     /// Fetches all NFL team logo URLs.
@@ -370,6 +377,16 @@ struct FighterHeadshotRow: Codable {
 
     enum CodingKeys: String, CodingKey {
         case fighterName = "fighter_name"
+        case headshotUrl = "headshot_url"
+    }
+}
+
+struct GolferHeadshotRow: Codable {
+    let golferName: String
+    let headshotUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case golferName = "golfer_name"
         case headshotUrl = "headshot_url"
     }
 }

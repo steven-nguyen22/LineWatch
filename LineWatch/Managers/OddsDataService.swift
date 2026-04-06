@@ -238,6 +238,24 @@ class OddsDataService {
         }
     }
 
+    // MARK: - Golf Assets (Golfer Headshots)
+
+    /// Fetch golfer headshots from Supabase (run once on launch)
+    func fetchGolfAssets() async {
+        do {
+            let rows = try await supabaseService.fetchGolferHeadshots()
+            await MainActor.run {
+                for row in rows {
+                    if let url = row.headshotUrl {
+                        playerHeadshotURLs[row.golferName] = url
+                    }
+                }
+            }
+        } catch {
+            // Silent failure — UI will show golf icon fallback
+        }
+    }
+
     // MARK: - Fighting Assets (Fighter Headshots)
 
     /// Fetch fighter headshots from Supabase (run once on launch)

@@ -404,6 +404,9 @@ verify_jwt = true
 [functions.fetch-soccer-assets]
 verify_jwt = true
 
+[functions.fetch-golf-assets]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327
