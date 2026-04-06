@@ -19,7 +19,7 @@ struct BetSelection: Equatable {
 // MARK: - Golf Outright Line Model
 
 struct GolfOutrightLine: Identifiable {
-    let id = UUID()
+    var id: String { playerName }
     let playerName: String
     let bookmakerOdds: [(bookmakerTitle: String, price: Int)]
 
