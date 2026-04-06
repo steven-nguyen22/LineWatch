@@ -207,6 +207,29 @@ class OddsDataService {
         }
     }
 
+    // MARK: - Soccer Assets (Logos & Headshots)
+
+    /// Fetch team logos and player headshots from Supabase for Soccer (run once on launch)
+    func fetchSoccerAssets() async {
+        do {
+            async let teamsTask = supabaseService.fetchSoccerTeamLogos()
+            async let playersTask = supabaseService.fetchSoccerPlayerHeadshots()
+
+            let (teams, players) = try await (teamsTask, playersTask)
+
+            await MainActor.run {
+                for team in teams {
+                    teamLogoURLs[team.teamName] = team.logoUrl
+                }
+                for player in players {
+                    playerHeadshotURLs[player.playerName] = player.headshotUrl
+                }
+            }
+        } catch {
+            // Silent failure — UI will show placeholder icons
+        }
+    }
+
     // MARK: - Fighting Assets (Fighter Headshots)
 
     /// Fetch fighter headshots from Supabase (run once on launch)
