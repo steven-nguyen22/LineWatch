@@ -10,4 +10,5 @@ import SwiftUI
 enum AppRoute: Hashable {
     case sportEvents(SportCategory)
     case eventDetail(ResponseBody, MarketType)
+    case bestEV
 }
