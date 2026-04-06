@@ -133,21 +133,34 @@ interface ESPNAthlete {
 // Headshot URLs starting with this prefix are broken ESPN fallbacks that need replacing
 const ESPN_HEADSHOT_PREFIX = "https://a.espncdn.com/i/headshots/soccer/players/full/";
 
-/** Search TheSportsDB for a player headshot (cutout or thumb). */
-async function searchHeadshot(playerName: string): Promise<string | null> {
+/**
+ * Search TheSportsDB for a player headshot (cutout or thumb).
+ * Returns:
+ *   - URL string if found
+ *   - "none" if the API responded successfully but the player doesn't exist
+ *   - null if the request failed (rate limit, network error) — caller should retry later
+ */
+async function searchHeadshot(playerName: string): Promise<string | "none" | null> {
   try {
     const url = `https://www.thesportsdb.com/api/v1/json/3/searchplayers.php?p=${encodeURIComponent(playerName)}`;
     const res = await fetch(url);
+
+    // Non-200 means rate limit or server error — return null so we retry later
     if (!res.ok) return null;
 
     const data = await res.json();
     // deno-lint-ignore no-explicit-any
     const players: any[] = data.player || [];
-    if (players.length === 0) return null;
+
+    if (players.length === 0) {
+      // Successful response but player not found — genuinely missing
+      return "none";
+    }
 
     // Prefer cutout (transparent background) over thumb (full photo)
-    return players[0].strCutout || players[0].strThumb || null;
+    return players[0].strCutout || players[0].strThumb || "none";
   } catch {
+    // Network error — return null so we retry later
     return null;
   }
 }
@@ -324,11 +337,11 @@ Deno.serve(async (req) => {
     }
 
     // ─── STEP 2: "headshots" ──────────────────────────────────────────
-    // Reads up to 100 players with broken ESPN headshot URLs from the DB,
+    // Reads up to 50 players with broken ESPN headshot URLs from the DB,
     // searches TheSportsDB for each, and updates the row.
     // Call repeatedly until remaining = 0.
     if (step === "headshots") {
-      const BATCH_SIZE = 100;
+      const BATCH_SIZE = 50;
 
       // Get players that still have the broken ESPN CDN headshot URL
       const { data: players, error: fetchError } = await supabase
@@ -352,29 +365,33 @@ Deno.serve(async (req) => {
       }
 
       let updated = 0;
-      let missed = 0;
+      let notFound = 0;
+      let rateLimited = 0;
 
       for (const player of players) {
-        const headshotUrl = await searchHeadshot(player.player_name);
+        const result = await searchHeadshot(player.player_name);
 
-        if (headshotUrl) {
+        if (result && result !== "none") {
+          // Found a headshot URL — save it
           await supabase
             .from("soccer_players")
-            .update({ headshot_url: headshotUrl })
+            .update({ headshot_url: result })
             .eq("id", player.id);
           updated++;
-        } else {
-          // Mark as "no headshot available" so we don't retry endlessly.
-          // Use a distinct prefix so the LIKE query no longer matches.
+        } else if (result === "none") {
+          // TheSportsDB confirmed player doesn't exist — mark permanently
           await supabase
             .from("soccer_players")
             .update({ headshot_url: "none" })
             .eq("id", player.id);
-          missed++;
+          notFound++;
+        } else {
+          // null = rate limited or network error — leave ESPN URL so we retry next call
+          rateLimited++;
         }
 
-        // Rate limit — 200ms between TheSportsDB requests
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        // Rate limit — 500ms between TheSportsDB requests to avoid throttling
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
       // Count how many still remain
@@ -389,7 +406,8 @@ Deno.serve(async (req) => {
           step: "headshots",
           processed: players.length,
           updated,
-          missed,
+          not_found: notFound,
+          rate_limited: rateLimited,
           remaining: remaining ?? 0,
           done: (remaining ?? 0) === 0,
         }),
@@ -397,8 +415,44 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ─── STEP 3: "retry" ────────────────────────────────────────────
+    // Resets players marked "none" back to ESPN fallback URL so they
+    // get retried on the next ?step=headshots call.
+    // Use this after the initial run if many were rate-limited.
+    if (step === "retry") {
+      const { count: noneCount } = await supabase
+        .from("soccer_players")
+        .select("id", { count: "exact", head: true })
+        .eq("headshot_url", "none");
+
+      // Reset "none" back to ESPN fallback so headshots step will retry them
+      const { data: nonePlayers } = await supabase
+        .from("soccer_players")
+        .select("id,espn_id")
+        .eq("headshot_url", "none");
+
+      if (nonePlayers && nonePlayers.length > 0) {
+        for (const p of nonePlayers) {
+          await supabase
+            .from("soccer_players")
+            .update({ headshot_url: `${ESPN_HEADSHOT_PREFIX}${p.espn_id}.png` })
+            .eq("id", p.id);
+        }
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          step: "retry",
+          reset_count: noneCount ?? 0,
+          next: "Now run ?step=headshots repeatedly to retry these players",
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     return new Response(
-      JSON.stringify({ error: "Unknown step. Use ?step=rosters or ?step=headshots" }),
+      JSON.stringify({ error: "Unknown step. Use ?step=rosters, ?step=headshots, or ?step=retry" }),
       { status: 400, headers: { "Content-Type": "application/json" } }
     );
   } catch (err) {
