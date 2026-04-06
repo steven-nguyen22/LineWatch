@@ -8,8 +8,15 @@
 import SwiftUI
 
 struct LandingPage: View {
+    @Environment(OddsDataService.self) private var dataService
+    @State private var showDisclaimer = false
+
     private var inSeasonSports: [SportCategory] { SportCategory.inSeason }
     private var offSeasonSports: [SportCategory] { SportCategory.offSeason }
+
+    private var bestEV: BestEVBet? {
+        EVCalculator.findBestEV(eventsBySport: dataService.eventsBySport)
+    }
 
     var body: some View {
         ScrollView {
@@ -26,6 +33,12 @@ struct LandingPage: View {
                 }
                 .padding(.top, 20)
                 .padding(.bottom, 8)
+
+                // Best EV Bet card
+                if let bestEV = bestEV {
+                    BestEVCard(bet: bestEV)
+                        .padding(.horizontal, 20)
+                }
 
                 // In Season
                 if !inSeasonSports.isEmpty {
@@ -57,7 +70,22 @@ struct LandingPage: View {
             .padding(.bottom, 20)
         }
         .background(AppColors.backgroundPrimary)
-        .navigationBarHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showDisclaimer = true
+                } label: {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+            }
+        }
+        .alert("Disclaimer", isPresented: $showDisclaimer) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
+        }
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -161,5 +189,6 @@ private struct OffSeasonCard: View {
 #Preview {
     NavigationStack {
         LandingPage()
+            .environment(previewDataService)
     }
 }
