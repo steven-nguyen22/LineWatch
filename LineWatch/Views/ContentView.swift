@@ -58,13 +58,10 @@ struct ContentView: View {
             async let golfAssets: () = dataService.fetchGolfAssets()
             _ = await (odds, nbaAssets, mlbAssets, nhlAssets, nflAssets, fightingAssets, soccerAssets, golfAssets)
 
-            // Prefetch team & player stats for supported sports (after odds are loaded)
-            await withTaskGroup(of: Void.self) { group in
-                for sport in OddsDataService.statsSports {
-                    group.addTask {
-                        await dataService.fetchStats(for: sport)
-                    }
-                }
+            // Prefetch team & player stats for supported sports (sequential to avoid
+            // data race on statsFetchedForSports — each call is a quick Supabase read)
+            for sport in OddsDataService.statsSports {
+                await dataService.fetchStats(for: sport)
             }
         }
     }
