@@ -57,98 +57,98 @@ struct PlayerStatsModal: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Drag indicator
-            Capsule()
-                .fill(Color.gray.opacity(0.4))
-                .frame(width: 36, height: 5)
-                .padding(.top, 10)
+        ScrollView {
+            VStack(spacing: 0) {
+                // Drag indicator
+                Capsule()
+                    .fill(Color.gray.opacity(0.4))
+                    .frame(width: 36, height: 5)
+                    .padding(.top, 10)
 
-            // Player headshot + name
-            VStack(spacing: 10) {
-                if let headshotURL = dataService.playerHeadshotURLs[playerName],
-                   let url = URL(string: headshotURL) {
-                    LazyImage(url: url) { state in
-                        if let image = state.image {
-                            image.resizable().scaledToFill()
-                        } else {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 50))
-                                .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                // Player headshot + name
+                VStack(spacing: 10) {
+                    if let headshotURL = dataService.playerHeadshotURLs[playerName],
+                       let url = URL(string: headshotURL) {
+                        LazyImage(url: url) { state in
+                            if let image = state.image {
+                                image.resizable().scaledToFill()
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .font(.system(size: 50))
+                                    .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                            }
                         }
-                    }
-                    .frame(width: 72, height: 72)
-                    .clipShape(Circle())
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 50))
-                        .foregroundStyle(AppColors.textSecondary.opacity(0.3))
                         .frame(width: 72, height: 72)
+                        .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .font(.system(size: 50))
+                            .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                            .frame(width: 72, height: 72)
+                    }
+
+                    Text(playerName)
+                        .font(AppFonts.title)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .multilineTextAlignment(.center)
+
+                    if let team = teamName {
+                        Text(team)
+                            .font(AppFonts.caption)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+
+                    Text("Season Averages")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(AppColors.primaryGreen)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 3)
+                        .background(
+                            Capsule()
+                                .fill(AppColors.primaryGreen.opacity(0.12))
+                        )
                 }
+                .padding(.top, 16)
+                .padding(.bottom, 20)
 
-                Text(playerName)
-                    .font(AppFonts.title)
-                    .foregroundStyle(AppColors.textPrimary)
-                    .multilineTextAlignment(.center)
-
-                if let team = teamName {
-                    Text(team)
-                        .font(AppFonts.caption)
+                // Stats rows
+                if stats.isEmpty {
+                    Text("Stats unavailable")
+                        .font(AppFonts.body)
                         .foregroundStyle(AppColors.textSecondary)
-                }
+                        .padding(.top, 40)
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(statKeys, id: \.self) { key in
+                            if let value = stats[key] {
+                                HStack {
+                                    Text(key)
+                                        .font(AppFonts.body)
+                                        .foregroundStyle(AppColors.textSecondary)
+                                    Spacer()
+                                    Text(value)
+                                        .font(.system(size: 15, weight: .semibold, design: .monospaced))
+                                        .foregroundStyle(AppColors.textPrimary)
+                                }
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 10)
 
-                Text("Season Averages")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(AppColors.primaryGreen)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 3)
-                    .background(
-                        Capsule()
-                            .fill(AppColors.primaryGreen.opacity(0.12))
-                    )
-            }
-            .padding(.top, 16)
-            .padding(.bottom, 20)
-
-            // Stats rows
-            if stats.isEmpty {
-                Spacer()
-                Text("Stats unavailable")
-                    .font(AppFonts.body)
-                    .foregroundStyle(AppColors.textSecondary)
-                Spacer()
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(statKeys, id: \.self) { key in
-                        if let value = stats[key] {
-                            HStack {
-                                Text(key)
-                                    .font(AppFonts.body)
-                                    .foregroundStyle(AppColors.textSecondary)
-                                Spacer()
-                                Text(value)
-                                    .font(.system(size: 15, weight: .semibold, design: .monospaced))
-                                    .foregroundStyle(AppColors.textPrimary)
-                            }
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 10)
-
-                            if key != statKeys.last {
-                                Divider()
-                                    .padding(.horizontal, 24)
+                                if key != statKeys.last {
+                                    Divider()
+                                        .padding(.horizontal, 24)
+                                }
                             }
                         }
                     }
+                    .background(AppColors.backgroundCard)
+                    .cornerRadius(12)
+                    .padding(.horizontal, 16)
                 }
-                .background(AppColors.backgroundCard)
-                .cornerRadius(12)
-                .padding(.horizontal, 16)
             }
-
-            Spacer()
+            .padding(.bottom, 20)
         }
         .background(AppColors.backgroundPrimary)
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
         .presentationDragIndicator(.hidden)
     }
 }

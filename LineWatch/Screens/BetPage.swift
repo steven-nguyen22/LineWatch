@@ -249,23 +249,20 @@ struct BetPage: View {
                 HStack(spacing: 0) {
                     // Away team / fighter (left)
                     VStack(spacing: 8) {
-                        competitorImage(name: event.awayTeam)
                         if supportsStats, let team = event.awayTeam {
                             Button {
                                 selectedTeamForStats = team
                             } label: {
-                                VStack(spacing: 2) {
+                                VStack(spacing: 8) {
+                                    competitorImage(name: event.awayTeam)
                                     Text(event.awayDisplay)
                                         .font(AppFonts.headline)
-                                        .foregroundStyle(AppColors.textPrimary)
+                                        .foregroundStyle(AppColors.primaryGreen)
                                         .multilineTextAlignment(.center)
-                                    Rectangle()
-                                        .fill(AppColors.primaryGreen.opacity(0.5))
-                                        .frame(height: 1.5)
-                                        .frame(maxWidth: 80)
                                 }
                             }
                         } else {
+                            competitorImage(name: event.awayTeam)
                             Text(event.awayDisplay)
                                 .font(AppFonts.headline)
                                 .foregroundStyle(AppColors.textPrimary)
@@ -280,23 +277,20 @@ struct BetPage: View {
 
                     // Home team / fighter (right)
                     VStack(spacing: 8) {
-                        competitorImage(name: event.homeTeam)
                         if supportsStats, let team = event.homeTeam {
                             Button {
                                 selectedTeamForStats = team
                             } label: {
-                                VStack(spacing: 2) {
+                                VStack(spacing: 8) {
+                                    competitorImage(name: event.homeTeam)
                                     Text(event.homeDisplay)
                                         .font(AppFonts.headline)
-                                        .foregroundStyle(AppColors.textPrimary)
+                                        .foregroundStyle(AppColors.primaryGreen)
                                         .multilineTextAlignment(.center)
-                                    Rectangle()
-                                        .fill(AppColors.primaryGreen.opacity(0.5))
-                                        .frame(height: 1.5)
-                                        .frame(maxWidth: 80)
                                 }
                             }
                         } else {
+                            competitorImage(name: event.homeTeam)
                             Text(event.homeDisplay)
                                 .font(AppFonts.headline)
                                 .foregroundStyle(AppColors.textPrimary)
@@ -332,6 +326,28 @@ struct BetPage: View {
                 }
             }
             .frame(width: 56, height: 56)
+        }
+    }
+
+    @ViewBuilder
+    private func playerHeadshot(name: String) -> some View {
+        if let headshotURL = dataService.playerHeadshotURLs[name],
+           let url = URL(string: headshotURL) {
+            LazyImage(url: url) { state in
+                if let image = state.image {
+                    image.resizable().scaledToFill()
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                }
+            }
+            .frame(width: 36, height: 36)
+            .clipShape(Circle())
+        } else {
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 36))
+                .foregroundStyle(AppColors.textSecondary.opacity(0.3))
         }
     }
 
@@ -997,39 +1013,19 @@ struct BetPage: View {
         VStack(spacing: 0) {
             // Player header
             HStack(spacing: 10) {
-                if let headshotURL = dataService.playerHeadshotURLs[line.playerName],
-                   let url = URL(string: headshotURL) {
-                    LazyImage(url: url) { state in
-                        if let image = state.image {
-                            image.resizable().scaledToFill()
-                        } else {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 36))
-                                .foregroundStyle(AppColors.textSecondary.opacity(0.3))
-                        }
-                    }
-                    .frame(width: 36, height: 36)
-                    .clipShape(Circle())
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 36))
-                        .foregroundStyle(AppColors.textSecondary.opacity(0.3))
-                }
-
                 if supportsStats {
                     Button {
                         selectedPlayerForStats = line.playerName
                     } label: {
-                        VStack(spacing: 2) {
+                        HStack(spacing: 10) {
+                            playerHeadshot(name: line.playerName)
                             Text(line.playerName)
                                 .font(.system(size: 16, weight: .bold))
-                                .foregroundStyle(AppColors.textPrimary)
-                            Rectangle()
-                                .fill(AppColors.primaryGreen.opacity(0.5))
-                                .frame(height: 1.5)
+                                .foregroundStyle(AppColors.primaryGreen)
                         }
                     }
                 } else {
+                    playerHeadshot(name: line.playerName)
                     Text(line.playerName)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(AppColors.textPrimary)
