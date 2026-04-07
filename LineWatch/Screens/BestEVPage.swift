@@ -11,6 +11,7 @@ struct BestEVPage: View {
     @Environment(OddsDataService.self) private var dataService
     @State private var showDisclaimer = false
     @State private var isLoadingProps = false
+    @State private var hasLoadedProps = false
 
     private var bestBets: [BestEVBet] {
         EVCalculator.findBestEVPerSport(
@@ -79,9 +80,12 @@ struct BestEVPage: View {
             Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
         }
         .task {
-            isLoadingProps = true
-            await dataService.prefetchAllPlayerProps()
-            isLoadingProps = false
+            if !hasLoadedProps {
+                isLoadingProps = true
+                await dataService.prefetchAllPlayerProps()
+                isLoadingProps = false
+                hasLoadedProps = true
+            }
         }
     }
 }
