@@ -9,6 +9,13 @@ function sleep(ms: number): Promise<void> {
 
 // ─── Sport Configuration ─────────────────────────────────────────────
 
+interface SeasonRange {
+  startMonth: number;
+  startDay: number;
+  endMonth: number;
+  endDay: number;
+}
+
 interface SportConfig {
   sportKey: string;
   espnSport: string; // e.g., "basketball/nba"
@@ -16,6 +23,26 @@ interface SportConfig {
   playerTables: string[]; // e.g., ["nba_players"] or ["nfl_qbs", "nfl_rbs", "nfl_receivers"]
   formatTeamStats: (entry: any) => Record<string, string>;
   formatPlayerStats: (data: any, position?: string) => Record<string, string>;
+  /** Date range when this sport is in season. null = year-round. */
+  seasonRange: SeasonRange | null;
+}
+
+/** Mirrors the iOS `isInSeason` logic in LinesManager.swift. */
+function isInSeason(config: SportConfig): boolean {
+  if (!config.seasonRange) return true;
+  const now = new Date();
+  const m = now.getUTCMonth() + 1; // 1–12
+  const d = now.getUTCDate();
+  const today = m * 100 + d; // e.g. Apr 6 = 406, Oct 1 = 1001
+  const { startMonth, startDay, endMonth, endDay } = config.seasonRange;
+  const start = startMonth * 100 + startDay;
+  const end = endMonth * 100 + endDay;
+  if (start <= end) {
+    // Season doesn't wrap the year (e.g. MLB Mar–Nov)
+    return today >= start && today <= end;
+  }
+  // Season wraps the year (e.g. NBA Oct–Jun, NFL Sep–Feb)
+  return today >= start || today <= end;
 }
 
 const SPORT_CONFIGS: SportConfig[] = [
@@ -26,6 +53,7 @@ const SPORT_CONFIGS: SportConfig[] = [
     playerTables: ["nba_players"],
     formatTeamStats: formatNBATeamStats,
     formatPlayerStats: formatNBAPlayerStats,
+    seasonRange: { startMonth: 10, startDay: 1, endMonth: 6, endDay: 30 }, // Oct 1 – Jun 30
   },
   {
     sportKey: "baseball_mlb",
@@ -34,6 +62,7 @@ const SPORT_CONFIGS: SportConfig[] = [
     playerTables: ["mlb_players"],
     formatTeamStats: formatMLBTeamStats,
     formatPlayerStats: formatMLBPlayerStats,
+    seasonRange: { startMonth: 3, startDay: 20, endMonth: 11, endDay: 5 }, // Mar 20 – Nov 5
   },
   {
     sportKey: "icehockey_nhl",
@@ -42,6 +71,7 @@ const SPORT_CONFIGS: SportConfig[] = [
     playerTables: ["nhl_players"],
     formatTeamStats: formatNHLTeamStats,
     formatPlayerStats: formatNHLPlayerStats,
+    seasonRange: { startMonth: 10, startDay: 1, endMonth: 6, endDay: 30 }, // Oct 1 – Jun 30
   },
   {
     sportKey: "americanfootball_nfl",
@@ -50,6 +80,7 @@ const SPORT_CONFIGS: SportConfig[] = [
     playerTables: ["nfl_qbs", "nfl_rbs", "nfl_receivers"],
     formatTeamStats: formatNFLTeamStats,
     formatPlayerStats: formatNFLPlayerStats,
+    seasonRange: { startMonth: 9, startDay: 1, endMonth: 2, endDay: 15 }, // Sep 1 – Feb 15
   },
 ];
 
@@ -271,6 +302,12 @@ Deno.serve(async (req) => {
     const summary: Record<string, any> = {};
 
     for (const config of SPORT_CONFIGS) {
+      // Skip off-season sports — mirrors iOS isInSeason logic in LinesManager.swift
+      if (!isInSeason(config)) {
+        summary[config.sportKey] = { skipped: true, reason: "off-season" };
+        continue;
+      }
+
       const sportSummary: any = { teams: 0, players: 0, errors: 0 };
 
       // ─── Step 1: Fetch team standings from ESPN ───────────
