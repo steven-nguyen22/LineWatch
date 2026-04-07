@@ -16,7 +16,7 @@ class OddsDataService {
     var playerHeadshotURLs: [String: String] = [:]
     var teamStatsByName: [String: [String: String]] = [:]
     var playerStatsByName: [String: [String: String]] = [:]
-    private var statsFetchedForSports: Set<String> = []
+    @ObservationIgnored private var statsFetchedForSports: Set<String> = []
     var isLoading = false
     var error: Error?
 
