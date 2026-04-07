@@ -39,6 +39,7 @@ struct GolfOutrightLine: Identifiable {
 struct BetPage: View {
     let event: ResponseBody
     let marketType: MarketType
+    var initialGolfSearch: String = ""
 
     @Environment(OddsDataService.self) private var dataService
     @Environment(\.openURL) private var openURL
@@ -115,6 +116,10 @@ struct BetPage: View {
             Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
         }
         .task {
+            // Pre-populate golf search when navigating from Best EV page
+            if !initialGolfSearch.isEmpty {
+                golfSearchText = initialGolfSearch
+            }
             if marketType == .playerProps {
                 // Set the correct default prop type for this sport
                 let validCases = PlayerPropType.cases(for: sportCategory)
