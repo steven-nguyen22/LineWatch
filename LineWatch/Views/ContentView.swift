@@ -57,6 +57,15 @@ struct ContentView: View {
             async let soccerAssets: () = dataService.fetchSoccerAssets()
             async let golfAssets: () = dataService.fetchGolfAssets()
             _ = await (odds, nbaAssets, mlbAssets, nhlAssets, nflAssets, fightingAssets, soccerAssets, golfAssets)
+
+            // Prefetch team & player stats for supported sports (after odds are loaded)
+            await withTaskGroup(of: Void.self) { group in
+                for sport in OddsDataService.statsSports {
+                    group.addTask {
+                        await dataService.fetchStats(for: sport)
+                    }
+                }
+            }
         }
     }
 }
