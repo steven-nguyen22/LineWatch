@@ -106,7 +106,7 @@ struct SubPage: View {
                     // Event list
                     LazyVStack(spacing: 12) {
                         ForEach(events) { event in
-                            NavigationLink(value: AppRoute.eventDetail(event, selectedMarket)) {
+                            NavigationLink(value: AppRoute.eventDetail(event, selectedMarket, nil)) {
                                 EventCard(
                                     event: event,
                                     marketType: selectedMarket,

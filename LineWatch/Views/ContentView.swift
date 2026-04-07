@@ -31,8 +31,8 @@ struct ContentView: View {
                             switch route {
                             case .sportEvents(let sport):
                                 SubPage(sport: sport)
-                            case .eventDetail(let event, let marketType):
-                                BetPage(event: event, marketType: marketType)
+                            case .eventDetail(let event, let marketType, let prefillSearch):
+                                BetPage(event: event, marketType: marketType, initialGolfSearch: prefillSearch ?? "")
                             case .bestEV:
                                 BestEVPage()
                             }

@@ -9,6 +9,7 @@ import SwiftUI
 
 enum AppRoute: Hashable {
     case sportEvents(SportCategory)
-    case eventDetail(ResponseBody, MarketType)
+    /// - `prefillSearch`: optional string to pre-populate the golf player search bar
+    case eventDetail(ResponseBody, MarketType, String?)
     case bestEV
 }
