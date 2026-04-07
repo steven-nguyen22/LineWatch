@@ -16,7 +16,7 @@ class OddsDataService {
     var playerHeadshotURLs: [String: String] = [:]
     var teamStatsByName: [String: [String: String]] = [:]
     var playerStatsByName: [String: [String: String]] = [:]
-    private var statsFetchedForSports: Set<SportCategory> = []
+    private var statsFetchedForSports: Set<String> = []
     var isLoading = false
     var error: Error?
 
@@ -287,8 +287,8 @@ class OddsDataService {
     /// Fetch team and player stats for a sport from Supabase (cached once per sport per session).
     func fetchStats(for sport: SportCategory) async {
         guard Self.statsSports.contains(sport) else { return }
-        guard !statsFetchedForSports.contains(sport) else { return }
-        statsFetchedForSports.insert(sport)
+        guard !statsFetchedForSports.contains(sport.rawValue) else { return }
+        statsFetchedForSports.insert(sport.rawValue)
 
         do {
             async let teamsTask = supabaseService.fetchTeamStats(sportKey: sport.rawValue)
