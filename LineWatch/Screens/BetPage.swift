@@ -53,11 +53,18 @@ struct BetPage: View {
     @State private var isLoadingProps = false
     @State private var propSearchText: String = ""
     @State private var golfSearchText: String = ""
+    @State private var selectedTeamForStats: String?
+    @State private var selectedPlayerForStats: String?
     @FocusState private var focusedBet: Int?
 
     /// Resolve the sport category from the event's sport key
     private var sportCategory: SportCategory {
         SportCategory.allCases.first { $0.rawValue == event.sportKey } ?? .basketball
+    }
+
+    /// Whether this sport supports team/player stats modals
+    private var supportsStats: Bool {
+        OddsDataService.statsSports.contains(sportCategory)
     }
 
     var body: some View {
@@ -115,6 +122,24 @@ struct BetPage: View {
         } message: {
             Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
         }
+        .sheet(isPresented: Binding(
+            get: { selectedTeamForStats != nil },
+            set: { if !$0 { selectedTeamForStats = nil } }
+        )) {
+            if let team = selectedTeamForStats {
+                TeamStatsModal(teamName: team, sport: sportCategory)
+                    .environment(dataService)
+            }
+        }
+        .sheet(isPresented: Binding(
+            get: { selectedPlayerForStats != nil },
+            set: { if !$0 { selectedPlayerForStats = nil } }
+        )) {
+            if let player = selectedPlayerForStats {
+                PlayerStatsModal(playerName: player, sport: sportCategory)
+                    .environment(dataService)
+            }
+        }
         .task {
             // Pre-populate golf search when navigating from Best EV page
             if !initialGolfSearch.isEmpty {
@@ -129,6 +154,10 @@ struct BetPage: View {
                 isLoadingProps = true
                 await dataService.fetchPlayerProps(eventId: event.id)
                 isLoadingProps = false
+            }
+            // Fetch team & player stats (cached per sport, no-op if already fetched)
+            if supportsStats {
+                await dataService.fetchStats(for: sportCategory)
             }
         }
     }
@@ -221,10 +250,27 @@ struct BetPage: View {
                     // Away team / fighter (left)
                     VStack(spacing: 8) {
                         competitorImage(name: event.awayTeam)
-                        Text(event.awayDisplay)
-                            .font(AppFonts.headline)
-                            .foregroundStyle(AppColors.textPrimary)
-                            .multilineTextAlignment(.center)
+                        if supportsStats, let team = event.awayTeam {
+                            Button {
+                                selectedTeamForStats = team
+                            } label: {
+                                VStack(spacing: 2) {
+                                    Text(event.awayDisplay)
+                                        .font(AppFonts.headline)
+                                        .foregroundStyle(AppColors.textPrimary)
+                                        .multilineTextAlignment(.center)
+                                    Rectangle()
+                                        .fill(AppColors.primaryGreen.opacity(0.5))
+                                        .frame(height: 1.5)
+                                        .frame(maxWidth: 80)
+                                }
+                            }
+                        } else {
+                            Text(event.awayDisplay)
+                                .font(AppFonts.headline)
+                                .foregroundStyle(AppColors.textPrimary)
+                                .multilineTextAlignment(.center)
+                        }
                     }
                     .frame(maxWidth: .infinity)
 
@@ -235,10 +281,27 @@ struct BetPage: View {
                     // Home team / fighter (right)
                     VStack(spacing: 8) {
                         competitorImage(name: event.homeTeam)
-                        Text(event.homeDisplay)
-                            .font(AppFonts.headline)
-                            .foregroundStyle(AppColors.textPrimary)
-                            .multilineTextAlignment(.center)
+                        if supportsStats, let team = event.homeTeam {
+                            Button {
+                                selectedTeamForStats = team
+                            } label: {
+                                VStack(spacing: 2) {
+                                    Text(event.homeDisplay)
+                                        .font(AppFonts.headline)
+                                        .foregroundStyle(AppColors.textPrimary)
+                                        .multilineTextAlignment(.center)
+                                    Rectangle()
+                                        .fill(AppColors.primaryGreen.opacity(0.5))
+                                        .frame(height: 1.5)
+                                        .frame(maxWidth: 80)
+                                }
+                            }
+                        } else {
+                            Text(event.homeDisplay)
+                                .font(AppFonts.headline)
+                                .foregroundStyle(AppColors.textPrimary)
+                                .multilineTextAlignment(.center)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -953,9 +1016,24 @@ struct BetPage: View {
                         .foregroundStyle(AppColors.textSecondary.opacity(0.3))
                 }
 
-                Text(line.playerName)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(AppColors.textPrimary)
+                if supportsStats {
+                    Button {
+                        selectedPlayerForStats = line.playerName
+                    } label: {
+                        VStack(spacing: 2) {
+                            Text(line.playerName)
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(AppColors.textPrimary)
+                            Rectangle()
+                                .fill(AppColors.primaryGreen.opacity(0.5))
+                                .frame(height: 1.5)
+                        }
+                    }
+                } else {
+                    Text(line.playerName)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(AppColors.textPrimary)
+                }
 
                 Spacer()
 

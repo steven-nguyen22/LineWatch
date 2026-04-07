@@ -268,6 +268,18 @@ class SupabaseService {
         return try await fetchRows(path: "nfl_receivers?select=player_name,headshot_url,team_name")
     }
 
+    // MARK: - Team & Player Stats
+
+    /// Fetches team stats (W-L, home/road, L10) for a specific sport.
+    func fetchTeamStats(sportKey: String) async throws -> [TeamStatsRow] {
+        return try await fetchRows(path: "team_stats?select=team_name,stats&sport_key=eq.\(sportKey)")
+    }
+
+    /// Fetches player season averages for a specific sport.
+    func fetchPlayerStats(sportKey: String) async throws -> [PlayerStatsRow] {
+        return try await fetchRows(path: "player_stats?select=player_name,team_name,stats&sport_key=eq.\(sportKey)")
+    }
+
     private func fetchRows<T: Decodable>(path: String) async throws -> [T] {
         guard let url = URL(string: "\(baseURL)/\(path)") else {
             throw GHError.invalidURL
@@ -416,6 +428,28 @@ struct NFLPlayerRow: Codable {
 /// Represents a single row from the cached_odds table (only the `data` column is selected).
 private struct CachedOddsRow: Codable {
     let data: [ResponseBody]
+}
+
+struct TeamStatsRow: Codable {
+    let teamName: String
+    let stats: [String: String]
+
+    enum CodingKeys: String, CodingKey {
+        case teamName = "team_name"
+        case stats
+    }
+}
+
+struct PlayerStatsRow: Codable {
+    let playerName: String
+    let teamName: String
+    let stats: [String: String]
+
+    enum CodingKeys: String, CodingKey {
+        case playerName = "player_name"
+        case teamName = "team_name"
+        case stats
+    }
 }
 
 /// Represents a single row from cached_player_props (data + player_teams).

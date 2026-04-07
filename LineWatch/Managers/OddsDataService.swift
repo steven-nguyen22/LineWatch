@@ -14,6 +14,9 @@ class OddsDataService {
     var playerTeamsByEvent: [String: [String: String]] = [:]
     var teamLogoURLs: [String: String] = [:]
     var playerHeadshotURLs: [String: String] = [:]
+    var teamStatsByName: [String: [String: String]] = [:]
+    var playerStatsByName: [String: [String: String]] = [:]
+    private var statsFetchedForSports: Set<SportCategory> = []
     var isLoading = false
     var error: Error?
 
@@ -273,6 +276,36 @@ class OddsDataService {
             }
         } catch {
             // Silent failure — UI will show silhouette fallback
+        }
+    }
+
+    // MARK: - Team & Player Stats
+
+    /// Whether the given sport supports team/player stats modals.
+    static let statsSports: Set<SportCategory> = [.basketball, .baseball, .hockey, .football]
+
+    /// Fetch team and player stats for a sport from Supabase (cached once per sport per session).
+    func fetchStats(for sport: SportCategory) async {
+        guard Self.statsSports.contains(sport) else { return }
+        guard !statsFetchedForSports.contains(sport) else { return }
+        statsFetchedForSports.insert(sport)
+
+        do {
+            async let teamsTask = supabaseService.fetchTeamStats(sportKey: sport.rawValue)
+            async let playersTask = supabaseService.fetchPlayerStats(sportKey: sport.rawValue)
+
+            let (teams, players) = try await (teamsTask, playersTask)
+
+            await MainActor.run {
+                for row in teams {
+                    teamStatsByName[row.teamName] = row.stats
+                }
+                for row in players {
+                    playerStatsByName[row.playerName] = row.stats
+                }
+            }
+        } catch {
+            // Silent failure — modals will show "Stats unavailable"
         }
     }
 
