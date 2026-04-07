@@ -6,16 +6,32 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct BestEVCard: View {
     let bet: BestEVBet
     var sportLabel: String? = nil
+
+    @Environment(OddsDataService.self) private var dataService
 
     private var headerText: String {
         if let label = sportLabel {
             return "Best Value Bet - \(label)"
         }
         return "Best Value Bet"
+    }
+
+    /// Whether this bet features a specific player (props or golf outrights)
+    private var isPlayerBet: Bool {
+        (bet.marketType == .playerProps && bet.playerName != nil)
+        || (bet.marketType == .outrights && bet.event.isGolf)
+    }
+
+    /// The player name to display (prop player or golf outright golfer)
+    private var displayPlayerName: String? {
+        if bet.marketType == .playerProps { return bet.playerName }
+        if bet.marketType == .outrights && bet.event.isGolf { return bet.outcomeName }
+        return nil
     }
 
     var body: some View {
@@ -46,35 +62,75 @@ struct BestEVCard: View {
                         )
                 }
 
-                // Matchup row: sport icon + teams
+                // Matchup row: logos + teams (or player headshot for props/golf)
                 HStack(spacing: 10) {
-                    ZStack {
-                        Circle()
-                            .fill(AppColors.primaryGreen.opacity(0.15))
-                            .frame(width: 36, height: 36)
+                    if isPlayerBet, let playerName = displayPlayerName {
+                        // Player prop or golf outright — show player headshot
+                        playerHeadshotView(name: playerName)
 
-                        Image(systemName: bet.sport.iconName)
-                            .font(.system(size: 16))
-                            .foregroundStyle(AppColors.primaryGreen)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        if let away = bet.event.awayTeam, let home = bet.event.homeTeam {
-                            Text("\(away) \(bet.event.isFighting ? "vs" : "@") \(home)")
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(playerName)
                                 .font(AppFonts.headline)
                                 .foregroundStyle(AppColors.textPrimary)
                                 .lineLimit(1)
-                        } else {
-                            Text(bet.event.sportTitle)
-                                .font(AppFonts.headline)
-                                .foregroundStyle(AppColors.textPrimary)
+
+                            Text(bet.betDescription)
+                                .font(AppFonts.body)
+                                .foregroundStyle(AppColors.textSecondary)
                                 .lineLimit(1)
                         }
+                    } else if bet.event.isFighting {
+                        // Fighting — show fighter headshot for the bet outcome
+                        fighterHeadshotView(name: bet.outcomeName)
 
-                        Text(bet.betDescription)
-                            .font(AppFonts.body)
-                            .foregroundStyle(AppColors.textSecondary)
-                            .lineLimit(1)
+                        VStack(alignment: .leading, spacing: 2) {
+                            if let away = bet.event.awayTeam, let home = bet.event.homeTeam {
+                                Text("\(away) vs \(home)")
+                                    .font(AppFonts.headline)
+                                    .foregroundStyle(AppColors.textPrimary)
+                                    .lineLimit(1)
+                            } else {
+                                Text(bet.event.sportTitle)
+                                    .font(AppFonts.headline)
+                                    .foregroundStyle(AppColors.textPrimary)
+                                    .lineLimit(1)
+                            }
+
+                            Text(bet.betDescription)
+                                .font(AppFonts.body)
+                                .foregroundStyle(AppColors.textSecondary)
+                                .lineLimit(1)
+                        }
+                    } else {
+                        // Standard team event — show team logos inline
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 6) {
+                                if let away = bet.event.awayTeam {
+                                    teamLogoView(name: away)
+                                    Text(away)
+                                        .font(AppFonts.headline)
+                                        .foregroundStyle(AppColors.textPrimary)
+                                        .lineLimit(1)
+                                }
+
+                                Text(bet.event.awayTeam != nil ? "@" : "")
+                                    .font(AppFonts.caption)
+                                    .foregroundStyle(AppColors.textSecondary)
+
+                                if let home = bet.event.homeTeam {
+                                    teamLogoView(name: home)
+                                    Text(home)
+                                        .font(AppFonts.headline)
+                                        .foregroundStyle(AppColors.textPrimary)
+                                        .lineLimit(1)
+                                }
+                            }
+
+                            Text(bet.betDescription)
+                                .font(AppFonts.body)
+                                .foregroundStyle(AppColors.textSecondary)
+                                .lineLimit(1)
+                        }
                     }
 
                     Spacer()
@@ -128,6 +184,76 @@ struct BestEVCard: View {
             )
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - Image Helpers
+
+    @ViewBuilder
+    private func teamLogoView(name: String) -> some View {
+        if let logoURL = dataService.teamLogoURLs[name],
+           let url = URL(string: logoURL) {
+            LazyImage(url: url) { state in
+                if let image = state.image {
+                    image.resizable().scaledToFit()
+                }
+            }
+            .frame(width: 20, height: 20)
+        }
+    }
+
+    @ViewBuilder
+    private func playerHeadshotView(name: String) -> some View {
+        if let headshotURL = dataService.playerHeadshotURLs[name],
+           let url = URL(string: headshotURL) {
+            LazyImage(url: url) { state in
+                if let image = state.image {
+                    image.resizable().scaledToFill()
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 32))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                }
+            }
+            .frame(width: 36, height: 36)
+            .clipShape(Circle())
+        } else {
+            Image(systemName: "person.circle.fill")
+                .font(.system(size: 32))
+                .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                .frame(width: 36, height: 36)
+        }
+    }
+
+    @ViewBuilder
+    private func fighterHeadshotView(name: String) -> some View {
+        if let headshotURL = dataService.playerHeadshotURLs[name],
+           let url = URL(string: headshotURL) {
+            LazyImage(url: url) { state in
+                if let image = state.image {
+                    image.resizable().scaledToFill()
+                } else {
+                    Image(systemName: "figure.boxing")
+                        .font(.system(size: 16))
+                        .foregroundStyle(AppColors.primaryGreen)
+                }
+            }
+            .frame(width: 36, height: 36)
+            .clipShape(Circle())
+            .background(
+                Circle()
+                    .fill(AppColors.primaryGreen.opacity(0.15))
+                    .frame(width: 36, height: 36)
+            )
+        } else {
+            ZStack {
+                Circle()
+                    .fill(AppColors.primaryGreen.opacity(0.15))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "figure.boxing")
+                    .font(.system(size: 16))
+                    .foregroundStyle(AppColors.primaryGreen)
+            }
+        }
     }
 
     private func formatOdds(_ odds: Int) -> String {

@@ -257,7 +257,7 @@ struct BetPage: View {
                                     competitorImage(name: event.awayTeam)
                                     Text(event.awayDisplay)
                                         .font(AppFonts.headline)
-                                        .foregroundStyle(AppColors.primaryGreen)
+                                        .foregroundStyle(AppColors.textPrimary)
                                         .multilineTextAlignment(.center)
                                 }
                             }
@@ -285,7 +285,7 @@ struct BetPage: View {
                                     competitorImage(name: event.homeTeam)
                                     Text(event.homeDisplay)
                                         .font(AppFonts.headline)
-                                        .foregroundStyle(AppColors.primaryGreen)
+                                        .foregroundStyle(AppColors.textPrimary)
                                         .multilineTextAlignment(.center)
                                 }
                             }
@@ -1021,7 +1021,7 @@ struct BetPage: View {
                             playerHeadshot(name: line.playerName)
                             Text(line.playerName)
                                 .font(.system(size: 16, weight: .bold))
-                                .foregroundStyle(AppColors.primaryGreen)
+                                .foregroundStyle(AppColors.textPrimary)
                         }
                     }
                 } else {
