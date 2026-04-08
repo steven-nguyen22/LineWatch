@@ -46,14 +46,9 @@ struct SubPage: View {
                         }
                     )) {
                         ForEach(sport.availableMarkets) { market in
-                            HStack(spacing: 4) {
-                                Text(market.displayName)
-                                if market == .playerProps && !authService.subscriptionTier.canAccessPlayerProps {
-                                    Image(systemName: "lock.fill")
-                                        .font(.caption2)
-                                }
-                            }
-                            .tag(market)
+                            let locked = market == .playerProps && !authService.subscriptionTier.canAccessPlayerProps
+                            Text(locked ? "\(market.shortDisplayName) \u{1F512}" : market.shortDisplayName)
+                                .tag(market)
                         }
                     }
                     .pickerStyle(.segmented)
