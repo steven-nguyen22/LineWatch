@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LandingPage: View {
     @Environment(OddsDataService.self) private var dataService
+    @Environment(AuthService.self) private var authService
     @State private var showDisclaimer = false
 
     private var inSeasonSports: [SportCategory] { SportCategory.inSeason }
@@ -31,7 +32,7 @@ struct LandingPage: View {
                 .padding(.bottom, 8)
 
                 // Best EV section entry
-                NavigationLink(value: AppRoute.bestEV) {
+                NavigationLink(value: authService.subscriptionTier.canAccessBestEV ? AppRoute.bestEV : AppRoute.paywall) {
                     HStack(spacing: 16) {
                         ZStack {
                             Circle()
@@ -48,6 +49,12 @@ struct LandingPage: View {
                             .foregroundStyle(AppColors.textPrimary)
 
                         Spacer()
+
+                        if !authService.subscriptionTier.canAccessBestEV {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                        }
 
                         Image(systemName: "chevron.right")
                             .font(.system(size: 16, weight: .semibold))
@@ -95,6 +102,12 @@ struct LandingPage: View {
         }
         .background(AppColors.backgroundPrimary)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NavigationLink(value: AppRoute.paywall) {
+                    Image(systemName: authService.subscriptionTier == .rookie ? "crown" : "crown.fill")
+                        .foregroundStyle(AppColors.primaryGreen)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showDisclaimer = true
@@ -214,5 +227,6 @@ private struct OffSeasonCard: View {
     NavigationStack {
         LandingPage()
             .environment(previewDataService)
+            .environment(AuthService())
     }
 }

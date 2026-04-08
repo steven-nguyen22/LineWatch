@@ -12,4 +12,5 @@ enum AppRoute: Hashable {
     /// - `prefillSearch`: optional string to pre-populate the golf player search bar
     case eventDetail(ResponseBody, MarketType, String?)
     case bestEV
+    case paywall
 }

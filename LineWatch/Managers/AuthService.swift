@@ -15,6 +15,7 @@ import GoogleSignIn
 class AuthService {
     var isAuthenticated = false
     var authError: String?
+    var subscriptionTier: SubscriptionTier = .rookie
 
     private let supabase: SupabaseClient
 
@@ -33,6 +34,9 @@ class AuthService {
             let session = try await supabase.auth.session
             await MainActor.run {
                 isAuthenticated = (session.user.id != nil)
+            }
+            if session.user.id != nil {
+                await fetchSubscriptionTier()
             }
         } catch {
             await MainActor.run {
@@ -54,6 +58,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
+            await fetchSubscriptionTier()
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -73,6 +78,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
+            await fetchSubscriptionTier()
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -95,6 +101,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
+            await fetchSubscriptionTier()
         } catch {
             await MainActor.run {
                 authError = "Apple sign-in failed: \(error.localizedDescription)"
@@ -117,6 +124,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
+            await fetchSubscriptionTier()
         } catch {
             await MainActor.run {
                 authError = "Google sign-in failed: \(error.localizedDescription)"
@@ -129,13 +137,58 @@ class AuthService {
     func signOut() async {
         do {
             try await supabase.auth.signOut()
+            UserDefaults.standard.removeObject(forKey: "cached_subscription_tier")
             await MainActor.run {
                 isAuthenticated = false
+                subscriptionTier = .rookie
             }
         } catch {
             await MainActor.run {
                 authError = "Sign out failed: \(error.localizedDescription)"
             }
+        }
+    }
+
+    // MARK: - Subscription Tier
+
+    /// Fetch the user's subscription tier from the Supabase profiles table
+    func fetchSubscriptionTier() async {
+        // Try cached value first for instant UI
+        if let cached = UserDefaults.standard.string(forKey: "cached_subscription_tier"),
+           let tier = SubscriptionTier(rawValue: cached) {
+            await MainActor.run {
+                subscriptionTier = tier
+            }
+        }
+
+        do {
+            let session = try await supabase.auth.session
+            let userId = session.user.id
+
+            struct ProfileRow: Decodable {
+                let subscriptionTier: String
+
+                enum CodingKeys: String, CodingKey {
+                    case subscriptionTier = "subscription_tier"
+                }
+            }
+
+            let row: ProfileRow = try await supabase
+                .from("profiles")
+                .select("subscription_tier")
+                .eq("id", value: userId)
+                .single()
+                .execute()
+                .value
+
+            if let tier = SubscriptionTier(rawValue: row.subscriptionTier) {
+                UserDefaults.standard.set(tier.rawValue, forKey: "cached_subscription_tier")
+                await MainActor.run {
+                    subscriptionTier = tier
+                }
+            }
+        } catch {
+            // Silent failure — keep cached or default tier
         }
     }
 

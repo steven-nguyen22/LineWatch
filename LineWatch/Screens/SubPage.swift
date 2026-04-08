@@ -11,10 +11,12 @@ import NukeUI
 struct SubPage: View {
     let sport: SportCategory
     @Environment(OddsDataService.self) private var dataService
+    @Environment(AuthService.self) private var authService
     @State private var selectedMarket: MarketType = .h2h
     @State private var selectedLeague: FightingLeague = .mma
     @State private var searchText: String = ""
     @State private var showDisclaimer = false
+    @State private var showPaywallForProps = false
 
     var body: some View {
         let events = displayedEvents
@@ -33,9 +35,25 @@ struct SubPage: View {
                     .padding(.top, 12)
                     .padding(.bottom, 16)
                 } else if sport.availableMarkets.count > 1 {
-                    Picker("Market", selection: $selectedMarket) {
+                    Picker("Market", selection: Binding(
+                        get: { selectedMarket },
+                        set: { newValue in
+                            if newValue == .playerProps && !authService.subscriptionTier.canAccessPlayerProps {
+                                showPaywallForProps = true
+                            } else {
+                                selectedMarket = newValue
+                            }
+                        }
+                    )) {
                         ForEach(sport.availableMarkets) { market in
-                            Text(market.displayName).tag(market)
+                            HStack(spacing: 4) {
+                                Text(market.displayName)
+                                if market == .playerProps && !authService.subscriptionTier.canAccessPlayerProps {
+                                    Image(systemName: "lock.fill")
+                                        .font(.caption2)
+                                }
+                            }
+                            .tag(market)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -140,6 +158,9 @@ struct SubPage: View {
             Button("OK", role: .cancel) { }
         } message: {
             Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
+        }
+        .navigationDestination(isPresented: $showPaywallForProps) {
+            PaywallView()
         }
         .onAppear {
             if !sport.availableMarkets.contains(selectedMarket) {
@@ -393,5 +414,6 @@ struct FighterCircle: View {
     NavigationStack {
         SubPage(sport: .basketball)
             .environment(previewDataService)
+            .environment(AuthService())
     }
 }

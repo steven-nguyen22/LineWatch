@@ -34,7 +34,13 @@ struct ContentView: View {
                             case .eventDetail(let event, let marketType, let prefillSearch):
                                 BetPage(event: event, marketType: marketType, initialGolfSearch: prefillSearch ?? "")
                             case .bestEV:
-                                BestEVPage()
+                                if authService.subscriptionTier.canAccessBestEV {
+                                    BestEVPage()
+                                } else {
+                                    PaywallView()
+                                }
+                            case .paywall:
+                                PaywallView()
                             }
                         }
                 }

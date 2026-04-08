@@ -42,6 +42,7 @@ struct BetPage: View {
     var initialGolfSearch: String = ""
 
     @Environment(OddsDataService.self) private var dataService
+    @Environment(AuthService.self) private var authService
     @Environment(\.openURL) private var openURL
     @State private var selections: [BetSelection] = []
     @State private var showDisclaimer = false
@@ -55,6 +56,7 @@ struct BetPage: View {
     @State private var golfSearchText: String = ""
     @State private var selectedTeamForStats: String?
     @State private var selectedPlayerForStats: String?
+    @State private var showPaywallForStats = false
     @FocusState private var focusedBet: Int?
 
     /// Resolve the sport category from the event's sport key
@@ -65,6 +67,11 @@ struct BetPage: View {
     /// Whether this sport supports team/player stats modals
     private var supportsStats: Bool {
         OddsDataService.statsSports.contains(sportCategory)
+    }
+
+    /// Whether the current user can access stats (sport supports it + tier allows it)
+    private var canShowStats: Bool {
+        supportsStats && authService.subscriptionTier.canAccessStats
     }
 
     var body: some View {
@@ -139,6 +146,9 @@ struct BetPage: View {
                 PlayerStatsModal(playerName: player, sport: sportCategory)
                     .environment(dataService)
             }
+        }
+        .navigationDestination(isPresented: $showPaywallForStats) {
+            PaywallView()
         }
         .task {
             // Pre-populate golf search when navigating from Best EV page
@@ -251,14 +261,25 @@ struct BetPage: View {
                     VStack(spacing: 8) {
                         if supportsStats, let team = event.awayTeam {
                             Button {
-                                selectedTeamForStats = team
+                                if canShowStats {
+                                    selectedTeamForStats = team
+                                } else {
+                                    showPaywallForStats = true
+                                }
                             } label: {
                                 VStack(spacing: 8) {
                                     competitorImage(name: event.awayTeam)
-                                    Text(event.awayDisplay)
-                                        .font(AppFonts.headline)
-                                        .foregroundStyle(AppColors.textPrimary)
-                                        .multilineTextAlignment(.center)
+                                    HStack(spacing: 4) {
+                                        Text(event.awayDisplay)
+                                            .font(AppFonts.headline)
+                                            .foregroundStyle(AppColors.textPrimary)
+                                            .multilineTextAlignment(.center)
+                                        if !authService.subscriptionTier.canAccessStats {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 10))
+                                                .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                                        }
+                                    }
                                 }
                             }
                         } else {
@@ -279,14 +300,25 @@ struct BetPage: View {
                     VStack(spacing: 8) {
                         if supportsStats, let team = event.homeTeam {
                             Button {
-                                selectedTeamForStats = team
+                                if canShowStats {
+                                    selectedTeamForStats = team
+                                } else {
+                                    showPaywallForStats = true
+                                }
                             } label: {
                                 VStack(spacing: 8) {
                                     competitorImage(name: event.homeTeam)
-                                    Text(event.homeDisplay)
-                                        .font(AppFonts.headline)
-                                        .foregroundStyle(AppColors.textPrimary)
-                                        .multilineTextAlignment(.center)
+                                    HStack(spacing: 4) {
+                                        Text(event.homeDisplay)
+                                            .font(AppFonts.headline)
+                                            .foregroundStyle(AppColors.textPrimary)
+                                            .multilineTextAlignment(.center)
+                                        if !authService.subscriptionTier.canAccessStats {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 10))
+                                                .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                                        }
+                                    }
                                 }
                             }
                         } else {
@@ -1015,7 +1047,11 @@ struct BetPage: View {
             HStack(spacing: 10) {
                 if supportsStats {
                     Button {
-                        selectedPlayerForStats = line.playerName
+                        if canShowStats {
+                            selectedPlayerForStats = line.playerName
+                        } else {
+                            showPaywallForStats = true
+                        }
                     } label: {
                         HStack(spacing: 10) {
                             playerHeadshot(name: line.playerName)
@@ -1361,6 +1397,7 @@ struct BetPage: View {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .h2h)
             .environment(previewDataService)
+            .environment(AuthService())
     }
 }
 
@@ -1368,6 +1405,7 @@ struct BetPage: View {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .spreads)
             .environment(previewDataService)
+            .environment(AuthService())
     }
 }
 
@@ -1375,6 +1413,7 @@ struct BetPage: View {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .totals)
             .environment(previewDataService)
+            .environment(AuthService())
     }
 }
 
@@ -1382,5 +1421,6 @@ struct BetPage: View {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .playerProps)
             .environment(previewDataService)
+            .environment(AuthService())
     }
 }
