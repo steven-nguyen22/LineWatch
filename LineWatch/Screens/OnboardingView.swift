@@ -44,6 +44,7 @@ struct OnboardingView: View {
 
                 // Pages
                 TabView(selection: $currentPage) {
+                    // 1. Welcome
                     OnboardingPage(
                         systemImage: "sportscourt.fill",
                         title: "Welcome to LineWatch",
@@ -51,42 +52,57 @@ struct OnboardingView: View {
                     )
                     .tag(0)
 
+                    // 2. ML / Spreads / Totals
                     OnboardingPage(
                         systemImage: "chart.bar.fill",
                         title: "Moneyline, Spreads & Totals",
                         description: "View side-by-side odds from every sportsbook. Green highlights show you the best available line."
-                    )
+                    ) {
+                        MockOddsCard()
+                    }
                     .tag(1)
 
+                    // 3. Player Props
                     OnboardingPage(
                         systemImage: "person.fill",
                         title: "Player Props",
                         description: "Dive into individual player betting markets — points, rebounds, assists, strikeouts and more.",
                         tierBadge: .pro
-                    )
+                    ) {
+                        MockPlayerPropCard()
+                    }
                     .tag(2)
 
+                    // 4. Best EV
                     OnboardingPage(
                         systemImage: "bolt.fill",
                         title: "Best EV Bets",
                         description: "Instantly find the bets with the highest expected value across all sports and markets.",
                         tierBadge: .hallOfFame
-                    )
+                    ) {
+                        MockBestEVCard()
+                    }
                     .tag(3)
 
+                    // 5. Team & Player Stats
                     OnboardingPage(
                         systemImage: "chart.line.uptrend.xyaxis",
                         title: "Team & Player Stats",
                         description: "Tap any team or player name to see their season stats — records, averages, and trends.",
                         tierBadge: .hallOfFame
-                    )
+                    ) {
+                        MockStatsCard()
+                    }
                     .tag(4)
 
+                    // 6. Bet Simulator
                     OnboardingPage(
                         systemImage: "hand.tap.fill",
                         title: "Bet Simulator & Place Bets",
                         description: "Tap any odds to simulate your payout, then go directly to the sportsbook to place your bet."
-                    )
+                    ) {
+                        MockBetSimulator()
+                    }
                     .tag(5)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
