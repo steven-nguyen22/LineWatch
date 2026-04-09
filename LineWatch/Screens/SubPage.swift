@@ -35,23 +35,46 @@ struct SubPage: View {
                     .padding(.top, 12)
                     .padding(.bottom, 16)
                 } else if sport.availableMarkets.count > 1 {
-                    Picker("Market", selection: Binding(
-                        get: { selectedMarket },
-                        set: { newValue in
-                            if newValue == .playerProps && !authService.subscriptionTier.canAccessPlayerProps {
-                                showPaywallForProps = true
-                            } else {
-                                selectedMarket = newValue
-                            }
-                        }
-                    )) {
+                    // Custom segmented control — allows SF Symbol lock icon inline with text
+                    HStack(spacing: 0) {
                         ForEach(sport.availableMarkets) { market in
+                            let isSelected = selectedMarket == market
                             let locked = market == .playerProps && !authService.subscriptionTier.canAccessPlayerProps
-                            Text(locked ? "\(market.shortDisplayName) \u{1F512}" : market.shortDisplayName)
-                                .tag(market)
+
+                            Button {
+                                if locked {
+                                    showPaywallForProps = true
+                                } else {
+                                    selectedMarket = market
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(market.displayName)
+                                        .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.75)
+                                    if locked {
+                                        Image(systemName: "lock.fill")
+                                            .font(.system(size: 10))
+                                    }
+                                }
+                                .foregroundStyle(isSelected ? AppColors.textPrimary : AppColors.textSecondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 7)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 7)
+                                        .fill(isSelected ? AppColors.backgroundCard : Color.clear)
+                                        .shadow(color: isSelected ? AppColors.cardShadow : Color.clear, radius: 2, x: 0, y: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
-                    .pickerStyle(.segmented)
+                    .padding(3)
+                    .background(
+                        RoundedRectangle(cornerRadius: 9)
+                            .fill(Color(UIColor.systemGray5))
+                    )
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
                     .padding(.bottom, 16)

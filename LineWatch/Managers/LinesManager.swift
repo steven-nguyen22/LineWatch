@@ -167,17 +167,6 @@ enum MarketType: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
-    /// Shorter label for compact UI (e.g., segmented pickers)
-    var shortDisplayName: String {
-        switch self {
-        case .h2h: return "ML"
-        case .spreads: return "Spreads"
-        case .totals: return "Totals"
-        case .outrights: return "Outrights"
-        case .playerProps: return "Props"
-        }
-    }
-
     /// Standard markets available for team sports (excludes outrights)
     static var standardMarkets: [MarketType] {
         [.h2h, .spreads, .totals]
