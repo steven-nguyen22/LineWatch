@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var isLoading = true
     @State private var dataService = OddsDataService()
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(AuthService.self) private var authService
 
     var body: some View {
@@ -18,6 +19,13 @@ struct ContentView: View {
                 LoadingScreen {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         isLoading = false
+                    }
+                }
+                .transition(.opacity)
+            } else if !hasSeenOnboarding {
+                OnboardingView {
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        hasSeenOnboarding = true
                     }
                 }
                 .transition(.opacity)
@@ -49,6 +57,7 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.4), value: isLoading)
+        .animation(.easeInOut(duration: 0.4), value: hasSeenOnboarding)
         .animation(.easeInOut(duration: 0.4), value: authService.isAuthenticated)
         .onAppear {
             dataService.loadLocalData()
