@@ -49,7 +49,7 @@ struct SubPage: View {
                                 }
                             } label: {
                                 HStack(spacing: 4) {
-                                    Text(market.displayName)
+                                    Text(market == .h2h ? "ML" : market.displayName)
                                         .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
                                         .lineLimit(1)
                                         .minimumScaleFactor(0.75)
