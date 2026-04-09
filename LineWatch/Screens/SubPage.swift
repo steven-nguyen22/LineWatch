@@ -52,15 +52,16 @@ struct SubPage: View {
                                     Text(market == .h2h ? "ML" : market.displayName)
                                         .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
                                         .lineLimit(1)
-                                        .minimumScaleFactor(0.75)
                                     if locked {
                                         Image(systemName: "lock.fill")
                                             .font(.system(size: 10))
                                     }
                                 }
                                 .foregroundStyle(isSelected ? AppColors.textPrimary : AppColors.textSecondary)
-                                .frame(maxWidth: .infinity)
                                 .padding(.vertical, 7)
+                                .padding(.horizontal, 6)
+                                // Player Props gets all remaining space; other segments cap at 80pt
+                                .frame(maxWidth: market == .playerProps ? .infinity : 80)
                                 .background(
                                     RoundedRectangle(cornerRadius: 7)
                                         .fill(isSelected ? AppColors.backgroundCard : Color.clear)
