@@ -47,6 +47,7 @@ struct OnboardingView: View {
                     // 1. Welcome
                     OnboardingPage(
                         systemImage: "sportscourt.fill",
+                        appImage: "AppLogo",
                         title: "Welcome to LineWatch",
                         description: "Compare odds across all major sportsbooks to find the best lines for every game."
                     )

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct OnboardingPage<Mockup: View>: View {
     let systemImage: String
+    var appImage: String? = nil
     let title: String
     let description: String
     var tierBadge: SubscriptionTier? = nil
@@ -18,19 +19,30 @@ struct OnboardingPage<Mockup: View>: View {
         VStack(spacing: 14) {
             Spacer()
 
-            // Icon (smaller now to make room for mockup)
+            // Icon
             ZStack {
                 Circle()
                     .fill(AppColors.primaryGreen.opacity(0.12))
                     .frame(width: 64, height: 64)
 
-                Image(systemName: systemImage)
-                    .font(.system(size: 28))
-                    .foregroundStyle(AppColors.primaryGreen)
+                if let appImage = appImage {
+                    Image(appImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 44, height: 44)
+                        .clipShape(Circle())
+                } else {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 28))
+                        .foregroundStyle(AppColors.primaryGreen)
+                }
             }
 
-            // Mini mockup preview
-            mockup()
+            // Title
+            Text(title)
+                .font(AppFonts.largeTitle)
+                .foregroundStyle(AppColors.textPrimary)
+                .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
             // Tier badge (if applicable)
@@ -46,11 +58,8 @@ struct OnboardingPage<Mockup: View>: View {
                     )
             }
 
-            // Title
-            Text(title)
-                .font(AppFonts.largeTitle)
-                .foregroundStyle(AppColors.textPrimary)
-                .multilineTextAlignment(.center)
+            // Mini mockup preview
+            mockup()
                 .padding(.horizontal, 32)
 
             // Description
@@ -68,8 +77,9 @@ struct OnboardingPage<Mockup: View>: View {
 
 // Convenience init for pages without a mockup
 extension OnboardingPage where Mockup == EmptyView {
-    init(systemImage: String, title: String, description: String, tierBadge: SubscriptionTier? = nil) {
+    init(systemImage: String, appImage: String? = nil, title: String, description: String, tierBadge: SubscriptionTier? = nil) {
         self.systemImage = systemImage
+        self.appImage = appImage
         self.title = title
         self.description = description
         self.tierBadge = tierBadge
@@ -83,9 +93,21 @@ extension OnboardingPage where Mockup == EmptyView {
 struct MockOddsCard: View {
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text("Lakers @ Thunder")
+            // Header with team logos
+            HStack(spacing: 4) {
+                Image(systemName: "basketball.fill")
+                    .font(.system(size: 10))
+                    .foregroundStyle(Color.purple.opacity(0.7))
+                Text("Lakers")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(AppColors.textPrimary)
+                Text("@")
+                    .font(.system(size: 9))
+                    .foregroundStyle(AppColors.textSecondary)
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 10))
+                    .foregroundStyle(Color.blue.opacity(0.7))
+                Text("Thunder")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(AppColors.textPrimary)
                 Spacer()
@@ -97,19 +119,30 @@ struct MockOddsCard: View {
             .padding(.vertical, 6)
             .background(AppColors.backgroundPrimary.opacity(0.5))
 
-            // Sportsbook rows
-            mockOddsRow("DraftKings", away: "+265", home: "-330", bestAway: true)
+            // Sportsbook rows — green = best, red = worst
+            mockOddsRow("DraftKings", away: "+265", home: "-330", awayHighlight: .best, homeHighlight: .worst)
             Divider().foregroundStyle(AppColors.divider)
-            mockOddsRow("FanDuel", away: "+250", home: "-310", bestHome: true)
+            mockOddsRow("FanDuel", away: "+250", home: "-310", homeHighlight: .best)
             Divider().foregroundStyle(AppColors.divider)
-            mockOddsRow("BetMGM", away: "+240", home: "-320")
+            mockOddsRow("BetMGM", away: "+240", home: "-320", awayHighlight: .worst)
         }
         .background(AppColors.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .shadow(color: AppColors.cardShadow, radius: 4, x: 0, y: 2)
     }
 
-    private func mockOddsRow(_ book: String, away: String, home: String, bestAway: Bool = false, bestHome: Bool = false) -> some View {
+    private enum OddsHighlight {
+        case best, worst, none
+        var color: Color {
+            switch self {
+            case .best: return AppColors.bestOdds
+            case .worst: return AppColors.worstOdds
+            case .none: return Color.clear
+            }
+        }
+    }
+
+    private func mockOddsRow(_ book: String, away: String, home: String, awayHighlight: OddsHighlight = .none, homeHighlight: OddsHighlight = .none) -> some View {
         HStack {
             Text(book)
                 .font(.system(size: 10, weight: .medium))
@@ -121,14 +154,14 @@ struct MockOddsCard: View {
                 .foregroundStyle(AppColors.primaryGreen)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
-                .background(bestAway ? AppColors.bestOdds : Color.clear)
+                .background(awayHighlight.color)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
             Text(home)
                 .font(.system(size: 11, weight: .semibold, design: .monospaced))
                 .foregroundStyle(AppColors.primaryGreen)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
-                .background(bestHome ? AppColors.bestOdds : Color.clear)
+                .background(homeHighlight.color)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
         }
         .padding(.horizontal, 10)
@@ -140,11 +173,16 @@ struct MockOddsCard: View {
 struct MockPlayerPropCard: View {
     var body: some View {
         VStack(spacing: 0) {
-            // Player header
+            // Player header with headshot
             HStack(spacing: 8) {
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 28))
-                    .foregroundStyle(AppColors.textSecondary.opacity(0.3))
+                ZStack {
+                    Circle()
+                        .fill(AppColors.primaryGreen.opacity(0.12))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 34))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.4))
+                }
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text("LeBron James")
@@ -167,114 +205,178 @@ struct MockPlayerPropCard: View {
 
             Divider().foregroundStyle(AppColors.divider)
 
-            // Odds row
-            HStack {
-                Text("DraftKings")
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(AppColors.textPrimary)
-                Spacer()
-                HStack(spacing: 12) {
-                    VStack(spacing: 1) {
-                        Text("Over")
-                            .font(.system(size: 8))
-                            .foregroundStyle(AppColors.textSecondary)
-                        Text("-110")
-                            .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                            .foregroundStyle(AppColors.primaryGreen)
-                    }
-                    VStack(spacing: 1) {
-                        Text("Under")
-                            .font(.system(size: 8))
-                            .foregroundStyle(AppColors.textSecondary)
-                        Text("-115")
-                            .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                            .foregroundStyle(AppColors.primaryGreen)
-                    }
-                }
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            // Sportsbook rows with green/red highlights
+            mockPropRow("DraftKings", over: "-110", under: "-115")
+            Divider().foregroundStyle(AppColors.divider)
+            mockPropRow("FanDuel", over: "-105", under: "-120", overHighlight: true, underWorst: true)
+            Divider().foregroundStyle(AppColors.divider)
+            mockPropRow("BetMGM", over: "-115", under: "-108", underHighlight: true, overWorst: true)
         }
         .background(AppColors.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .shadow(color: AppColors.cardShadow, radius: 4, x: 0, y: 2)
+    }
+
+    private func mockPropRow(_ book: String, over: String, under: String, overHighlight: Bool = false, underHighlight: Bool = false, overWorst: Bool = false, underWorst: Bool = false) -> some View {
+        HStack {
+            Text(book)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(AppColors.textPrimary)
+            Spacer()
+            HStack(spacing: 12) {
+                VStack(spacing: 1) {
+                    Text("Over")
+                        .font(.system(size: 8))
+                        .foregroundStyle(AppColors.textSecondary)
+                    Text(over)
+                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(AppColors.primaryGreen)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(overHighlight ? AppColors.bestOdds : overWorst ? AppColors.worstOdds : Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+                VStack(spacing: 1) {
+                    Text("Under")
+                        .font(.system(size: 8))
+                        .foregroundStyle(AppColors.textSecondary)
+                    Text(under)
+                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                        .foregroundStyle(AppColors.primaryGreen)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(underHighlight ? AppColors.bestOdds : underWorst ? AppColors.worstOdds : Color.clear)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
     }
 }
 
 /// Mock Best EV card (for Best EV page)
 struct MockBestEVCard: View {
     var body: some View {
-        HStack(spacing: 10) {
-            // Green accent
-            RoundedRectangle(cornerRadius: 2)
-                .fill(AppColors.primaryGreen)
-                .frame(width: 4, height: 50)
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                // Green accent
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(AppColors.primaryGreen)
+                    .frame(width: 4, height: 50)
 
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 4) {
-                    Image(systemName: "bolt.fill")
-                        .font(.system(size: 9))
-                        .foregroundStyle(AppColors.primaryGreen)
-                    Text("Best EV")
-                        .font(.system(size: 9, weight: .bold))
-                        .foregroundStyle(AppColors.primaryGreen)
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "bolt.fill")
+                            .font(.system(size: 9))
+                            .foregroundStyle(AppColors.primaryGreen)
+                        Text("Best EV")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(AppColors.primaryGreen)
+                    }
+                    Text("Celtics @ Knicks")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AppColors.textPrimary)
+                    Text("Knicks ML  +145 on FanDuel")
+                        .font(.system(size: 10))
+                        .foregroundStyle(AppColors.textSecondary)
                 }
-                Text("Celtics @ Knicks")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(AppColors.textPrimary)
-                Text("Knicks ML  +145 on FanDuel")
+
+                Spacer()
+
+                VStack(spacing: 2) {
+                    Text("+4.2%")
+                        .font(.system(size: 14, weight: .bold, design: .monospaced))
+                        .foregroundStyle(AppColors.primaryGreen)
+                    Text("EV")
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+
+            // EV breakdown row
+            Divider().foregroundStyle(AppColors.divider).padding(.horizontal, 10)
+
+            HStack(spacing: 0) {
+                Image(systemName: "chart.bar.fill")
+                    .font(.system(size: 9))
+                    .foregroundStyle(AppColors.textSecondary)
+                    .padding(.trailing, 4)
+
+                Text("6 books avg: ")
                     .font(.system(size: 10))
                     .foregroundStyle(AppColors.textSecondary)
-            }
 
-            Spacer()
+                Text("+110")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(AppColors.textPrimary)
 
-            VStack(spacing: 2) {
-                Text("+4.2%")
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
-                    .foregroundStyle(AppColors.primaryGreen)
-                Text("EV")
-                    .font(.system(size: 9, weight: .medium))
+                Text(" · FanDuel: ")
+                    .font(.system(size: 10))
                     .foregroundStyle(AppColors.textSecondary)
+
+                Text("+145")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(AppColors.primaryGreen)
+
+                Text(" — 4.2% edge")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(AppColors.primaryGreen)
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
         .background(AppColors.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .shadow(color: AppColors.cardShadow, radius: 4, x: 0, y: 2)
     }
 }
 
-/// Mock stats modal card (for Team & Player Stats page)
+/// Mock player stats card (for Team & Player Stats page)
 struct MockStatsCard: View {
     var body: some View {
         VStack(spacing: 8) {
-            // Team header
-            HStack(spacing: 8) {
-                Image(systemName: "basketball.fill")
-                    .font(.system(size: 22))
-                    .foregroundStyle(AppColors.primaryGreen)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Boston Celtics")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundStyle(AppColors.textPrimary)
-                    Text("2025-26 Season")
-                        .font(.system(size: 9))
-                        .foregroundStyle(AppColors.textSecondary)
+            // Player header with headshot
+            VStack(spacing: 6) {
+                ZStack {
+                    Circle()
+                        .fill(AppColors.primaryGreen.opacity(0.12))
+                        .frame(width: 48, height: 48)
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 44))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.4))
                 }
-                Spacer()
+
+                Text("Devin Booker")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Text("Phoenix Suns")
+                    .font(.system(size: 9))
+                    .foregroundStyle(AppColors.textSecondary)
+
+                Text("Season Averages")
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(AppColors.primaryGreen)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule()
+                            .fill(AppColors.primaryGreen.opacity(0.12))
+                    )
             }
-            .padding(.horizontal, 10)
-            .padding(.top, 8)
+            .padding(.top, 10)
 
             Divider().foregroundStyle(AppColors.divider).padding(.horizontal, 10)
 
             // Stat rows
             VStack(spacing: 4) {
-                mockStatRow("Record", value: "52-18")
-                mockStatRow("Home", value: "30-6")
-                mockStatRow("PPG", value: "118.2")
+                mockStatRow("PPG", value: "27.1")
+                mockStatRow("RPG", value: "4.5")
+                mockStatRow("APG", value: "6.8")
+                mockStatRow("FG%", value: "49.2")
             }
             .padding(.horizontal, 10)
             .padding(.bottom, 8)
