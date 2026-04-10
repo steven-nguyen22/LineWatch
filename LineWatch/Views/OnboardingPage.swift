@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct OnboardingPage<Mockup: View>: View {
     let systemImage: String
@@ -20,18 +21,18 @@ struct OnboardingPage<Mockup: View>: View {
             Spacer()
 
             // Icon
-            ZStack {
-                Circle()
-                    .fill(AppColors.primaryGreen.opacity(0.12))
+            if let appImage = appImage {
+                Image(appImage)
+                    .resizable()
+                    .scaledToFill()
                     .frame(width: 64, height: 64)
+                    .clipShape(Circle())
+            } else {
+                ZStack {
+                    Circle()
+                        .fill(AppColors.primaryGreen.opacity(0.12))
+                        .frame(width: 64, height: 64)
 
-                if let appImage = appImage {
-                    Image(appImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 44, height: 44)
-                        .clipShape(Circle())
-                } else {
                     Image(systemName: systemImage)
                         .font(.system(size: 28))
                         .foregroundStyle(AppColors.primaryGreen)
@@ -95,18 +96,20 @@ struct MockOddsCard: View {
         VStack(spacing: 0) {
             // Header with team logos
             HStack(spacing: 4) {
-                Image(systemName: "basketball.fill")
-                    .font(.system(size: 10))
-                    .foregroundStyle(Color.purple.opacity(0.7))
+                LazyImage(url: URL(string: "https://a.espncdn.com/i/teamlogos/nba/500/13.png")) { state in
+                    if let image = state.image { image.resizable().scaledToFit() }
+                }
+                .frame(width: 16, height: 16)
                 Text("Lakers")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(AppColors.textPrimary)
                 Text("@")
                     .font(.system(size: 9))
                     .foregroundStyle(AppColors.textSecondary)
-                Image(systemName: "bolt.fill")
-                    .font(.system(size: 10))
-                    .foregroundStyle(Color.blue.opacity(0.7))
+                LazyImage(url: URL(string: "https://a.espncdn.com/i/teamlogos/nba/500/25.png")) { state in
+                    if let image = state.image { image.resizable().scaledToFit() }
+                }
+                .frame(width: 16, height: 16)
                 Text("Thunder")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(AppColors.textPrimary)
@@ -151,14 +154,14 @@ struct MockOddsCard: View {
             Spacer()
             Text(away)
                 .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                .foregroundStyle(AppColors.primaryGreen)
+                .foregroundStyle(AppColors.textPrimary)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
                 .background(awayHighlight.color)
                 .clipShape(RoundedRectangle(cornerRadius: 4))
             Text(home)
                 .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                .foregroundStyle(AppColors.primaryGreen)
+                .foregroundStyle(AppColors.textPrimary)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
                 .background(homeHighlight.color)
@@ -179,9 +182,17 @@ struct MockPlayerPropCard: View {
                     Circle()
                         .fill(AppColors.primaryGreen.opacity(0.12))
                         .frame(width: 36, height: 36)
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 34))
-                        .foregroundStyle(AppColors.textSecondary.opacity(0.4))
+                    LazyImage(url: URL(string: "https://a.espncdn.com/i/headshots/nba/players/full/1966.png")) { state in
+                        if let image = state.image {
+                            image.resizable().scaledToFill()
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 34))
+                                .foregroundStyle(AppColors.textSecondary.opacity(0.4))
+                        }
+                    }
+                    .frame(width: 36, height: 36)
+                    .clipShape(Circle())
                 }
 
                 VStack(alignment: .leading, spacing: 1) {
@@ -230,7 +241,7 @@ struct MockPlayerPropCard: View {
                         .foregroundStyle(AppColors.textSecondary)
                     Text(over)
                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(AppColors.primaryGreen)
+                        .foregroundStyle(AppColors.textPrimary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(overHighlight ? AppColors.bestOdds : overWorst ? AppColors.worstOdds : Color.clear)
@@ -242,7 +253,7 @@ struct MockPlayerPropCard: View {
                         .foregroundStyle(AppColors.textSecondary)
                     Text(under)
                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
-                        .foregroundStyle(AppColors.primaryGreen)
+                        .foregroundStyle(AppColors.textPrimary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
                         .background(underHighlight ? AppColors.bestOdds : underWorst ? AppColors.worstOdds : Color.clear)
@@ -344,9 +355,17 @@ struct MockStatsCard: View {
                     Circle()
                         .fill(AppColors.primaryGreen.opacity(0.12))
                         .frame(width: 48, height: 48)
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 44))
-                        .foregroundStyle(AppColors.textSecondary.opacity(0.4))
+                    LazyImage(url: URL(string: "https://a.espncdn.com/i/headshots/nba/players/full/3136193.png")) { state in
+                        if let image = state.image {
+                            image.resizable().scaledToFill()
+                        } else {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 44))
+                                .foregroundStyle(AppColors.textSecondary.opacity(0.4))
+                        }
+                    }
+                    .frame(width: 48, height: 48)
+                    .clipShape(Circle())
                 }
 
                 Text("Devin Booker")
