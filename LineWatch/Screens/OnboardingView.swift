@@ -28,12 +28,16 @@ struct OnboardingView: View {
                         title: "Welcome to LineWatch",
                         description: "Compare odds across all major sportsbooks to find the best lines for every game.",
                         customTitleView: AnyView(
-                            VStack(spacing: 6) {
-                                Text("Welcome to")
+                            HStack(spacing: 0) {
+                                Text("Welcome to ")
                                     .font(AppFonts.largeTitle)
                                     .foregroundStyle(AppColors.textPrimary)
-                                    .multilineTextAlignment(.center)
-                                LineWatchLogo(size: 28)
+                                Text("Line")
+                                    .font(AppFonts.largeTitle)
+                                    .foregroundStyle(.white)
+                                Text("Watch")
+                                    .font(AppFonts.largeTitle)
+                                    .foregroundStyle(AppColors.primaryGreen)
                             }
                         )
                     )
