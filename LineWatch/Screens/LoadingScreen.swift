@@ -27,8 +27,9 @@ struct LoadingScreen: View {
                 // App logo
                 Image("AppLogo")
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: 120, height: 120)
+                    .clipShape(Circle())
 
                 // Logo text: "Line" in white, "Watch" in green
                 HStack(spacing: 0) {
