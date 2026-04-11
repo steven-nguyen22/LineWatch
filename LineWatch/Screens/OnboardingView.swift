@@ -19,29 +19,6 @@ struct OnboardingView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Skip button
-                HStack {
-                    Spacer()
-                    if currentPage < totalPages - 1 {
-                        Button {
-                            onComplete()
-                        } label: {
-                            Text("Skip")
-                                .font(.system(size: 15, weight: .medium))
-                                .foregroundStyle(AppColors.textSecondary)
-                        }
-                        .padding(.trailing, 20)
-                        .padding(.top, 12)
-                    } else {
-                        // Placeholder to keep layout stable on last page
-                        Text(" ")
-                            .font(.system(size: 15))
-                            .padding(.trailing, 20)
-                            .padding(.top, 12)
-                            .opacity(0)
-                    }
-                }
-
                 // Pages
                 TabView(selection: $currentPage) {
                     // 1. Welcome
@@ -142,6 +119,14 @@ struct OnboardingView: View {
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 24)
+
+                    if currentPage == totalPages - 1 {
+                        Text("Start your 7 day Hall of Fame free trial now")
+                            .font(AppFonts.body)
+                            .foregroundStyle(AppColors.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 40)
+                    }
                 }
                 .padding(.bottom, 40)
             }
