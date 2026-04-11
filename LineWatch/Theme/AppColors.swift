@@ -14,13 +14,13 @@ enum AppColors {
     static let lightGreen = Color(red: 0.56, green: 0.83, blue: 0.56)
 
     // Backgrounds
-    static let backgroundPrimary = Color(red: 0.96, green: 0.96, blue: 0.96)
-    static let backgroundCard = Color.white
+    static let backgroundPrimary = Color(red: 0.08, green: 0.09, blue: 0.11)
+    static let backgroundCard = Color(red: 0.14, green: 0.15, blue: 0.18)
     static let backgroundDark = Color(red: 0.12, green: 0.12, blue: 0.14)
 
     // Text
-    static let textPrimary = Color(red: 0.13, green: 0.13, blue: 0.13)
-    static let textSecondary = Color(red: 0.55, green: 0.55, blue: 0.55)
+    static let textPrimary = Color.white
+    static let textSecondary = Color(red: 0.63, green: 0.65, blue: 0.70)
     static let textOnGreen = Color.white
 
     // Odds highlighting
@@ -28,6 +28,6 @@ enum AppColors {
     static let worstOdds = Color(red: 0.85, green: 0.20, blue: 0.20).opacity(0.25)
 
     // Utility
-    static let divider = Color.gray.opacity(0.3)
-    static let cardShadow = Color.black.opacity(0.08)
+    static let divider = Color.white.opacity(0.12)
+    static let cardShadow = Color.black.opacity(0.35)
 }

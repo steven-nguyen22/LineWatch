@@ -20,9 +20,7 @@ struct LandingPage: View {
             VStack(spacing: 24) {
                 // Header
                 VStack(spacing: 6) {
-                    Text("LineWatch")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppColors.darkGreen)
+                    LineWatchLogo(size: 32)
 
                     Text("Compare the best odds")
                         .font(AppFonts.body)
@@ -218,7 +216,7 @@ private struct OffSeasonCard: View {
         .padding(.vertical, 20)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.gray.opacity(0.06))
+                .fill(AppColors.backgroundCard)
         )
     }
 }
