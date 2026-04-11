@@ -21,15 +21,8 @@ struct SignInView: View {
         NavigationStack {
             ZStack {
                 // Background
-                LinearGradient(
-                    colors: [
-                        AppColors.backgroundDark,
-                        Color(red: 0.08, green: 0.14, blue: 0.10)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                AppColors.backgroundPrimary
+                    .ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: 0) {
@@ -42,13 +35,7 @@ struct SignInView: View {
                             .frame(width: 100, height: 100)
 
                         // Logo text: "Line" in white, "Watch" in green
-                        HStack(spacing: 0) {
-                            Text("Line")
-                                .foregroundStyle(.white)
-                            Text("Watch")
-                                .foregroundStyle(AppColors.primaryGreen)
-                        }
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
+                        LineWatchLogo(size: 36)
 
                         Text("Sign in to your account")
                             .font(.body)

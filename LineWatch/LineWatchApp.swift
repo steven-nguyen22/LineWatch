@@ -25,6 +25,7 @@ struct LineWatchApp: App {
         WindowGroup {
             ContentView()
                 .environment(authService)
+                .preferredColorScheme(.dark)
                 .onOpenURL { url in
                     GIDSignIn.sharedInstance.handle(url)
                 }
