@@ -121,7 +121,7 @@ struct OnboardingView: View {
                     .padding(.horizontal, 24)
 
                     if currentPage == totalPages - 1 {
-                        Text("Start your 7 day Hall of Fame free trial now")
+                        Text("Start your 7-day Hall of Fame free trial now")
                             .font(AppFonts.body)
                             .foregroundStyle(AppColors.textSecondary)
                             .multilineTextAlignment(.center)
