@@ -14,6 +14,7 @@ struct OnboardingPage<Mockup: View>: View {
     let title: String
     let description: String
     var tierBadge: SubscriptionTier? = nil
+    var customTitleView: AnyView? = nil
     @ViewBuilder var mockup: () -> Mockup
 
     var body: some View {
@@ -25,7 +26,7 @@ struct OnboardingPage<Mockup: View>: View {
                 Image(appImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 64, height: 64)
+                    .frame(width: 100, height: 100)
                     .clipShape(Circle())
             } else {
                 ZStack {
@@ -40,11 +41,15 @@ struct OnboardingPage<Mockup: View>: View {
             }
 
             // Title
-            Text(title)
-                .font(AppFonts.largeTitle)
-                .foregroundStyle(AppColors.textPrimary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+            if let customTitleView = customTitleView {
+                customTitleView
+            } else {
+                Text(title)
+                    .font(AppFonts.largeTitle)
+                    .foregroundStyle(AppColors.textPrimary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 32)
+            }
 
             // Tier badge (if applicable)
             if let tier = tierBadge {
@@ -78,12 +83,13 @@ struct OnboardingPage<Mockup: View>: View {
 
 // Convenience init for pages without a mockup
 extension OnboardingPage where Mockup == EmptyView {
-    init(systemImage: String, appImage: String? = nil, title: String, description: String, tierBadge: SubscriptionTier? = nil) {
+    init(systemImage: String, appImage: String? = nil, title: String, description: String, tierBadge: SubscriptionTier? = nil, customTitleView: AnyView? = nil) {
         self.systemImage = systemImage
         self.appImage = appImage
         self.title = title
         self.description = description
         self.tierBadge = tierBadge
+        self.customTitleView = customTitleView
         self.mockup = { EmptyView() }
     }
 }

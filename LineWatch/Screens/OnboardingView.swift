@@ -26,7 +26,16 @@ struct OnboardingView: View {
                         systemImage: "sportscourt.fill",
                         appImage: "AppLogo",
                         title: "Welcome to LineWatch",
-                        description: "Compare odds across all major sportsbooks to find the best lines for every game."
+                        description: "Compare odds across all major sportsbooks to find the best lines for every game.",
+                        customTitleView: AnyView(
+                            VStack(spacing: 6) {
+                                Text("Welcome to")
+                                    .font(AppFonts.largeTitle)
+                                    .foregroundStyle(AppColors.textPrimary)
+                                    .multilineTextAlignment(.center)
+                                LineWatchLogo(size: 28)
+                            }
+                        )
                     )
                     .tag(0)
 
