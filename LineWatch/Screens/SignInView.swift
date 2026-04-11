@@ -189,6 +189,9 @@ struct SignInView: View {
 
             Task {
                 await authService.signInWithApple(idToken: idToken, nonce: nonce)
+                if authService.isAuthenticated {
+                    await NotificationManager.shared.requestAuthorization()
+                }
             }
 
         case .failure(let error):
@@ -232,6 +235,9 @@ struct SignInView: View {
 
             Task {
                 await authService.signInWithGoogle(idToken: idToken, rawNonce: rawNonce)
+                if authService.isAuthenticated {
+                    await NotificationManager.shared.requestAuthorization()
+                }
             }
         }
     }

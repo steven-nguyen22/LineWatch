@@ -42,7 +42,7 @@ struct ContentView: View {
                             case .eventDetail(let event, let marketType, let prefillSearch):
                                 BetPage(event: event, marketType: marketType, initialGolfSearch: prefillSearch ?? "")
                             case .bestEV:
-                                if authService.subscriptionTier.canAccessBestEV {
+                                if authService.effectiveTier.canAccessBestEV {
                                     BestEVPage()
                                 } else {
                                     PaywallView()
@@ -59,6 +59,14 @@ struct ContentView: View {
         .animation(.easeInOut(duration: 0.4), value: isLoading)
         .animation(.easeInOut(duration: 0.4), value: hasSeenOnboarding)
         .animation(.easeInOut(duration: 0.4), value: authService.isAuthenticated)
+        .fullScreenCover(isPresented: Binding(
+            get: { authService.needsPostTrialPaywall },
+            set: { _ in }
+        )) {
+            NavigationStack {
+                PaywallView(presentationContext: .postTrial)
+            }
+        }
         .onAppear {
             dataService.loadLocalData()
         }
