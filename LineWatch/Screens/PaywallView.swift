@@ -12,6 +12,15 @@ struct PaywallView: View {
     @State private var billingPeriod: BillingPeriod = .monthly
     @State private var selectedTier: SubscriptionTier = .pro
 
+    var presentationContext: PresentationContext = .normal
+
+    enum PresentationContext {
+        /// Shown via navigation push (e.g., from Best EV button or crown icon).
+        case normal
+        /// Shown as a fullScreenCover after the free trial expires.
+        case postTrial
+    }
+
     enum BillingPeriod: String, CaseIterable {
         case monthly = "Monthly"
         case annual = "Annual"
@@ -27,13 +36,18 @@ struct PaywallView: View {
                         .foregroundStyle(AppColors.primaryGreen)
                         .padding(.top, 8)
 
-                    Text("Choose Your Plan")
+                    Text(presentationContext == .postTrial ? "Your Free Trial Has Ended" : "Choose Your Plan")
                         .font(AppFonts.largeTitle)
                         .foregroundStyle(AppColors.textPrimary)
+                        .multilineTextAlignment(.center)
 
-                    Text("Unlock premium features to get an edge")
+                    Text(presentationContext == .postTrial
+                         ? "Pick a plan to keep your perks, or continue with Rookie."
+                         : "Unlock premium features to get an edge")
                         .font(AppFonts.body)
                         .foregroundStyle(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
                 }
                 .padding(.top, 12)
 
@@ -71,7 +85,7 @@ struct PaywallView: View {
                 .padding(.horizontal, 16)
 
                 // CTA button
-                if authService.subscriptionTier == selectedTier {
+                if authService.subscriptionTier == selectedTier && presentationContext != .postTrial {
                     Text("Current Plan")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(AppColors.textSecondary)
@@ -84,7 +98,11 @@ struct PaywallView: View {
                         .padding(.horizontal, 16)
                 } else if selectedTier != .rookie {
                     Button {
-                        // Placeholder — will integrate RevenueCat here
+                        // Placeholder — will integrate RevenueCat here.
+                        // For now, dismiss the post-trial cover so the user isn't stuck.
+                        if presentationContext == .postTrial {
+                            Task { await authService.acknowledgeTrialPaywall() }
+                        }
                     } label: {
                         Text("Coming Soon")
                             .font(.system(size: 16, weight: .semibold))
@@ -95,6 +113,21 @@ struct PaywallView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(AppColors.primaryGreen)
                             )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 16)
+                }
+
+                // Post-trial soft dismiss — "Continue with Rookie"
+                if presentationContext == .postTrial {
+                    Button {
+                        Task { await authService.acknowledgeTrialPaywall() }
+                    } label: {
+                        Text("Continue with Rookie")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(AppColors.textSecondary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 16)

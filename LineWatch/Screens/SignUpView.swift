@@ -85,6 +85,9 @@ struct SignUpView: View {
                         isLoading = true
                         Task {
                             await authService.signUp(email: email, password: password, name: name)
+                            if authService.isAuthenticated {
+                                await NotificationManager.shared.requestAuthorization()
+                            }
                             isLoading = false
                         }
                     } label: {
@@ -216,6 +219,9 @@ struct SignUpView: View {
 
             Task {
                 await authService.signInWithApple(idToken: idToken, nonce: nonce)
+                if authService.isAuthenticated {
+                    await NotificationManager.shared.requestAuthorization()
+                }
             }
 
         case .failure(let error):
@@ -259,6 +265,9 @@ struct SignUpView: View {
 
             Task {
                 await authService.signInWithGoogle(idToken: idToken, rawNonce: rawNonce)
+                if authService.isAuthenticated {
+                    await NotificationManager.shared.requestAuthorization()
+                }
             }
         }
     }

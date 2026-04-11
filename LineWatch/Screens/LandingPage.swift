@@ -29,8 +29,32 @@ struct LandingPage: View {
                 .padding(.top, 20)
                 .padding(.bottom, 8)
 
+                // Trial banner — visible only during an active free trial
+                if authService.isOnTrial, let daysLeft = authService.trialDaysRemaining {
+                    NavigationLink(value: AppRoute.paywall) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 13, weight: .semibold))
+                            Text("Free trial · \(daysLeft) day\(daysLeft == 1 ? "" : "s") left")
+                                .font(.system(size: 13, weight: .semibold))
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 11, weight: .bold))
+                                .opacity(0.7)
+                        }
+                        .foregroundStyle(AppColors.primaryGreen)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(
+                            Capsule()
+                                .fill(AppColors.primaryGreen.opacity(0.12))
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 20)
+                }
+
                 // Best EV section entry
-                NavigationLink(value: authService.subscriptionTier.canAccessBestEV ? AppRoute.bestEV : AppRoute.paywall) {
+                NavigationLink(value: authService.effectiveTier.canAccessBestEV ? AppRoute.bestEV : AppRoute.paywall) {
                     HStack(spacing: 16) {
                         ZStack {
                             Circle()
@@ -48,7 +72,7 @@ struct LandingPage: View {
 
                         Spacer()
 
-                        if !authService.subscriptionTier.canAccessBestEV {
+                        if !authService.effectiveTier.canAccessBestEV {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 14))
                                 .foregroundStyle(AppColors.textSecondary.opacity(0.5))

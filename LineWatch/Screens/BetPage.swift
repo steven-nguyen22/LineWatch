@@ -71,7 +71,7 @@ struct BetPage: View {
 
     /// Whether the current user can access stats (sport supports it + tier allows it)
     private var canShowStats: Bool {
-        supportsStats && authService.subscriptionTier.canAccessStats
+        supportsStats && authService.effectiveTier.canAccessStats
     }
 
     var body: some View {
@@ -274,7 +274,7 @@ struct BetPage: View {
                                             .font(AppFonts.headline)
                                             .foregroundStyle(AppColors.textPrimary)
                                             .multilineTextAlignment(.center)
-                                        if !authService.subscriptionTier.canAccessStats {
+                                        if !authService.effectiveTier.canAccessStats {
                                             Image(systemName: "lock.fill")
                                                 .font(.system(size: 10))
                                                 .foregroundStyle(AppColors.textSecondary.opacity(0.5))
@@ -313,7 +313,7 @@ struct BetPage: View {
                                             .font(AppFonts.headline)
                                             .foregroundStyle(AppColors.textPrimary)
                                             .multilineTextAlignment(.center)
-                                        if !authService.subscriptionTier.canAccessStats {
+                                        if !authService.effectiveTier.canAccessStats {
                                             Image(systemName: "lock.fill")
                                                 .font(.system(size: 10))
                                                 .foregroundStyle(AppColors.textSecondary.opacity(0.5))

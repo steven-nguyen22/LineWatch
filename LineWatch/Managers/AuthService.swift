@@ -16,6 +16,8 @@ class AuthService {
     var isAuthenticated = false
     var authError: String?
     var subscriptionTier: SubscriptionTier = .rookie
+    var trialEndsAt: Date? = nil
+    var trialAcknowledged: Bool = false
 
     private let supabase: SupabaseClient
 
@@ -24,6 +26,49 @@ class AuthService {
             supabaseURL: URL(string: "https://voxokcdwctpvzbqigklw.supabase.co")!,
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZveG9rY2R3Y3RwdnpicWlna2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTg4ODYsImV4cCI6MjA5MDIzNDg4Nn0.lGh1rKpR8kt3MPJnSe4VXdR_b1mmOT9x6xLvFmhiPnw"
         )
+
+        // Hydrate trial state from cache for instant UI on launch
+        if let cachedTier = UserDefaults.standard.string(forKey: "cached_subscription_tier"),
+           let tier = SubscriptionTier(rawValue: cachedTier) {
+            subscriptionTier = tier
+        }
+        let cachedEnds = UserDefaults.standard.double(forKey: "cached_trial_ends_at")
+        if cachedEnds > 0 {
+            trialEndsAt = Date(timeIntervalSince1970: cachedEnds)
+        }
+        trialAcknowledged = UserDefaults.standard.bool(forKey: "cached_trial_acknowledged")
+    }
+
+    // MARK: - Trial / Effective Tier
+
+    /// True while the user is inside an active 7-day trial and hasn't paid for an upgrade.
+    var isOnTrial: Bool {
+        guard let endsAt = trialEndsAt, subscriptionTier == .rookie else { return false }
+        return endsAt > Date()
+    }
+
+    /// True once the trial end date has passed (regardless of acknowledgement).
+    var trialExpired: Bool {
+        guard let endsAt = trialEndsAt else { return false }
+        return endsAt <= Date()
+    }
+
+    /// True when we should show the post-trial paywall as a fullScreenCover —
+    /// trial is over, user hasn't acknowledged it yet, and they're still on rookie.
+    var needsPostTrialPaywall: Bool {
+        trialExpired && !trialAcknowledged && subscriptionTier == .rookie
+    }
+
+    /// The tier the app should treat the user as. During an active trial this
+    /// returns `.hallOfFame` even though the DB row says `rookie`.
+    var effectiveTier: SubscriptionTier {
+        isOnTrial ? .hallOfFame : subscriptionTier
+    }
+
+    /// Whole days remaining in the active trial, or nil if not on trial.
+    var trialDaysRemaining: Int? {
+        guard let endsAt = trialEndsAt, isOnTrial else { return nil }
+        return Calendar.current.dateComponents([.day], from: Date(), to: endsAt).day
     }
 
     // MARK: - Session Management
@@ -36,7 +81,7 @@ class AuthService {
                 isAuthenticated = (session.user.id != nil)
             }
             if session.user.id != nil {
-                await fetchSubscriptionTier()
+                await fetchProfile()
             }
         } catch {
             await MainActor.run {
@@ -58,7 +103,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
-            await fetchSubscriptionTier()
+            await fetchProfile()
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -78,7 +123,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
-            await fetchSubscriptionTier()
+            await fetchProfile()
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -101,7 +146,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
-            await fetchSubscriptionTier()
+            await fetchProfile()
         } catch {
             await MainActor.run {
                 authError = "Apple sign-in failed: \(error.localizedDescription)"
@@ -124,7 +169,7 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
-            await fetchSubscriptionTier()
+            await fetchProfile()
         } catch {
             await MainActor.run {
                 authError = "Google sign-in failed: \(error.localizedDescription)"
@@ -138,9 +183,14 @@ class AuthService {
         do {
             try await supabase.auth.signOut()
             UserDefaults.standard.removeObject(forKey: "cached_subscription_tier")
+            UserDefaults.standard.removeObject(forKey: "cached_trial_ends_at")
+            UserDefaults.standard.removeObject(forKey: "cached_trial_acknowledged")
+            NotificationManager.shared.cancelTrialReminders()
             await MainActor.run {
                 isAuthenticated = false
                 subscriptionTier = .rookie
+                trialEndsAt = nil
+                trialAcknowledged = false
             }
         } catch {
             await MainActor.run {
@@ -149,10 +199,11 @@ class AuthService {
         }
     }
 
-    // MARK: - Subscription Tier
+    // MARK: - Profile / Subscription
 
-    /// Fetch the user's subscription tier from the Supabase profiles table
-    func fetchSubscriptionTier() async {
+    /// Fetch the user's profile (tier + trial state) from Supabase.
+    /// Caches results in UserDefaults and schedules/cancels trial notifications.
+    func fetchProfile() async {
         // Try cached value first for instant UI
         if let cached = UserDefaults.standard.string(forKey: "cached_subscription_tier"),
            let tier = SubscriptionTier(rawValue: cached) {
@@ -167,28 +218,71 @@ class AuthService {
 
             struct ProfileRow: Decodable {
                 let subscriptionTier: String
+                let trialEndsAt: Date?
+                let trialAcknowledged: Bool
 
                 enum CodingKeys: String, CodingKey {
                     case subscriptionTier = "subscription_tier"
+                    case trialEndsAt = "trial_ends_at"
+                    case trialAcknowledged = "trial_acknowledged"
                 }
             }
 
             let row: ProfileRow = try await supabase
                 .from("profiles")
-                .select("subscription_tier")
+                .select("subscription_tier, trial_ends_at, trial_acknowledged")
                 .eq("id", value: userId)
                 .single()
                 .execute()
                 .value
 
-            if let tier = SubscriptionTier(rawValue: row.subscriptionTier) {
-                UserDefaults.standard.set(tier.rawValue, forKey: "cached_subscription_tier")
-                await MainActor.run {
-                    subscriptionTier = tier
-                }
+            let tier = SubscriptionTier(rawValue: row.subscriptionTier) ?? .rookie
+            UserDefaults.standard.set(tier.rawValue, forKey: "cached_subscription_tier")
+
+            if let endsAt = row.trialEndsAt {
+                UserDefaults.standard.set(endsAt.timeIntervalSince1970, forKey: "cached_trial_ends_at")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "cached_trial_ends_at")
+            }
+            UserDefaults.standard.set(row.trialAcknowledged, forKey: "cached_trial_acknowledged")
+
+            await MainActor.run {
+                subscriptionTier = tier
+                trialEndsAt = row.trialEndsAt
+                trialAcknowledged = row.trialAcknowledged
+            }
+
+            // Schedule or cancel local trial reminders based on current state
+            if isOnTrial, let endsAt = trialEndsAt {
+                NotificationManager.shared.scheduleTrialReminders(endsAt: endsAt)
+            } else {
+                NotificationManager.shared.cancelTrialReminders()
             }
         } catch {
             // Silent failure — keep cached or default tier
+        }
+    }
+
+    /// Mark the post-trial paywall as acknowledged so it doesn't appear again.
+    /// Called when the user taps "Continue with Rookie" or selects a paid tier.
+    func acknowledgeTrialPaywall() async {
+        do {
+            let session = try await supabase.auth.session
+            try await supabase
+                .from("profiles")
+                .update(["trial_acknowledged": true])
+                .eq("id", value: session.user.id)
+                .execute()
+            UserDefaults.standard.set(true, forKey: "cached_trial_acknowledged")
+            await MainActor.run {
+                trialAcknowledged = true
+            }
+        } catch {
+            // Silent fail — flip local state anyway so the user isn't stuck
+            UserDefaults.standard.set(true, forKey: "cached_trial_acknowledged")
+            await MainActor.run {
+                trialAcknowledged = true
+            }
         }
     }
 

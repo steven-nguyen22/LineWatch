@@ -39,7 +39,7 @@ struct SubPage: View {
                     HStack(spacing: 0) {
                         ForEach(sport.availableMarkets) { market in
                             let isSelected = selectedMarket == market
-                            let locked = market == .playerProps && !authService.subscriptionTier.canAccessPlayerProps
+                            let locked = market == .playerProps && !authService.effectiveTier.canAccessPlayerProps
 
                             Button {
                                 if locked {
