@@ -7,6 +7,7 @@
 
 import SwiftUI
 import GoogleSignIn
+import RevenueCat
 
 @main
 struct LineWatchApp: App {
@@ -19,6 +20,10 @@ struct LineWatchApp: App {
             clientID: "1090657770332-0avaak35vossmkpg8hqjkro33g0kjr6q.apps.googleusercontent.com",
             serverClientID: "1090657770332-8gdieq700jrlfgb6j5g8koc068hnncmd.apps.googleusercontent.com"
         )
+
+        // Configure RevenueCat for in-app subscriptions
+        Purchases.logLevel = .error
+        Purchases.configure(withAPIKey: "appl_rsJDPvslYwkdlYedNCksmBEaYUU")
     }
 
     var body: some Scene {

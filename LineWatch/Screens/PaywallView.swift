@@ -9,8 +9,11 @@ import SwiftUI
 
 struct PaywallView: View {
     @Environment(AuthService.self) private var authService
+    @Environment(PurchaseManager.self) private var purchaseManager
     @State private var billingPeriod: BillingPeriod = .monthly
     @State private var selectedTier: SubscriptionTier = .pro
+    @State private var errorMessage: String?
+    @State private var showRestoreNoEntitlements = false
 
     var presentationContext: PresentationContext = .normal
 
@@ -19,11 +22,6 @@ struct PaywallView: View {
         case normal
         /// Shown as a fullScreenCover after the free trial expires.
         case postTrial
-    }
-
-    enum BillingPeriod: String, CaseIterable {
-        case monthly = "Monthly"
-        case annual = "Annual"
     }
 
     var body: some View {
@@ -54,7 +52,7 @@ struct PaywallView: View {
                 // Billing toggle
                 Picker("Billing", selection: $billingPeriod) {
                     ForEach(BillingPeriod.allCases, id: \.self) { period in
-                        Text(period.rawValue).tag(period)
+                        Text(period.displayName).tag(period)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -98,23 +96,28 @@ struct PaywallView: View {
                         .padding(.horizontal, 16)
                 } else if selectedTier != .rookie {
                     Button {
-                        // Placeholder — will integrate RevenueCat here.
-                        // For now, dismiss the post-trial cover so the user isn't stuck.
-                        if presentationContext == .postTrial {
-                            Task { await authService.acknowledgeTrialPaywall() }
-                        }
+                        Task { await buy() }
                     } label: {
-                        Text("Coming Soon")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(AppColors.primaryGreen)
-                            )
+                        HStack(spacing: 8) {
+                            if purchaseManager.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(.circular)
+                                    .tint(.white)
+                            } else {
+                                Text("Continue with \(selectedTier.displayName)")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(AppColors.primaryGreen)
+                        )
                     }
                     .buttonStyle(.plain)
+                    .disabled(purchaseManager.isLoading)
                     .padding(.horizontal, 16)
                 }
 
@@ -133,20 +136,79 @@ struct PaywallView: View {
                     .padding(.horizontal, 16)
                 }
 
-                // Footer note
-                Text("Payment integration coming soon.\nPrices shown are planned pricing.")
-                    .font(.system(size: 12))
-                    .foregroundStyle(AppColors.textSecondary.opacity(0.6))
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 4)
-                    .padding(.bottom, 20)
+                // Restore purchases
+                Button {
+                    Task { await restore() }
+                } label: {
+                    Text("Restore Purchases")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(AppColors.textSecondary)
+                        .padding(.vertical, 8)
+                }
+                .buttonStyle(.plain)
+                .disabled(purchaseManager.isLoading)
+                .padding(.bottom, 20)
             }
         }
         .background(AppColors.backgroundPrimary)
         .navigationTitle("Upgrade")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Purchase Error", isPresented: Binding(
+            get: { errorMessage != nil },
+            set: { if !$0 { errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { errorMessage = nil }
+        } message: {
+            Text(errorMessage ?? "")
+        }
+        .alert("No Purchases to Restore", isPresented: $showRestoreNoEntitlements) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("We couldn't find any active subscriptions tied to your Apple ID.")
+        }
         .onAppear {
             selectedTier = authService.subscriptionTier == .rookie ? .pro : authService.subscriptionTier
+        }
+        .task {
+            if purchaseManager.currentOffering == nil {
+                await purchaseManager.loadOffering()
+            }
+        }
+    }
+
+    // MARK: - Purchase / Restore
+
+    private func buy() async {
+        guard let package = purchaseManager.package(for: selectedTier, billing: billingPeriod) else {
+            errorMessage = "Subscription products aren't available right now. Please try again later."
+            return
+        }
+        do {
+            let tier = try await purchaseManager.purchase(package: package)
+            await authService.updateSubscriptionTier(tier)
+            if presentationContext == .postTrial {
+                await authService.acknowledgeTrialPaywall()
+            }
+        } catch PurchaseError.cancelled {
+            // User cancelled — silent
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func restore() async {
+        do {
+            let tier = try await purchaseManager.restorePurchases()
+            if tier == .rookie {
+                showRestoreNoEntitlements = true
+            } else {
+                await authService.updateSubscriptionTier(tier)
+                if presentationContext == .postTrial {
+                    await authService.acknowledgeTrialPaywall()
+                }
+            }
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 
@@ -296,6 +358,15 @@ struct PaywallView: View {
     // MARK: - Helpers
 
     private func priceLabel(for tier: SubscriptionTier) -> String {
+        // Rookie has no RC product — always show "Free"
+        if tier == .rookie {
+            return billingPeriod == .monthly ? tier.monthlyPriceLabel : tier.annualPriceLabel
+        }
+        // Use the live RevenueCat price if the offering has loaded,
+        // otherwise fall back to the hardcoded label.
+        if let livePrice = purchaseManager.localizedPrice(for: tier, billing: billingPeriod) {
+            return billingPeriod == .monthly ? "\(livePrice)/mo" : "\(livePrice)/yr"
+        }
         switch billingPeriod {
         case .monthly: return tier.monthlyPriceLabel
         case .annual: return tier.annualPriceLabel
@@ -307,5 +378,6 @@ struct PaywallView: View {
     NavigationStack {
         PaywallView()
             .environment(AuthService())
+            .environment(PurchaseManager())
     }
 }

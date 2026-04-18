@@ -10,6 +10,7 @@ import Supabase
 import AuthenticationServices
 import CryptoKit
 import GoogleSignIn
+import RevenueCat
 
 @Observable
 class AuthService {
@@ -82,6 +83,7 @@ class AuthService {
             }
             if session.user.id != nil {
                 await fetchProfile()
+                await syncRevenueCatIdentity()
             }
         } catch {
             await MainActor.run {
@@ -104,6 +106,7 @@ class AuthService {
                 authError = nil
             }
             await fetchProfile()
+            await syncRevenueCatIdentity()
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -124,6 +127,7 @@ class AuthService {
                 authError = nil
             }
             await fetchProfile()
+            await syncRevenueCatIdentity()
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -147,6 +151,7 @@ class AuthService {
                 authError = nil
             }
             await fetchProfile()
+            await syncRevenueCatIdentity()
         } catch {
             await MainActor.run {
                 authError = "Apple sign-in failed: \(error.localizedDescription)"
@@ -170,6 +175,7 @@ class AuthService {
                 authError = nil
             }
             await fetchProfile()
+            await syncRevenueCatIdentity()
         } catch {
             await MainActor.run {
                 authError = "Google sign-in failed: \(error.localizedDescription)"
@@ -182,6 +188,7 @@ class AuthService {
     func signOut() async {
         do {
             try await supabase.auth.signOut()
+            _ = try? await Purchases.shared.logOut()
             UserDefaults.standard.removeObject(forKey: "cached_subscription_tier")
             UserDefaults.standard.removeObject(forKey: "cached_trial_ends_at")
             UserDefaults.standard.removeObject(forKey: "cached_trial_acknowledged")
@@ -283,6 +290,55 @@ class AuthService {
             await MainActor.run {
                 trialAcknowledged = true
             }
+        }
+    }
+
+    // MARK: - RevenueCat Identity
+
+    /// Log the current Supabase user into RevenueCat so their purchases are tied
+    /// to their account across devices. If RC reports an entitlement higher than
+    /// what Supabase has, reconcile by writing the RC-derived tier back to Supabase.
+    func syncRevenueCatIdentity() async {
+        do {
+            let session = try await supabase.auth.session
+            let userId = session.user.id.uuidString
+            let (customerInfo, _) = try await Purchases.shared.logIn(userId)
+
+            // Derive tier from active entitlements (HoF > Pro > Rookie).
+            let active = customerInfo.entitlements.active
+            let rcTier: SubscriptionTier
+            if active["hall_of_fame"] != nil {
+                rcTier = .hallOfFame
+            } else if active["pro"] != nil {
+                rcTier = .pro
+            } else {
+                rcTier = .rookie
+            }
+
+            // If RC has a higher tier than Supabase (cross-device purchase), reconcile.
+            if rcTier > subscriptionTier {
+                await updateSubscriptionTier(rcTier)
+            }
+        } catch {
+            // Silent — RC sync is best-effort
+        }
+    }
+
+    /// Persist a new subscription tier to Supabase after a successful purchase.
+    func updateSubscriptionTier(_ tier: SubscriptionTier) async {
+        do {
+            let session = try await supabase.auth.session
+            try await supabase
+                .from("profiles")
+                .update(["subscription_tier": tier.rawValue])
+                .eq("id", value: session.user.id)
+                .execute()
+        } catch {
+            // Silent — still flip local state so the user sees their upgrade
+        }
+        UserDefaults.standard.set(tier.rawValue, forKey: "cached_subscription_tier")
+        await MainActor.run {
+            subscriptionTier = tier
         }
     }
 

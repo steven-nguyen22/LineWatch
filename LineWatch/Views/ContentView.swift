@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var isLoading = true
     @State private var dataService = OddsDataService()
+    @State private var purchaseManager = PurchaseManager()
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(AuthService.self) private var authService
 
@@ -56,6 +57,7 @@ struct ContentView: View {
                 .transition(.opacity)
             }
         }
+        .environment(purchaseManager)
         .animation(.easeInOut(duration: 0.4), value: isLoading)
         .animation(.easeInOut(duration: 0.4), value: hasSeenOnboarding)
         .animation(.easeInOut(duration: 0.4), value: authService.isAuthenticated)
@@ -66,11 +68,14 @@ struct ContentView: View {
             NavigationStack {
                 PaywallView(presentationContext: .postTrial)
             }
+            .environment(purchaseManager)
+            .environment(authService)
         }
         .onAppear {
             dataService.loadLocalData()
         }
         .task {
+            await purchaseManager.loadOffering()
             async let odds: () = dataService.fetchAndCacheAll()
             async let nbaAssets: () = dataService.fetchNBAAssets()
             async let mlbAssets: () = dataService.fetchMLBAssets()
