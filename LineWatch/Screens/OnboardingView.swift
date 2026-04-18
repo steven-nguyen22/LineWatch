@@ -57,7 +57,7 @@ struct OnboardingView: View {
                     OnboardingPage(
                         systemImage: "person.fill",
                         title: "Player Props",
-                        description: "Dive into individual player betting markets — points, rebounds, assists, strikeouts and more.",
+                        description: "Dive into individual player betting markets — points, rebounds, assists, strikeouts and more. Available with Pro tier version.",
                         tierBadge: .pro
                     ) {
                         MockPlayerPropCard()
@@ -68,7 +68,7 @@ struct OnboardingView: View {
                     OnboardingPage(
                         systemImage: "bolt.fill",
                         title: "Best EV Bets",
-                        description: "Instantly find the bets with the highest expected value across all sports and markets.",
+                        description: "Instantly find the bets with the highest expected value across all sports and markets. Available with Hall of Fame tier version.",
                         tierBadge: .hallOfFame
                     ) {
                         MockBestEVCard()
@@ -79,7 +79,7 @@ struct OnboardingView: View {
                     OnboardingPage(
                         systemImage: "chart.line.uptrend.xyaxis",
                         title: "Team & Player Stats",
-                        description: "Tap any team or player name to see their season stats — records, averages, and trends.",
+                        description: "Tap any team or player name to see their season stats — records, averages, and trends. Available with Hall of Fame tier version.",
                         tierBadge: .hallOfFame
                     ) {
                         MockStatsCard()
@@ -134,7 +134,7 @@ struct OnboardingView: View {
                     .padding(.horizontal, 24)
 
                     if currentPage == totalPages - 1 {
-                        Text("Start your 7 day Hall of Fame free trial now")
+                        Text("Start your 7-day Hall of Fame free trial now")
                             .font(AppFonts.body)
                             .foregroundStyle(AppColors.textSecondary)
                             .multilineTextAlignment(.center)
