@@ -11,6 +11,7 @@
 		B087D4322F779981003E94B8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4312F779981003E94B8 /* GoogleSignIn */; };
 		B087D4352F7E0001003E94B8 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4342F7E0001003E94B8 /* NukeUI */; };
 		B087D4372F7E0001003E94B8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4362F7E0001003E94B8 /* Nuke */; };
+		B087D4402F800001003E94B8 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = B087D4422F800001003E94B8 /* RevenueCat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 				B087D4322F779981003E94B8 /* GoogleSignIn in Frameworks */,
 				B087D4352F7E0001003E94B8 /* NukeUI in Frameworks */,
 				B087D4372F7E0001003E94B8 /* Nuke in Frameworks */,
+				B087D4402F800001003E94B8 /* RevenueCat in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +129,7 @@
 				B087D4312F779981003E94B8 /* GoogleSignIn */,
 				B087D4342F7E0001003E94B8 /* NukeUI */,
 				B087D4362F7E0001003E94B8 /* Nuke */,
+				B087D4422F800001003E94B8 /* RevenueCat */,
 			);
 			productName = LineWatch;
 			productReference = B011432E2CE18D6B0054AA5B /* LineWatch.app */;
@@ -214,6 +217,7 @@
 				B087D42D2F77994B003E94B8 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				B087D4302F779981003E94B8 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				B087D4332F7E0001003E94B8 /* XCRemoteSwiftPackageReference "Nuke" */,
+				B087D4412F800001003E94B8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B011432F2CE18D6B0054AA5B /* Products */;
@@ -604,6 +608,14 @@
 				minimumVersion = 12.0.0;
 			};
 		};
+		B087D4412F800001003E94B8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -626,6 +638,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B087D4332F7E0001003E94B8 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = Nuke;
+		};
+		B087D4422F800001003E94B8 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B087D4412F800001003E94B8 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
