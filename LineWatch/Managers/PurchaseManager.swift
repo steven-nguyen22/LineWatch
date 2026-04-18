@@ -26,17 +26,26 @@ enum EntitlementID {
 final class PurchaseManager {
     var currentOffering: Offering?
     var isLoading: Bool = false
+    /// Last error thrown by `loadOffering()`, surfaced to the paywall for debug-only messaging.
+    var lastOfferingError: String?
 
     /// Fetch the default offering from RevenueCat so the paywall can show live prices.
     /// Idempotent — safe to call multiple times.
     func loadOffering() async {
         do {
             let offerings = try await Purchases.shared.offerings()
+            let current = offerings.current
+            let productIds = current?.availablePackages.map { $0.storeProduct.productIdentifier } ?? []
+            print("[PurchaseManager] currentOffering=\(current?.identifier ?? "nil") packages=\(productIds)")
             await MainActor.run {
-                self.currentOffering = offerings.current
+                self.currentOffering = current
+                self.lastOfferingError = nil
             }
         } catch {
-            // Silent — paywall will fall back to hardcoded labels
+            print("[PurchaseManager] loadOffering failed: \(error)")
+            await MainActor.run {
+                self.lastOfferingError = "\(error)"
+            }
         }
     }
 
@@ -77,17 +86,32 @@ final class PurchaseManager {
     }
 
     /// Look up the Package matching a tier + billing period from the current offering.
-    func package(for tier: SubscriptionTier, billing: BillingPeriod) -> Package? {
-        guard let offering = currentOffering else { return nil }
-        let productId = productIdentifier(tier: tier, billing: billing)
-        return offering.availablePackages.first {
-            $0.storeProduct.productIdentifier == productId
+    /// Returns a richer result so callers can distinguish "offering never loaded" from
+    /// "offering loaded but this product wasn't in it" (e.g., sandbox propagation delay).
+    func lookupPackage(for tier: SubscriptionTier, billing: BillingPeriod) -> PackageLookupResult {
+        guard let offering = currentOffering else {
+            print("[PurchaseManager] lookupPackage: currentOffering is nil")
+            return .offeringMissing
         }
+        guard let productId = productIdentifier(tier: tier, billing: billing) else {
+            return .productMissing("<none for \(tier.rawValue)/\(billing.rawValue)>")
+        }
+        if let pkg = offering.availablePackages.first(where: {
+            $0.storeProduct.productIdentifier == productId
+        }) {
+            return .found(pkg)
+        }
+        let available = offering.availablePackages.map { $0.storeProduct.productIdentifier }
+        print("[PurchaseManager] lookupPackage: \(productId) not in offering. available=\(available)")
+        return .productMissing(productId)
     }
 
     /// Localized price string for a tier + billing period, or nil if the offering isn't loaded.
     func localizedPrice(for tier: SubscriptionTier, billing: BillingPeriod) -> String? {
-        package(for: tier, billing: billing)?.storeProduct.localizedPriceString
+        if case .found(let pkg) = lookupPackage(for: tier, billing: billing) {
+            return pkg.storeProduct.localizedPriceString
+        }
+        return nil
     }
 
     private func productIdentifier(tier: SubscriptionTier, billing: BillingPeriod) -> String? {
@@ -117,4 +141,15 @@ enum BillingPeriod: String, CaseIterable {
 enum PurchaseError: Error {
     case cancelled
     case packageNotFound
+}
+
+/// Result of looking up a Package for a given tier + billing period.
+enum PackageLookupResult {
+    case found(Package)
+    /// RevenueCat's `current` offering is nil — either `loadOffering()` hasn't finished
+    /// or it failed (see `PurchaseManager.lastOfferingError`).
+    case offeringMissing
+    /// The offering loaded but no package with the expected product identifier was in it.
+    /// Usually means App Store Connect sandbox propagation hasn't completed yet.
+    case productMissing(String)
 }

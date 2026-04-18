@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RevenueCat
 
 struct PaywallView: View {
     @Environment(AuthService.self) private var authService
@@ -179,10 +180,31 @@ struct PaywallView: View {
     // MARK: - Purchase / Restore
 
     private func buy() async {
-        guard let package = purchaseManager.package(for: selectedTier, billing: billingPeriod) else {
-            errorMessage = "Subscription products aren't available right now. Please try again later."
+        // If the offering never loaded (e.g. transient launch-time failure), retry once
+        // before deciding we can't show a purchase sheet.
+        if purchaseManager.currentOffering == nil {
+            await purchaseManager.loadOffering()
+        }
+
+        let lookup = purchaseManager.lookupPackage(for: selectedTier, billing: billingPeriod)
+        let package: Package
+        switch lookup {
+        case .found(let pkg):
+            package = pkg
+        case .offeringMissing:
+            var msg = "We couldn't reach the App Store to load subscription options.\n\nCheck your connection and try again. If this persists, the RevenueCat offering may not be marked as Current."
+            #if DEBUG
+            if let rcError = purchaseManager.lastOfferingError {
+                msg += "\n\n[debug] \(rcError)"
+            }
+            #endif
+            errorMessage = msg
+            return
+        case .productMissing(let id):
+            errorMessage = "The \"\(id)\" subscription isn't available yet. Apple Sandbox can take a few hours to activate new products after they're created in App Store Connect."
             return
         }
+
         do {
             let tier = try await purchaseManager.purchase(package: package)
             await authService.updateSubscriptionTier(tier)
