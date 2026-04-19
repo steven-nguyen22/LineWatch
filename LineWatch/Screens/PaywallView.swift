@@ -148,7 +148,11 @@ struct PaywallView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(purchaseManager.isLoading)
-                .padding(.bottom, 20)
+
+                // Legal disclosure — required by Apple for auto-renewing subscriptions
+                legalDisclosure
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
             }
         }
         .background(AppColors.backgroundPrimary)
@@ -244,6 +248,32 @@ struct PaywallView: View {
             }
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: - Legal Disclosure
+
+    private var legalDisclosure: some View {
+        VStack(spacing: 10) {
+            Text("Subscriptions auto-renew at the selected price until canceled. Cancel anytime in your Apple ID Subscriptions settings at least 24 hours before the end of the current period. Payment is charged to your Apple ID at confirmation of purchase.")
+                .font(.system(size: 11))
+                .foregroundStyle(AppColors.textSecondary.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 16) {
+                Link("Terms of Use", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(AppColors.textSecondary)
+
+                Text("·")
+                    .font(.system(size: 11))
+                    .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+
+                Link("Privacy Policy", destination: URL(string: "https://steven-nguyen22.github.io/LineWatch-Website/privacy")!)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(AppColors.textSecondary)
+            }
         }
     }
 
