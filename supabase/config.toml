@@ -413,6 +413,9 @@ verify_jwt = true
 [functions.fetch-stats]
 verify_jwt = true
 
+[functions.manage-sport-schedules]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327
