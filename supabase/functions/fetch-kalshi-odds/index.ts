@@ -87,7 +87,7 @@ async function fetchAllMarkets(series: string): Promise<KalshiMarket[]> {
   for (let i = 0; i < 20; i++) {
     const url = new URL("https://api.elections.kalshi.com/trade-api/v2/markets");
     url.searchParams.set("series_ticker", series);
-    url.searchParams.set("status", "active");
+    url.searchParams.set("status", "open");
     url.searchParams.set("limit", "1000");
     if (cursor) url.searchParams.set("cursor", cursor);
 
