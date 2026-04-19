@@ -17,6 +17,13 @@ struct ContentView: View {
 
     private let backgroundRefreshInterval: UInt64 = 5 * 60 * 1_000_000_000 // 5 min in nanoseconds
 
+    /// Changes whenever a condition that should start/stop the refresh loop flips.
+    /// Using a combined id means the task restarts as soon as loading finishes or
+    /// the user signs in — not only when scenePhase changes.
+    private var refreshTaskId: String {
+        "\(scenePhase)-\(isLoading)-\(authService.isAuthenticated)"
+    }
+
     var body: some View {
         ZStack {
             if isLoading {
@@ -95,10 +102,10 @@ struct ContentView: View {
                 await dataService.fetchStats(for: sport)
             }
         }
-        .task(id: scenePhase) {
+        .task(id: refreshTaskId) {
             // Auto-refresh odds + opened player props every 5 minutes while foregrounded.
-            // SwiftUI cancels this task automatically when scenePhase changes, so
-            // backgrounding cleanly stops the loop without timer leaks.
+            // refreshTaskId includes scenePhase + isLoading + isAuthenticated, so this task
+            // restarts the moment loading finishes — not only on background/foreground.
             guard scenePhase == .active, !isLoading, authService.isAuthenticated else { return }
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: backgroundRefreshInterval)
