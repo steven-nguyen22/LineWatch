@@ -161,22 +161,31 @@ function transformMarkets(
     if (!Number.isFinite(yesProb) || !Number.isFinite(noProb)) continue;
     if (yesProb <= 0 || noProb <= 0) continue;
 
-    // Determine which team YES refers to via yes_sub_title
-    const yesSub = (market.yes_sub_title ?? "").toLowerCase();
-    const awayTokens = awayName.toLowerCase().split(/\s+/);
-    const homeTokens = homeName.toLowerCase().split(/\s+/);
-    const awayNick = awayTokens[awayTokens.length - 1];
-    const homeNick = homeTokens[homeTokens.length - 1];
+    // Determine which team YES refers to via yes_sub_title.
+    // Kalshi uses city names ("Phoenix", "Oklahoma City") for some sports
+    // and nicknames ("Lightning") for others. Check both directions:
+    //   1. teamName contains subTitle  → e.g. "phoenix suns" ⊇ "phoenix" ✓
+    //   2. any token of teamName appears in subTitle → e.g. "lightning" ∈ "lightning" ✓
+    const yesSub = (market.yes_sub_title ?? "").toLowerCase().trim();
+
+    const teamMatchesSub = (teamName: string): boolean => {
+      const t = teamName.toLowerCase();
+      if (t.includes(yesSub)) return true;
+      return t.split(/\s+/).some((tok) => tok.length > 3 && yesSub.includes(tok));
+    };
+
+    const awayHit = teamMatchesSub(awayName);
+    const homeHit = teamMatchesSub(homeName);
 
     let awayProb: number, homeProb: number;
-    if (yesSub.includes(awayNick)) {
+    if (awayHit && !homeHit) {
       awayProb = yesProb;
       homeProb = noProb;
-    } else if (yesSub.includes(homeNick)) {
+    } else if (homeHit && !awayHit) {
       homeProb = yesProb;
       awayProb = noProb;
     } else {
-      // Can't determine — skip
+      // Ambiguous or no match — skip
       continue;
     }
 
