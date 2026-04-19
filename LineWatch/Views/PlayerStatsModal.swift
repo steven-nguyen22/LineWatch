@@ -116,7 +116,11 @@ struct PlayerStatsModal: View {
                     Text("Stats unavailable")
                         .font(AppFonts.body)
                         .foregroundStyle(AppColors.textSecondary)
-                        .padding(.top, 40)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 40)
+                        .background(AppColors.backgroundCard)
+                        .cornerRadius(12)
+                        .padding(.horizontal, 16)
                 } else {
                     VStack(spacing: 0) {
                         ForEach(statKeys, id: \.self) { key in
