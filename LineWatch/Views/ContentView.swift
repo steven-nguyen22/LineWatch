@@ -13,6 +13,9 @@ struct ContentView: View {
     @State private var purchaseManager = PurchaseManager()
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @Environment(AuthService.self) private var authService
+    @Environment(\.scenePhase) private var scenePhase
+
+    private let backgroundRefreshInterval: UInt64 = 5 * 60 * 1_000_000_000 // 5 min in nanoseconds
 
     var body: some View {
         ZStack {
@@ -90,6 +93,18 @@ struct ContentView: View {
             // data race on statsFetchedForSports — each call is a quick Supabase read)
             for sport in OddsDataService.statsSports {
                 await dataService.fetchStats(for: sport)
+            }
+        }
+        .task(id: scenePhase) {
+            // Auto-refresh odds + opened player props every 5 minutes while foregrounded.
+            // SwiftUI cancels this task automatically when scenePhase changes, so
+            // backgrounding cleanly stops the loop without timer leaks.
+            guard scenePhase == .active, !isLoading, authService.isAuthenticated else { return }
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: backgroundRefreshInterval)
+                if Task.isCancelled { break }
+                await dataService.fetchAndCacheAll()
+                await dataService.refreshCachedPlayerProps()
             }
         }
     }

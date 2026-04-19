@@ -31,7 +31,7 @@ const FIGHTING_JOB = { jobName: "refresh-fighting", oddsFn: "fetch-fighting-odds
 // decide whether the meta-cron for it should be running at all.
 const GOLF_JOB = { jobName: "refresh-golf", oddsFn: "fetch-golf-odds" };
 
-const SCHEDULE = "*/15 * * * *"; // every 15 minutes
+const SCHEDULE = "*/5 * * * *"; // every 5 minutes
 
 Deno.serve(async (req) => {
   // --- auth: require service_role JWT (same pattern as fetch-odds) ---
