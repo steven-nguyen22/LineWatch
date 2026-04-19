@@ -165,6 +165,9 @@ struct SubPage: View {
         .tint(AppColors.primaryGreen)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                RefreshCountdownButton()
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showDisclaimer = true
                 } label: {

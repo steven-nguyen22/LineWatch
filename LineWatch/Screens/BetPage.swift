@@ -106,6 +106,9 @@ struct BetPage: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                RefreshCountdownButton()
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showDisclaimer = true
                 } label: {

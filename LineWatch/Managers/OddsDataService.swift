@@ -20,6 +20,12 @@ class OddsDataService {
     var isLoading = false
     var error: Error?
 
+    /// Wall-clock time of the next scheduled background refresh. Updated by the
+    /// 5-min refresh loop in ContentView; read by RefreshCountdownButton to
+    /// render the countdown popover. `nil` means no refresh is currently scheduled
+    /// (e.g. signed out, backgrounded, or pre-initial-load).
+    var nextRefreshAt: Date?
+
     private let supabaseService = SupabaseService()
 
     // Load from bundled JSON files (no API calls)
