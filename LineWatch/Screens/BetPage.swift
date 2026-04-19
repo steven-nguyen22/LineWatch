@@ -254,6 +254,10 @@ struct BetPage: View {
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
                 }
+
+                if event.isInProgress {
+                    InProgressBadge()
+                }
             }
             .padding(.vertical, 20)
             .frame(maxWidth: .infinity)
@@ -361,6 +365,10 @@ struct BetPage: View {
                     Text(formatGameTime(time))
                         .font(AppFonts.caption)
                         .foregroundStyle(AppColors.textSecondary)
+                }
+
+                if event.isInProgress {
+                    InProgressBadge()
                 }
             }
             .padding(.vertical, 20)
