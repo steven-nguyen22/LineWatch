@@ -52,7 +52,7 @@ struct ContentView: View {
                                 BetPage(
                                     event: event,
                                     marketType: marketType,
-                                    initialGolfSearch: prefillSearch ?? "",
+                                    initialSearchText: prefillSearch ?? "",
                                     initialPlayerPropType: initialProp
                                 )
                             case .bestEV:

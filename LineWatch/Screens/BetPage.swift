@@ -39,7 +39,7 @@ struct GolfOutrightLine: Identifiable {
 struct BetPage: View {
     let event: ResponseBody
     let marketType: MarketType
-    var initialGolfSearch: String = ""
+    var initialSearchText: String = ""
     var initialPlayerPropType: PlayerPropType? = nil
 
     @Environment(OddsDataService.self) private var dataService
@@ -155,9 +155,13 @@ struct BetPage: View {
             PaywallView()
         }
         .task {
-            // Pre-populate golf search when navigating from Best EV page
-            if !initialGolfSearch.isEmpty {
-                golfSearchText = initialGolfSearch
+            // Pre-populate the relevant search field when navigating from Best EV.
+            if !initialSearchText.isEmpty {
+                switch marketType {
+                case .outrights:   golfSearchText = initialSearchText
+                case .playerProps: propSearchText = initialSearchText
+                default: break
+                }
             }
             if marketType == .playerProps {
                 // Set the correct default prop type for this sport.
