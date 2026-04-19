@@ -57,7 +57,8 @@ function parseEventTicker(
   if (dash < 0) return null;
   const suffix = eventTicker.slice(dash + 1); // e.g. "26APR25OKCPHX"
 
-  const m = suffix.match(/^(\d{2})([A-Z]{3})(\d{2})([A-Z]{4,8})$/);
+  // Optional 4-digit time component between day and team codes (e.g. MLB "1610")
+  const m = suffix.match(/^(\d{2})([A-Z]{3})(\d{2})\d{0,4}([A-Z]{4,8})$/);
   if (!m) return null;
   const [, yy, monAbbr, dd, teamsPart] = m;
   const mm = MONTHS[monAbbr];
@@ -161,27 +162,33 @@ function transformMarkets(
     if (!Number.isFinite(yesProb) || !Number.isFinite(noProb)) continue;
     if (yesProb <= 0 || noProb <= 0) continue;
 
-    // Determine which team YES refers to via yes_sub_title.
-    // Kalshi uses city names ("Phoenix", "Oklahoma City") for some sports
-    // and nicknames ("Lightning") for others. Check both directions:
-    //   1. teamName contains subTitle  → e.g. "phoenix suns" ⊇ "phoenix" ✓
-    //   2. any token of teamName appears in subTitle → e.g. "lightning" ∈ "lightning" ✓
+    // Determine which team YES refers to using yes_sub_title + no_sub_title.
+    // Kalshi uses city names ("Phoenix"), nicknames ("Lightning"), or
+    // informal names ("A's") — check both sub_titles so that even if the
+    // YES side is unrecognizable (e.g. "A's"), the NO side ("Seattle")
+    // still identifies the layout unambiguously.
+    //
+    // awayIsYes is true when:
+    //   (a) yes_sub_title matches away team name, OR
+    //   (b) no_sub_title matches home team name (home is NO → away is YES)
     const yesSub = (market.yes_sub_title ?? "").toLowerCase().trim();
+    const noSub  = (market.no_sub_title  ?? "").toLowerCase().trim();
 
-    const teamMatchesSub = (teamName: string): boolean => {
+    const subMatchesTeam = (sub: string, teamName: string): boolean => {
+      if (!sub) return false;
       const t = teamName.toLowerCase();
-      if (t.includes(yesSub)) return true;
-      return t.split(/\s+/).some((tok) => tok.length > 3 && yesSub.includes(tok));
+      if (t.includes(sub)) return true;
+      return t.split(/\s+/).some((tok) => tok.length > 3 && sub.includes(tok));
     };
 
-    const awayHit = teamMatchesSub(awayName);
-    const homeHit = teamMatchesSub(homeName);
+    const awayIsYes = subMatchesTeam(yesSub, awayName) || subMatchesTeam(noSub, homeName);
+    const homeIsYes = subMatchesTeam(yesSub, homeName) || subMatchesTeam(noSub, awayName);
 
     let awayProb: number, homeProb: number;
-    if (awayHit && !homeHit) {
+    if (awayIsYes && !homeIsYes) {
       awayProb = yesProb;
       homeProb = noProb;
-    } else if (homeHit && !awayHit) {
+    } else if (homeIsYes && !awayIsYes) {
       homeProb = yesProb;
       awayProb = noProb;
     } else {
