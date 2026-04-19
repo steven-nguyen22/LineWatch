@@ -243,6 +243,10 @@ private struct EventCard: View {
                             .font(AppFonts.caption)
                             .foregroundStyle(AppColors.textSecondary)
                     }
+
+                    if event.isInProgress {
+                        InProgressBadge()
+                    }
                 }
             } else {
                 VStack(alignment: .leading, spacing: 6) {
@@ -270,6 +274,10 @@ private struct EventCard: View {
                         Text(formatGameTime(time))
                             .font(AppFonts.caption)
                             .foregroundStyle(AppColors.textSecondary)
+                    }
+
+                    if event.isInProgress {
+                        InProgressBadge()
                     }
                 }
             }

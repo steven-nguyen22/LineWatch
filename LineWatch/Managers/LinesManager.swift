@@ -313,6 +313,16 @@ struct ResponseBody: Codable, Identifiable {
     var isGolf: Bool {
         sportKey.hasPrefix("golf_")
     }
+
+    /// True when the game has already started (commence_time is in the past).
+    /// Relies on the Odds API dropping completed games from the feed — so any
+    /// event still present past its commence_time is actually live. Golf
+    /// tournaments correctly read as in-progress from first tee through final putt.
+    var isInProgress: Bool {
+        guard let iso = commenceTime,
+              let start = ISO8601DateFormatter().date(from: iso) else { return false }
+        return start <= Date()
+    }
 }
 
 extension ResponseBody: Hashable {

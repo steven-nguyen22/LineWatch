@@ -27,6 +27,10 @@ enum AppColors {
     static let bestOdds = Color(red: 0.13, green: 0.55, blue: 0.13).opacity(0.25)
     static let worstOdds = Color(red: 0.85, green: 0.20, blue: 0.20).opacity(0.25)
 
+    /// Red used for "In Progress" / live indicators. Matches the red base
+    /// already used in `worstOdds`.
+    static let alertRed = Color(red: 0.85, green: 0.20, blue: 0.20)
+
     // Utility
     static let divider = Color.white.opacity(0.12)
     static let cardShadow = Color.black.opacity(0.35)
