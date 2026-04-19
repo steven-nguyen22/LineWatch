@@ -4,8 +4,6 @@ import { MLB_TEAMS, NBA_TEAMS, NFL_TEAMS, NHL_TEAMS } from "./team-maps.ts";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-// Kalshi game series + the sport_key we cache under + the abbrev→name map.
-// All four series are public (no auth) on Kalshi's elections gateway.
 const SPORTS = [
   { series: "KXNBAGAME",  cacheKey: "kalshi_basketball_nba",       teams: NBA_TEAMS },
   { series: "KXNFLGAME",  cacheKey: "kalshi_americanfootball_nfl", teams: NFL_TEAMS },
@@ -18,17 +16,17 @@ const MONTHS: Record<string, string> = {
   JUL: "07", AUG: "08", SEP: "09", OCT: "10", NOV: "11", DEC: "12",
 };
 
+// Real Kalshi market shape (from live API inspection)
 interface KalshiMarket {
   ticker: string;
-  event_ticker?: string;
-  yes_sub_title?: string;
-  no_sub_title?: string;
+  event_ticker?: string;      // e.g. "KXNBAGAME-26APR25OKCPHX"
+  yes_sub_title?: string;     // e.g. "Phoenix" — the YES team city/nickname
+  no_sub_title?: string;      // e.g. "Oklahoma City"
   title?: string;
-  yes_ask?: number;     // cents (0-100)
-  no_ask?: number;
+  yes_ask_dollars?: string;   // e.g. "0.1800" — implied prob, already 0-1
+  no_ask_dollars?: string;    // e.g. "0.8500"
   status?: string;
-  close_time?: string;
-  expected_expiration_time?: string;
+  occurrence_datetime?: string;
 }
 
 interface KalshiListResponse {
@@ -37,10 +35,8 @@ interface KalshiListResponse {
 }
 
 /**
- * Convert an implied probability (0-1 ask price, where the ask is what
- * a buyer pays to acquire a $1 YES contract) into American odds.
- *
- *   p ≥ 0.5 → favorite (negative); p < 0.5 → underdog (positive)
+ * Convert an implied probability (0-1) into American odds.
+ * p >= 0.5 → favorite (negative); p < 0.5 → underdog (positive).
  */
 function probToAmerican(p: number): number {
   if (!Number.isFinite(p) || p <= 0 || p >= 1) return 0;
@@ -49,27 +45,18 @@ function probToAmerican(p: number): number {
 }
 
 /**
- * Parse a Kalshi game ticker like `KXNBAGAME-26APR15ORLPHI` into
- *   { isoDate: "2026-04-15", awayAbbr: "ORL", homeAbbr: "PHI" }
- *
- * Kalshi's convention within a given series is that the first abbr is
- * the away team and the second is the home team. We resolve which team
- * is YES by matching `yes_sub_title` against the two candidate names.
- *
- * Abbreviations are variable length (2-4 chars), so we find the split
- * by trying each prefix length in [2,3,4] and checking membership in
- * the team map.
+ * Parse a Kalshi event_ticker like "KXNBAGAME-26APR25OKCPHX" into
+ * { isoDate, awayAbbr, homeAbbr }.
+ * The event_ticker has no trailing team suffix (unlike individual market tickers).
  */
-function parseTicker(
-  ticker: string,
+function parseEventTicker(
+  eventTicker: string,
   teams: Record<string, string>,
 ): { isoDate: string; awayAbbr: string; homeAbbr: string } | null {
-  // Example suffix: "26APR15ORLPHI"
-  const dash = ticker.indexOf("-");
+  const dash = eventTicker.indexOf("-");
   if (dash < 0) return null;
-  const suffix = ticker.slice(dash + 1);
+  const suffix = eventTicker.slice(dash + 1); // e.g. "26APR25OKCPHX"
 
-  // YYMMM DD then the two team codes
   const m = suffix.match(/^(\d{2})([A-Z]{3})(\d{2})([A-Z]{4,8})$/);
   if (!m) return null;
   const [, yy, monAbbr, dd, teamsPart] = m;
@@ -91,33 +78,8 @@ function parseTicker(
 }
 
 /**
- * Decide which of { away, home } the YES contract refers to, using
- * `yes_sub_title` or `title` heuristics. Returns "away" | "home" | null.
- */
-function whichSideIsYes(
-  market: KalshiMarket,
-  awayName: string,
-  homeName: string,
-): "away" | "home" | null {
-  const haystacks = [market.yes_sub_title, market.title].filter(Boolean) as string[];
-  for (const s of haystacks) {
-    const lower = s.toLowerCase();
-    const awayTokens = awayName.toLowerCase().split(/\s+/);
-    const homeTokens = homeName.toLowerCase().split(/\s+/);
-
-    // The nickname (last token) is the most reliable signal.
-    const awayNick = awayTokens[awayTokens.length - 1];
-    const homeNick = homeTokens[homeTokens.length - 1];
-    const awayHit = lower.includes(awayNick);
-    const homeHit = lower.includes(homeNick);
-    if (awayHit && !homeHit) return "away";
-    if (homeHit && !awayHit) return "home";
-  }
-  return null;
-}
-
-/**
- * Fetch every open market for a Kalshi series, paginating via `cursor`.
+ * Fetch all active markets for a Kalshi series, paginating via cursor.
+ * Uses status=active (not "open") — confirmed from live API inspection.
  */
 async function fetchAllMarkets(series: string): Promise<KalshiMarket[]> {
   const out: KalshiMarket[] = [];
@@ -125,7 +87,7 @@ async function fetchAllMarkets(series: string): Promise<KalshiMarket[]> {
   for (let i = 0; i < 20; i++) {
     const url = new URL("https://api.elections.kalshi.com/trade-api/v2/markets");
     url.searchParams.set("series_ticker", series);
-    url.searchParams.set("status", "open");
+    url.searchParams.set("status", "active");
     url.searchParams.set("limit", "1000");
     if (cursor) url.searchParams.set("cursor", cursor);
 
@@ -156,55 +118,96 @@ interface TransformedEvent {
   };
 }
 
-function transformMarket(
-  market: KalshiMarket,
+/**
+ * Deduplicate markets by event_ticker and transform each game into a
+ * single TransformedEvent with both team outcomes.
+ *
+ * Each game has two Kalshi markets (one per team as YES). We group by
+ * event_ticker and use whichever market we see first — it already has
+ * yes_ask_dollars for one team and no_ask_dollars for the other.
+ *
+ * yes_sub_title / no_sub_title give us city/nickname strings ("Phoenix",
+ * "Oklahoma City") so we match them against the last token(s) of the
+ * full team names from our map to identify which side is which.
+ */
+function transformMarkets(
+  markets: KalshiMarket[],
   teams: Record<string, string>,
   nowIso: string,
-): TransformedEvent | null {
-  const parsed = parseTicker(market.ticker, teams);
-  if (!parsed) return null;
-  const awayName = teams[parsed.awayAbbr];
-  const homeName = teams[parsed.homeAbbr];
-  if (!awayName || !homeName) return null;
+): TransformedEvent[] {
+  // Deduplicate: one entry per event_ticker
+  const seen = new Map<string, KalshiMarket>();
+  for (const m of markets) {
+    const key = m.event_ticker ?? m.ticker;
+    if (!seen.has(key)) seen.set(key, m);
+  }
 
-  // Kalshi returns ask prices in cents (integer 1-99). Both sides required.
-  const yesCents = market.yes_ask;
-  const noCents = market.no_ask;
-  if (!yesCents || !noCents || yesCents <= 0 || noCents <= 0) return null;
-  const yesProb = yesCents / 100;
-  const noProb = noCents / 100;
+  const out: TransformedEvent[] = [];
 
-  const yesSide = whichSideIsYes(market, awayName, homeName);
-  if (!yesSide) return null;
+  for (const [eventTicker, market] of seen) {
+    const parsed = parseEventTicker(eventTicker, teams);
+    if (!parsed) continue;
 
-  const awayProb = yesSide === "away" ? yesProb : noProb;
-  const homeProb = yesSide === "home" ? yesProb : noProb;
+    const awayName = teams[parsed.awayAbbr];
+    const homeName = teams[parsed.homeAbbr];
+    if (!awayName || !homeName) continue;
 
-  const awayPrice = probToAmerican(awayProb);
-  const homePrice = probToAmerican(homeProb);
-  if (awayPrice === 0 || homePrice === 0) return null;
+    const yesAskStr = market.yes_ask_dollars;
+    const noAskStr = market.no_ask_dollars;
+    if (!yesAskStr || !noAskStr) continue;
 
-  return {
-    id: market.ticker,
-    commence_date: parsed.isoDate,
-    away_team: awayName,
-    home_team: homeName,
-    bookmaker: {
-      key: "kalshi",
-      title: "Kalshi",
-      last_update: nowIso,
-      markets: [
-        {
-          key: "h2h",
-          last_update: nowIso,
-          outcomes: [
-            { name: awayName, price: awayPrice },
-            { name: homeName, price: homePrice },
-          ],
-        },
-      ],
-    },
-  };
+    const yesProb = parseFloat(yesAskStr);
+    const noProb = parseFloat(noAskStr);
+    if (!Number.isFinite(yesProb) || !Number.isFinite(noProb)) continue;
+    if (yesProb <= 0 || noProb <= 0) continue;
+
+    // Determine which team YES refers to via yes_sub_title
+    const yesSub = (market.yes_sub_title ?? "").toLowerCase();
+    const awayTokens = awayName.toLowerCase().split(/\s+/);
+    const homeTokens = homeName.toLowerCase().split(/\s+/);
+    const awayNick = awayTokens[awayTokens.length - 1];
+    const homeNick = homeTokens[homeTokens.length - 1];
+
+    let awayProb: number, homeProb: number;
+    if (yesSub.includes(awayNick)) {
+      awayProb = yesProb;
+      homeProb = noProb;
+    } else if (yesSub.includes(homeNick)) {
+      homeProb = yesProb;
+      awayProb = noProb;
+    } else {
+      // Can't determine — skip
+      continue;
+    }
+
+    const awayPrice = probToAmerican(awayProb);
+    const homePrice = probToAmerican(homeProb);
+    if (awayPrice === 0 || homePrice === 0) continue;
+
+    out.push({
+      id: eventTicker,
+      commence_date: parsed.isoDate,
+      away_team: awayName,
+      home_team: homeName,
+      bookmaker: {
+        key: "kalshi",
+        title: "Kalshi",
+        last_update: nowIso,
+        markets: [
+          {
+            key: "h2h",
+            last_update: nowIso,
+            outcomes: [
+              { name: awayName, price: awayPrice },
+              { name: homeName, price: homePrice },
+            ],
+          },
+        ],
+      },
+    });
+  }
+
+  return out;
 }
 
 Deno.serve(async (req) => {
@@ -229,7 +232,6 @@ Deno.serve(async (req) => {
   try {
     const nowIso = new Date().toISOString();
 
-    // Fetch all 4 series in parallel.
     const results = await Promise.allSettled(
       SPORTS.map((s) => fetchAllMarkets(s.series)),
     );
@@ -246,21 +248,14 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      const transformed: TransformedEvent[] = [];
-      for (const market of result.value) {
-        try {
-          const ev = transformMarket(market, sport.teams, nowIso);
-          if (ev) transformed.push(ev);
-        } catch {
-          // Per-market parse failure: skip, continue.
-        }
-      }
+      const transformed = transformMarkets(result.value, sport.teams, nowIso);
 
       const { error } = await supabase.from("cached_odds").upsert({
         sport_key: sport.cacheKey,
         data: transformed,
         updated_at: nowIso,
       });
+
       if (error) {
         errors[sport.series] = error.message;
       } else {
