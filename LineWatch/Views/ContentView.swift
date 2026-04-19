@@ -48,8 +48,13 @@ struct ContentView: View {
                             switch route {
                             case .sportEvents(let sport):
                                 SubPage(sport: sport)
-                            case .eventDetail(let event, let marketType, let prefillSearch):
-                                BetPage(event: event, marketType: marketType, initialGolfSearch: prefillSearch ?? "")
+                            case .eventDetail(let event, let marketType, let prefillSearch, let initialProp):
+                                BetPage(
+                                    event: event,
+                                    marketType: marketType,
+                                    initialGolfSearch: prefillSearch ?? "",
+                                    initialPlayerPropType: initialProp
+                                )
                             case .bestEV:
                                 if authService.effectiveTier.canAccessBestEV {
                                     BestEVPage()

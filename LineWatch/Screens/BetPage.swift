@@ -40,6 +40,7 @@ struct BetPage: View {
     let event: ResponseBody
     let marketType: MarketType
     var initialGolfSearch: String = ""
+    var initialPlayerPropType: PlayerPropType? = nil
 
     @Environment(OddsDataService.self) private var dataService
     @Environment(AuthService.self) private var authService
@@ -159,9 +160,13 @@ struct BetPage: View {
                 golfSearchText = initialGolfSearch
             }
             if marketType == .playerProps {
-                // Set the correct default prop type for this sport
+                // Set the correct default prop type for this sport.
+                // Prefer the caller-supplied prop (e.g., from the Best EV card)
+                // over the sport's first tab.
                 let validCases = PlayerPropType.cases(for: sportCategory)
-                if !validCases.contains(selectedPropType), let first = validCases.first {
+                if let requested = initialPlayerPropType, validCases.contains(requested) {
+                    selectedPropType = requested
+                } else if !validCases.contains(selectedPropType), let first = validCases.first {
                     selectedPropType = first
                 }
                 isLoadingProps = true
