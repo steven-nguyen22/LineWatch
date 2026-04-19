@@ -23,8 +23,19 @@ class OddsDataService {
     /// Wall-clock time of the next scheduled background refresh. Updated by the
     /// 5-min refresh loop in ContentView; read by RefreshCountdownButton to
     /// render the countdown popover. `nil` means no refresh is currently scheduled
-    /// (e.g. signed out, backgrounded, or pre-initial-load).
+    /// (e.g. signed out or pre-initial-load). Persists across backgrounding so
+    /// the countdown can resume from where it left off.
     var nextRefreshAt: Date?
+
+    /// Wall-clock time of the most recent completed refresh. Used by the
+    /// foreground stale-check: if the app was backgrounded past `nextRefreshAt`,
+    /// we fetch immediately on return instead of waiting a new 5-min cycle.
+    var lastRefreshAt: Date?
+
+    /// True while the refresh loop is actively awaiting `fetchAndCacheAll` /
+    /// `refreshCachedPlayerProps`. Drives the "Refreshing…" label in the
+    /// countdown popover so the user sees explicit in-flight feedback.
+    var isRefreshing: Bool = false
 
     private let supabaseService = SupabaseService()
 

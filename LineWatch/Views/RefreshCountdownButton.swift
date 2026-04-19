@@ -40,9 +40,16 @@ private struct CountdownPopover: View {
                 Text("Next refresh in")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                Text(display(for: context.date))
-                    .font(.system(size: 28, weight: .semibold, design: .monospaced))
-                    .monospacedDigit()
+
+                if dataService.isRefreshing {
+                    Text("Refreshing…")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(AppColors.primaryGreen)
+                } else {
+                    Text(display(for: context.date))
+                        .font(.system(size: 28, weight: .semibold, design: .monospaced))
+                        .monospacedDigit()
+                }
             }
             .padding(20)
         }
