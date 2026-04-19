@@ -264,7 +264,14 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      const transformed = transformMarkets(result.value, sport.teams, nowIso);
+      const raw = result.value;
+      console.log(`${sport.series}: ${raw.length} raw markets`);
+      if (raw.length > 0) {
+        const sample = raw[0];
+        console.log(`  sample ticker=${sample.ticker} event_ticker=${sample.event_ticker} yes_sub=${sample.yes_sub_title} no_sub=${sample.no_sub_title} yes_ask=${sample.yes_ask_dollars} no_ask=${sample.no_ask_dollars}`);
+      }
+      const transformed = transformMarkets(raw, sport.teams, nowIso);
+      console.log(`${sport.series}: ${transformed.length} transformed`);
 
       const { error } = await supabase.from("cached_odds").upsert({
         sport_key: sport.cacheKey,
