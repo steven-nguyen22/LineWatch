@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Supabase
 
 class SupabaseService {
     private let baseURL = "https://voxokcdwctpvzbqigklw.supabase.co/rest/v1"
@@ -271,13 +272,27 @@ class SupabaseService {
     // MARK: - Team & Player Stats
 
     /// Fetches team stats (W-L, home/road, L10) for a specific sport.
+    /// Uses the shared SupabaseClient so the user's session JWT is included,
+    /// allowing the RLS policy to verify Hall of Fame tier server-side.
     func fetchTeamStats(sportKey: String) async throws -> [TeamStatsRow] {
-        return try await fetchRows(path: "team_stats?select=team_name,stats&sport_key=eq.\(sportKey)")
+        try await SupabaseManager.shared
+            .from("team_stats")
+            .select("team_name, stats")
+            .eq("sport_key", value: sportKey)
+            .execute()
+            .value
     }
 
     /// Fetches player season averages for a specific sport.
+    /// Uses the shared SupabaseClient so the user's session JWT is included,
+    /// allowing the RLS policy to verify Hall of Fame tier server-side.
     func fetchPlayerStats(sportKey: String) async throws -> [PlayerStatsRow] {
-        return try await fetchRows(path: "player_stats?select=player_name,team_name,stats&sport_key=eq.\(sportKey)")
+        try await SupabaseManager.shared
+            .from("player_stats")
+            .select("player_name, team_name, stats")
+            .eq("sport_key", value: sportKey)
+            .execute()
+            .value
     }
 
     private func fetchRows<T: Decodable>(path: String) async throws -> [T] {

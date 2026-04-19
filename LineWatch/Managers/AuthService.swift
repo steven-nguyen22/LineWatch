@@ -20,14 +20,7 @@ class AuthService {
     var trialEndsAt: Date? = nil
     var trialAcknowledged: Bool = false
 
-    private let supabase: SupabaseClient
-
     init() {
-        supabase = SupabaseClient(
-            supabaseURL: URL(string: "https://voxokcdwctpvzbqigklw.supabase.co")!,
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZveG9rY2R3Y3RwdnpicWlna2x3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTg4ODYsImV4cCI6MjA5MDIzNDg4Nn0.lGh1rKpR8kt3MPJnSe4VXdR_b1mmOT9x6xLvFmhiPnw"
-        )
-
         // Hydrate trial state from cache for instant UI on launch
         if let cachedTier = UserDefaults.standard.string(forKey: "cached_subscription_tier"),
            let tier = SubscriptionTier(rawValue: cachedTier) {
@@ -77,7 +70,7 @@ class AuthService {
     /// Check for an existing session on app launch (restores from Keychain automatically)
     func restoreSession() async {
         do {
-            let session = try await supabase.auth.session
+            let session = try await SupabaseManager.shared.auth.session
             await MainActor.run {
                 isAuthenticated = (session.user.id != nil)
             }
@@ -96,7 +89,7 @@ class AuthService {
 
     func signUp(email: String, password: String, name: String) async {
         do {
-            let session = try await supabase.auth.signUp(
+            let session = try await SupabaseManager.shared.auth.signUp(
                 email: email,
                 password: password,
                 data: ["full_name": .string(name)]
@@ -118,7 +111,7 @@ class AuthService {
 
     func signIn(email: String, password: String) async {
         do {
-            let session = try await supabase.auth.signIn(
+            let session = try await SupabaseManager.shared.auth.signIn(
                 email: email,
                 password: password
             )
@@ -139,7 +132,7 @@ class AuthService {
 
     func signInWithApple(idToken: String, nonce: String) async {
         do {
-            let session = try await supabase.auth.signInWithIdToken(
+            let session = try await SupabaseManager.shared.auth.signInWithIdToken(
                 credentials: .init(
                     provider: .apple,
                     idToken: idToken,
@@ -163,7 +156,7 @@ class AuthService {
 
     func signInWithGoogle(idToken: String, rawNonce: String) async {
         do {
-            let session = try await supabase.auth.signInWithIdToken(
+            let session = try await SupabaseManager.shared.auth.signInWithIdToken(
                 credentials: OpenIDConnectCredentials(
                     provider: .google,
                     idToken: idToken,
@@ -187,7 +180,7 @@ class AuthService {
 
     func signOut() async {
         do {
-            try await supabase.auth.signOut()
+            try await SupabaseManager.shared.auth.signOut()
             _ = try? await Purchases.shared.logOut()
             UserDefaults.standard.removeObject(forKey: "cached_subscription_tier")
             UserDefaults.standard.removeObject(forKey: "cached_trial_ends_at")
@@ -220,7 +213,7 @@ class AuthService {
         }
 
         do {
-            let session = try await supabase.auth.session
+            let session = try await SupabaseManager.shared.auth.session
             let userId = session.user.id
 
             struct ProfileRow: Decodable {
@@ -274,7 +267,7 @@ class AuthService {
     /// Called when the user taps "Continue with Rookie" or selects a paid tier.
     func acknowledgeTrialPaywall() async {
         do {
-            let session = try await supabase.auth.session
+            let session = try await SupabaseManager.shared.auth.session
             try await supabase
                 .from("profiles")
                 .update(["trial_acknowledged": true])
@@ -300,7 +293,7 @@ class AuthService {
     /// what Supabase has, reconcile by writing the RC-derived tier back to Supabase.
     func syncRevenueCatIdentity() async {
         do {
-            let session = try await supabase.auth.session
+            let session = try await SupabaseManager.shared.auth.session
             let userId = session.user.id.uuidString
             let (customerInfo, _) = try await Purchases.shared.logIn(userId)
 
@@ -327,7 +320,7 @@ class AuthService {
     /// Persist a new subscription tier to Supabase after a successful purchase.
     func updateSubscriptionTier(_ tier: SubscriptionTier) async {
         do {
-            let session = try await supabase.auth.session
+            let session = try await SupabaseManager.shared.auth.session
             try await supabase
                 .from("profiles")
                 .update(["subscription_tier": tier.rawValue])
