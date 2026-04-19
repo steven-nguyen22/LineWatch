@@ -15,8 +15,6 @@ struct ContentView: View {
     @Environment(AuthService.self) private var authService
     @Environment(\.scenePhase) private var scenePhase
 
-    private let backgroundRefreshInterval: UInt64 = 5 * 60 * 1_000_000_000 // 5 min in nanoseconds
-
     /// Changes whenever a condition that should start/stop the refresh loop flips.
     /// Using a combined id means the task restarts as soon as loading finishes or
     /// the user signs in — not only when scenePhase changes.
@@ -108,17 +106,39 @@ struct ContentView: View {
             // restarts the moment loading finishes — not only on background/foreground.
             guard scenePhase == .active, !isLoading, authService.isAuthenticated else { return }
 
-            // Advertise the first refresh 5 min out so the countdown popover can render
-            // immediately. Cleared in defer when the task is cancelled (background, sign-out).
-            dataService.nextRefreshAt = Date().addingTimeInterval(5 * 60)
-            defer { dataService.nextRefreshAt = nil }
+            // First run only — on subsequent foregrounds we resume the existing schedule
+            // so the countdown continues from where it left off instead of resetting.
+            if dataService.nextRefreshAt == nil {
+                dataService.nextRefreshAt = Date().addingTimeInterval(5 * 60)
+            }
 
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: backgroundRefreshInterval)
+                // Sleep until the scheduled refresh. If we're already past it (app was
+                // backgrounded through the window), this is a no-op and we fetch immediately.
+                if let next = dataService.nextRefreshAt {
+                    let remaining = next.timeIntervalSinceNow
+                    if remaining > 0 {
+                        try? await Task.sleep(nanoseconds: UInt64(remaining * 1_000_000_000))
+                    }
+                }
                 if Task.isCancelled { break }
+
+                // Advance BEFORE the fetch so the countdown visibly rolls over to 5:00
+                // the moment this cycle begins — no stuck 0:00 while the network call runs.
+                dataService.nextRefreshAt = Date().addingTimeInterval(5 * 60)
+                dataService.isRefreshing = true
                 await dataService.fetchAndCacheAll()
                 await dataService.refreshCachedPlayerProps()
-                dataService.nextRefreshAt = Date().addingTimeInterval(5 * 60)
+                dataService.lastRefreshAt = Date()
+                dataService.isRefreshing = false
+            }
+        }
+        .onChange(of: authService.isAuthenticated) { _, isAuthed in
+            // Sign-out should clear the countdown so a fresh sign-in starts clean.
+            if !isAuthed {
+                dataService.nextRefreshAt = nil
+                dataService.lastRefreshAt = nil
+                dataService.isRefreshing = false
             }
         }
     }
