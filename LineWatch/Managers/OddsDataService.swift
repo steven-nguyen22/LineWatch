@@ -7,7 +7,6 @@
 
 import Foundation
 
-@MainActor
 @Observable
 class OddsDataService {
     var eventsBySport: [SportCategory: [ResponseBody]] = [:]
@@ -45,12 +44,12 @@ class OddsDataService {
             || sport == .football || sport == .soccer || sport == .golf {
             do {
                 let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
-                eventsBySport[sport] = events
+                await MainActor.run { eventsBySport[sport] = events }
                 saveToDocuments(events, filename: "\(sport.rawValue).json")
             } catch {
                 self.error = error
                 let local: [ResponseBody] = loadFromBundle(sport.rawValue)
-                eventsBySport[sport] = local
+                await MainActor.run { eventsBySport[sport] = local }
             }
             return
         }
@@ -69,7 +68,8 @@ class OddsDataService {
                     allEvents.append(contentsOf: local)
                 }
             }
-            eventsBySport[sport] = allEvents
+            let finalEvents = allEvents
+            await MainActor.run { eventsBySport[sport] = finalEvents }
             return
         }
     }
@@ -85,12 +85,12 @@ class OddsDataService {
                 || sport == .football || sport == .soccer || sport == .golf {
                 do {
                     let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
-                    eventsBySport[sport] = events
+                    await MainActor.run { eventsBySport[sport] = events }
                     saveToDocuments(events, filename: "\(sport.rawValue).json")
                 } catch {
                     self.error = error
                     let local: [ResponseBody] = loadFromBundle(sport.rawValue)
-                    eventsBySport[sport] = local
+                    await MainActor.run { eventsBySport[sport] = local }
                 }
                 continue
             }
@@ -109,7 +109,8 @@ class OddsDataService {
                         allEvents.append(contentsOf: local)
                     }
                 }
-                eventsBySport[sport] = allEvents
+                let finalEvents = allEvents
+                await MainActor.run { eventsBySport[sport] = finalEvents }
                 continue
             }
         }
