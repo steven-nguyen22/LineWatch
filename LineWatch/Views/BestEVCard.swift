@@ -35,7 +35,12 @@ struct BestEVCard: View {
     }
 
     var body: some View {
-        NavigationLink(value: AppRoute.eventDetail(bet.event, bet.marketType, bet.marketType == .outrights ? bet.outcomeName : nil)) {
+        NavigationLink(value: AppRoute.eventDetail(
+            bet.event,
+            bet.marketType,
+            bet.marketType == .outrights ? bet.outcomeName : nil,
+            bet.propType
+        )) {
             VStack(alignment: .leading, spacing: 12) {
                 // Top row: badge + EV%
                 HStack {

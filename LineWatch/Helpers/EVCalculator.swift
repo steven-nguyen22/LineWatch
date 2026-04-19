@@ -10,7 +10,7 @@ import Foundation
 // MARK: - Best EV Bet Model
 
 struct BestEVBet: Identifiable {
-    var id: String { "\(event.id)-\(bookmakerTitle)-\(outcomeName)-\(marketType.rawValue)-\(playerName ?? "")" }
+    var id: String { "\(event.id)-\(bookmakerTitle)-\(outcomeName)-\(marketType.rawValue)-\(playerName ?? "")-\(propType?.rawValue ?? "")" }
 
     let event: ResponseBody
     let outcomeName: String        // e.g., "Boston Celtics", "Over", "Under"
@@ -25,6 +25,7 @@ struct BestEVBet: Identifiable {
     let sport: SportCategory       // which sport this bet belongs to
     let point: Double?             // spread/total/prop line value
     let playerName: String?        // player name for props
+    let propType: PlayerPropType?  // specific prop market (points, assists, etc.) — populated only for .playerProps
 
     /// Human-readable description of the bet for the card UI
     var betDescription: String {
@@ -263,7 +264,8 @@ enum EVCalculator {
                     event: event,
                     sport: sport,
                     marketType: .playerProps,
-                    playerName: playerName
+                    playerName: playerName,
+                    propType: propType
                 ) {
                     if candidate.evPercent > (best?.evPercent ?? 0) {
                         best = candidate
@@ -283,7 +285,8 @@ enum EVCalculator {
         event: ResponseBody,
         sport: SportCategory,
         marketType: MarketType,
-        playerName: String? = nil
+        playerName: String? = nil,
+        propType: PlayerPropType? = nil
     ) -> BestEVBet? {
         guard bookmakerOutcomes.count >= 3 else { return nil }
 
@@ -342,7 +345,8 @@ enum EVCalculator {
                     marketType: marketType,
                     sport: sport,
                     point: outcome.point,
-                    playerName: playerName ?? outcome.description
+                    playerName: playerName ?? outcome.description,
+                    propType: propType
                 )
 
                 if evPct > (best?.evPercent ?? 0) {
