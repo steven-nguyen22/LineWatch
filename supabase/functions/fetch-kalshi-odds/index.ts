@@ -162,38 +162,26 @@ function transformMarkets(
     if (!Number.isFinite(yesProb) || !Number.isFinite(noProb)) continue;
     if (yesProb <= 0 || noProb <= 0) continue;
 
-    // Determine which team YES refers to using yes_sub_title + no_sub_title.
-    // Kalshi uses city names ("Phoenix"), nicknames ("Lightning"), or
-    // informal names ("A's") — check both sub_titles so that even if the
-    // YES side is unrecognizable (e.g. "A's"), the NO side ("Seattle")
-    // still identifies the layout unambiguously.
-    //
-    // awayIsYes is true when:
-    //   (a) yes_sub_title matches away team name, OR
-    //   (b) no_sub_title matches home team name (home is NO → away is YES)
-    const yesSub = (market.yes_sub_title ?? "").toLowerCase().trim();
-    const noSub  = (market.no_sub_title  ?? "").toLowerCase().trim();
-
-    const subMatchesTeam = (sub: string, teamName: string): boolean => {
-      if (!sub) return false;
-      const t = teamName.toLowerCase();
-      if (t.includes(sub)) return true;
-      return t.split(/\s+/).some((tok) => tok.length > 3 && sub.includes(tok));
-    };
-
-    const awayIsYes = subMatchesTeam(yesSub, awayName) || subMatchesTeam(noSub, homeName);
-    const homeIsYes = subMatchesTeam(yesSub, homeName) || subMatchesTeam(noSub, awayName);
+    // Determine which team YES refers to via the market ticker suffix.
+    // Market tickers are shaped "<event_ticker>-<YES_TEAM_ABBR>", e.g.
+    // "KXNHLGAME-26APR26EDMANA-EDM" → YES=EDM. This is more reliable
+    // than sub_titles, which Kalshi sometimes leaves as the same string
+    // on both sides (e.g. yes_sub="EDM Oilers" AND no_sub="EDM Oilers").
+    const marketTicker = market.ticker ?? "";
+    const suffix = marketTicker.startsWith(eventTicker + "-")
+      ? marketTicker.slice(eventTicker.length + 1)
+      : "";
+    if (!suffix) continue;
 
     let awayProb: number, homeProb: number;
-    if (awayIsYes && !homeIsYes) {
+    if (suffix === parsed.awayAbbr) {
       awayProb = yesProb;
       homeProb = noProb;
-    } else if (homeIsYes && !awayIsYes) {
+    } else if (suffix === parsed.homeAbbr) {
       homeProb = yesProb;
       awayProb = noProb;
     } else {
-      // Ambiguous or no match — skip
-      continue;
+      continue; // unknown suffix
     }
 
     const awayPrice = probToAmerican(awayProb);
