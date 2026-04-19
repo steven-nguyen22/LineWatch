@@ -34,11 +34,21 @@ struct BestEVCard: View {
         return nil
     }
 
+    /// Text to prefill in BetPage's search bar — the golfer/outcome name for
+    /// outrights, the player name for props, nothing otherwise.
+    private var searchPrefill: String? {
+        switch bet.marketType {
+        case .outrights:   return bet.outcomeName
+        case .playerProps: return bet.playerName
+        default:           return nil
+        }
+    }
+
     var body: some View {
         NavigationLink(value: AppRoute.eventDetail(
             bet.event,
             bet.marketType,
-            bet.marketType == .outrights ? bet.outcomeName : nil,
+            searchPrefill,
             bet.propType
         )) {
             VStack(alignment: .leading, spacing: 12) {
