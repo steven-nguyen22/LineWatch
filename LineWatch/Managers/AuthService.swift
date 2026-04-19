@@ -228,7 +228,7 @@ class AuthService {
                 }
             }
 
-            let row: ProfileRow = try await supabase
+            let row: ProfileRow = try await SupabaseManager.shared
                 .from("profiles")
                 .select("subscription_tier, trial_ends_at, trial_acknowledged")
                 .eq("id", value: userId)
@@ -268,7 +268,7 @@ class AuthService {
     func acknowledgeTrialPaywall() async {
         do {
             let session = try await SupabaseManager.shared.auth.session
-            try await supabase
+            try await SupabaseManager.shared
                 .from("profiles")
                 .update(["trial_acknowledged": true])
                 .eq("id", value: session.user.id)
@@ -321,7 +321,7 @@ class AuthService {
     func updateSubscriptionTier(_ tier: SubscriptionTier) async {
         do {
             let session = try await SupabaseManager.shared.auth.session
-            try await supabase
+            try await SupabaseManager.shared
                 .from("profiles")
                 .update(["subscription_tier": tier.rawValue])
                 .eq("id", value: session.user.id)
