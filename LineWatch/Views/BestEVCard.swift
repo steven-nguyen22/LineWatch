@@ -155,6 +155,10 @@ struct BestEVCard: View {
                         .foregroundStyle(AppColors.textSecondary.opacity(0.5))
                 }
 
+                if bet.event.isInProgress {
+                    InProgressBadge()
+                }
+
                 // Transparency / insight row
                 Divider()
                     .foregroundStyle(AppColors.divider)
