@@ -77,6 +77,7 @@ class AuthService {
             if session.user.id != nil {
                 await fetchProfile()
                 await syncRevenueCatIdentity()
+                identifyInPostHog(session: session)
             }
         } catch {
             await MainActor.run {
@@ -85,11 +86,20 @@ class AuthService {
         }
     }
 
+    /// Tie the active Supabase user to PostHog so analytics follow them across sessions.
+    private func identifyInPostHog(session: Session) {
+        PostHogService.identify(
+            userId: session.user.id.uuidString,
+            email: session.user.email,
+            tier: subscriptionTier.rawValue
+        )
+    }
+
     // MARK: - Email/Password Sign Up
 
     func signUp(email: String, password: String, name: String) async {
         do {
-            let session = try await SupabaseManager.shared.auth.signUp(
+            _ = try await SupabaseManager.shared.auth.signUp(
                 email: email,
                 password: password,
                 data: ["full_name": .string(name)]
@@ -100,6 +110,9 @@ class AuthService {
             }
             await fetchProfile()
             await syncRevenueCatIdentity()
+            if let session = try? await SupabaseManager.shared.auth.session {
+                identifyInPostHog(session: session)
+            }
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -121,6 +134,7 @@ class AuthService {
             }
             await fetchProfile()
             await syncRevenueCatIdentity()
+            identifyInPostHog(session: session)
         } catch {
             await MainActor.run {
                 authError = error.localizedDescription
@@ -145,6 +159,7 @@ class AuthService {
             }
             await fetchProfile()
             await syncRevenueCatIdentity()
+            identifyInPostHog(session: session)
         } catch {
             await MainActor.run {
                 authError = "Apple sign-in failed: \(error.localizedDescription)"
@@ -169,6 +184,7 @@ class AuthService {
             }
             await fetchProfile()
             await syncRevenueCatIdentity()
+            identifyInPostHog(session: session)
         } catch {
             await MainActor.run {
                 authError = "Google sign-in failed: \(error.localizedDescription)"
@@ -186,6 +202,7 @@ class AuthService {
             UserDefaults.standard.removeObject(forKey: "cached_trial_ends_at")
             UserDefaults.standard.removeObject(forKey: "cached_trial_acknowledged")
             NotificationManager.shared.cancelTrialReminders()
+            PostHogService.reset()
             await MainActor.run {
                 isAuthenticated = false
                 subscriptionTier = .rookie
@@ -239,7 +256,15 @@ class AuthService {
             let tier = SubscriptionTier(rawValue: row.subscriptionTier) ?? .rookie
             UserDefaults.standard.set(tier.rawValue, forKey: "cached_subscription_tier")
 
+            // Fire a one-time `trial_started` event the first time we observe a
+            // non-nil `trial_ends_at` — i.e., the trial row flipped from missing to present.
+            let previousCachedEnds = UserDefaults.standard.double(forKey: "cached_trial_ends_at")
             if let endsAt = row.trialEndsAt {
+                if previousCachedEnds == 0 {
+                    PostHogService.capture("trial_started", properties: [
+                        "ends_at": ISO8601DateFormatter().string(from: endsAt)
+                    ])
+                }
                 UserDefaults.standard.set(endsAt.timeIntervalSince1970, forKey: "cached_trial_ends_at")
             } else {
                 UserDefaults.standard.removeObject(forKey: "cached_trial_ends_at")

@@ -145,6 +145,7 @@ struct LandingPage: View {
             Text("Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting.")
         }
         .navigationBarTitleDisplayMode(.inline)
+        .trackScreen("landing")
     }
 }
 

@@ -186,6 +186,7 @@ struct SubPage: View {
                 selectedMarket = sport.availableMarkets.first ?? .h2h
             }
         }
+        .trackScreen("sub_page", properties: ["sport": sport.rawValue])
     }
 
     private var displayedEvents: [ResponseBody] {

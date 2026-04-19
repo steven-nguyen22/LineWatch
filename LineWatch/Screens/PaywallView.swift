@@ -169,12 +169,16 @@ struct PaywallView: View {
         }
         .onAppear {
             selectedTier = authService.subscriptionTier == .rookie ? .pro : authService.subscriptionTier
+            PostHogService.capture("paywall_viewed", properties: [
+                "context": presentationContext == .postTrial ? "post_trial" : "normal"
+            ])
         }
         .task {
             if purchaseManager.currentOffering == nil {
                 await purchaseManager.loadOffering()
             }
         }
+        .trackScreen("paywall")
     }
 
     // MARK: - Purchase / Restore
@@ -208,12 +212,21 @@ struct PaywallView: View {
         do {
             let tier = try await purchaseManager.purchase(package: package)
             await authService.updateSubscriptionTier(tier)
+            PostHogService.capture("purchase_completed", properties: [
+                "tier": tier.rawValue,
+                "billing_period": billingPeriod.rawValue
+            ])
             if presentationContext == .postTrial {
                 await authService.acknowledgeTrialPaywall()
             }
         } catch PurchaseError.cancelled {
             // User cancelled — silent
         } catch {
+            PostHogService.capture("purchase_failed", properties: [
+                "tier": selectedTier.rawValue,
+                "billing_period": billingPeriod.rawValue,
+                "error": error.localizedDescription
+            ])
             errorMessage = error.localizedDescription
         }
     }

@@ -55,6 +55,7 @@ struct LoadingScreen: View {
                 }
             }
         }
+        .trackScreen("loading")
     }
 }
 
