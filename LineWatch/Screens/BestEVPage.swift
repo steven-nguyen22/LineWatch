@@ -66,6 +66,9 @@ struct BestEVPage: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                RefreshCountdownButton()
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showDisclaimer = true
                 } label: {

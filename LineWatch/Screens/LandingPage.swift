@@ -131,6 +131,9 @@ struct LandingPage: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
+                RefreshCountdownButton()
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showDisclaimer = true
                 } label: {

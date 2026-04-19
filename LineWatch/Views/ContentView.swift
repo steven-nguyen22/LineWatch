@@ -107,11 +107,18 @@ struct ContentView: View {
             // refreshTaskId includes scenePhase + isLoading + isAuthenticated, so this task
             // restarts the moment loading finishes — not only on background/foreground.
             guard scenePhase == .active, !isLoading, authService.isAuthenticated else { return }
+
+            // Advertise the first refresh 5 min out so the countdown popover can render
+            // immediately. Cleared in defer when the task is cancelled (background, sign-out).
+            dataService.nextRefreshAt = Date().addingTimeInterval(5 * 60)
+            defer { dataService.nextRefreshAt = nil }
+
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: backgroundRefreshInterval)
                 if Task.isCancelled { break }
                 await dataService.fetchAndCacheAll()
                 await dataService.refreshCachedPlayerProps()
+                dataService.nextRefreshAt = Date().addingTimeInterval(5 * 60)
             }
         }
     }
