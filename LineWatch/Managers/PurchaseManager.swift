@@ -35,14 +35,18 @@ final class PurchaseManager {
         do {
             let offerings = try await Purchases.shared.offerings()
             let current = offerings.current
+            #if DEBUG
             let productIds = current?.availablePackages.map { $0.storeProduct.productIdentifier } ?? []
             print("[PurchaseManager] currentOffering=\(current?.identifier ?? "nil") packages=\(productIds)")
+            #endif
             await MainActor.run {
                 self.currentOffering = current
                 self.lastOfferingError = nil
             }
         } catch {
+            #if DEBUG
             print("[PurchaseManager] loadOffering failed: \(error)")
+            #endif
             await MainActor.run {
                 self.lastOfferingError = "\(error)"
             }
@@ -90,7 +94,9 @@ final class PurchaseManager {
     /// "offering loaded but this product wasn't in it" (e.g., sandbox propagation delay).
     func lookupPackage(for tier: SubscriptionTier, billing: BillingPeriod) -> PackageLookupResult {
         guard let offering = currentOffering else {
+            #if DEBUG
             print("[PurchaseManager] lookupPackage: currentOffering is nil")
+            #endif
             return .offeringMissing
         }
         guard let productId = productIdentifier(tier: tier, billing: billing) else {
@@ -101,8 +107,10 @@ final class PurchaseManager {
         }) {
             return .found(pkg)
         }
+        #if DEBUG
         let available = offering.availablePackages.map { $0.storeProduct.productIdentifier }
         print("[PurchaseManager] lookupPackage: \(productId) not in offering. available=\(available)")
+        #endif
         return .productMissing(productId)
     }
 
