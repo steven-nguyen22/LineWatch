@@ -2,7 +2,7 @@
 //
 // Runs once a day. Calls The Odds API's /v4/sports endpoint to discover which
 // leagues are currently in-season, then adds or removes pg_cron jobs so the
-// 15-minute refreshers only run for active sports.
+// 5-minute refreshers only run for active sports.
 //
 // Triggered by a daily pg_cron entry (see schedule_sport_job / unschedule_sport_job
 // RPC helpers and the "manage-sport-schedules" cron job in the database).
@@ -31,7 +31,7 @@ const FIGHTING_JOB = { jobName: "refresh-fighting", oddsFn: "fetch-fighting-odds
 // decide whether the meta-cron for it should be running at all.
 const GOLF_JOB = { jobName: "refresh-golf", oddsFn: "fetch-golf-odds" };
 
-const SCHEDULE = "*/15 * * * *"; // every 15 minutes
+const SCHEDULE = "*/5 * * * *"; // every 5 minutes
 
 Deno.serve(async (req) => {
   // --- auth: require service_role JWT (same pattern as fetch-odds) ---

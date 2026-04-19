@@ -324,6 +324,23 @@ class OddsDataService {
         }
     }
 
+    /// Re-fetch player props for every event already in the cache.
+    /// Called by the 5-min background refresh loop so opened BetPages stay fresh.
+    func refreshCachedPlayerProps() async {
+        let eventIds = Array(playerPropsByEvent.keys)
+        for eventId in eventIds {
+            do {
+                let result = try await supabaseService.fetchCachedPlayerProps(eventId: eventId)
+                await MainActor.run {
+                    playerPropsByEvent[eventId] = result.props
+                    playerTeamsByEvent[eventId] = result.playerTeams
+                }
+            } catch {
+                // Keep existing cached props on failure — don't wipe the UI
+            }
+        }
+    }
+
     /// Fetch player props for a specific event (lazy-loaded on BetPage)
     func fetchPlayerProps(eventId: String) async {
         // Skip if already cached
