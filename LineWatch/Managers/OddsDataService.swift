@@ -39,6 +39,52 @@ class OddsDataService {
 
     private let supabaseService = SupabaseService()
 
+    /// Sports where Kalshi moneyline markets are available. Kept as raw keys
+    /// so the merge path can be gated without a SportCategory enum dependency.
+    private static let kalshiSupportedKeys: Set<String> = [
+        "basketball_nba",
+        "americanfootball_nfl",
+        "baseball_mlb",
+        "icehockey_nhl",
+    ]
+
+    /// Append Kalshi's moneyline bookmaker to any event whose teams match.
+    /// Matching is exact on (away_team, home_team) — the edge function already
+    /// normalized Kalshi team names to The Odds API strings — with a ±1 day
+    /// tolerance on commence_date to absorb timezone slack for late-night games.
+    /// If a match isn't found, the event is passed through untouched.
+    private func mergeKalshi(into events: [ResponseBody], from kalshi: [KalshiEvent]) -> [ResponseBody] {
+        guard !kalshi.isEmpty else { return events }
+        let isoFormatter = ISO8601DateFormatter()
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "yyyy-MM-dd"
+        dayFormatter.timeZone = TimeZone(identifier: "UTC")
+
+        return events.map { event in
+            guard let away = event.awayTeam, let home = event.homeTeam else { return event }
+            let eventDate: Date? = event.commenceTime.flatMap { isoFormatter.date(from: $0) }
+
+            let match = kalshi.first { k in
+                guard k.awayTeam == away, k.homeTeam == home else { return false }
+                guard let d = eventDate, let kd = dayFormatter.date(from: k.commenceDate) else {
+                    return true // no date to compare → accept the team-name match
+                }
+                return abs(d.timeIntervalSince(kd)) <= 86_400 * 1.5
+            }
+
+            guard let match else { return event }
+            return ResponseBody(
+                id: event.id,
+                sportKey: event.sportKey,
+                sportTitle: event.sportTitle,
+                commenceTime: event.commenceTime,
+                homeTeam: event.homeTeam,
+                awayTeam: event.awayTeam,
+                bookmakers: event.bookmakers + [match.bookmaker]
+            )
+        }
+    }
+
     // Load from bundled JSON files (no API calls)
     func loadLocalData() {
         for sport in SportCategory.allCases {
@@ -61,7 +107,8 @@ class OddsDataService {
             || sport == .football || sport == .soccer || sport == .golf {
             do {
                 let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
-                await MainActor.run { eventsBySport[sport] = events }
+                let merged = await mergeKalshiIfSupported(events: events, sportKey: sport.rawValue)
+                await MainActor.run { eventsBySport[sport] = merged }
                 saveToDocuments(events, filename: "\(sport.rawValue).json")
             } catch {
                 self.error = error
@@ -91,6 +138,16 @@ class OddsDataService {
         }
     }
 
+    /// Merges Kalshi moneyline prices into the event list for the 4 supported
+    /// leagues. A Kalshi fetch failure (network / decode / missing row) is
+    /// swallowed — Kalshi is strictly additive and must never fail the main
+    /// odds feed. Sports outside the supported set pass through unchanged.
+    private func mergeKalshiIfSupported(events: [ResponseBody], sportKey: String) async -> [ResponseBody] {
+        guard Self.kalshiSupportedKeys.contains(sportKey) else { return events }
+        let kalshi = (try? await supabaseService.fetchKalshiEvents(sportKey: sportKey)) ?? []
+        return mergeKalshi(into: events, from: kalshi)
+    }
+
     // Fetch all sports from API
     func fetchAndCacheAll() async {
         isLoading = true
@@ -102,7 +159,8 @@ class OddsDataService {
                 || sport == .football || sport == .soccer || sport == .golf {
                 do {
                     let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
-                    await MainActor.run { eventsBySport[sport] = events }
+                    let merged = await mergeKalshiIfSupported(events: events, sportKey: sport.rawValue)
+                    await MainActor.run { eventsBySport[sport] = merged }
                     saveToDocuments(events, filename: "\(sport.rawValue).json")
                 } catch {
                     self.error = error

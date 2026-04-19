@@ -115,6 +115,10 @@ Deno.serve(async (req) => {
     jobs: [`${GOLF_JOB.jobName}-odds`],
   };
 
+  // --- kalshi (always on; free public API, covers NBA/NFL/MLB/NHL) ---
+  await applyJob(supabase, "refresh-kalshi", "fetch-kalshi-odds", true);
+  decisions["kalshi"] = { active: true, jobs: ["refresh-kalshi"] };
+
   return new Response(
     JSON.stringify({ success: true, decisions }, null, 2),
     { headers: { "Content-Type": "application/json" } },

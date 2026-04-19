@@ -38,6 +38,33 @@ class SupabaseService {
         }
         return events
     }
+
+    /// Fetches the cached Kalshi-derived events for a given Odds API sport key.
+    /// Pass the plain sport key (e.g. `"basketball_nba"`) — this prepends
+    /// `"kalshi_"` internally to hit the parallel row written by fetch-kalshi-odds.
+    /// Throws on network/decode errors; callers should catch and treat absence
+    /// as "no Kalshi data" so a Kalshi outage never degrades the main odds feed.
+    func fetchKalshiEvents(sportKey: String) async throws -> [KalshiEvent] {
+        let endpoint = "\(baseURL)/cached_odds?sport_key=eq.kalshi_\(sportKey)&select=data"
+
+        guard let url = URL(string: endpoint) else {
+            throw GHError.invalidURL
+        }
+
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+
+        let rows = try JSONDecoder().decode([CachedKalshiRow].self, from: data)
+        return rows.first?.data ?? []
+    }
+
     /// Fetches cached player props from Supabase for a specific event.
     /// Returns the props data and a player-to-team mapping.
     func fetchCachedPlayerProps(eventId: String) async throws -> (props: ResponseBody, playerTeams: [String: String]) {
@@ -443,6 +470,29 @@ struct NFLPlayerRow: Codable {
 /// Represents a single row from the cached_odds table (only the `data` column is selected).
 private struct CachedOddsRow: Codable {
     let data: [ResponseBody]
+}
+
+/// One transformed Kalshi market cached as a pseudo-event. Matched against
+/// the Odds API events by (away_team, home_team) + commence_date proximity,
+/// then its `bookmaker` is appended to the matched event's bookmakers array.
+struct KalshiEvent: Codable {
+    let id: String
+    let commenceDate: String
+    let awayTeam: String
+    let homeTeam: String
+    let bookmaker: Bookmaker
+
+    enum CodingKeys: String, CodingKey {
+        case id, bookmaker
+        case commenceDate = "commence_date"
+        case awayTeam = "away_team"
+        case homeTeam = "home_team"
+    }
+}
+
+/// One row from cached_odds whose `data` column holds the Kalshi events array.
+private struct CachedKalshiRow: Codable {
+    let data: [KalshiEvent]
 }
 
 struct TeamStatsRow: Codable {

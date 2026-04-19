@@ -18,4 +18,5 @@ let sportsbookURLs: [String: String] = [
     "Bovada": "https://www.bovada.lv",
     "MyBookie.ag": "https://www.mybookie.ag",
     "LowVig.ag": "https://www.lowvig.ag",
+    "Kalshi": "https://kalshi.com",
 ]
