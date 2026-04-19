@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 @Observable
 class OddsDataService {
     var eventsBySport: [SportCategory: [ResponseBody]] = [:]
