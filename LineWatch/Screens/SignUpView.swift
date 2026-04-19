@@ -203,6 +203,7 @@ struct SignUpView: View {
                 }
             }
         }
+        .trackScreen("sign_up")
     }
 
     // MARK: - Apple Sign In Handler

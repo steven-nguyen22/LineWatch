@@ -24,6 +24,9 @@ struct LineWatchApp: App {
         // Configure RevenueCat for in-app subscriptions
         Purchases.logLevel = .error
         Purchases.configure(withAPIKey: "appl_rsJDPvslYwkdlYedNCksmBEaYUU")
+
+        // Configure PostHog product analytics (screen views, custom events)
+        PostHogService.configure()
     }
 
     var body: some Scene {

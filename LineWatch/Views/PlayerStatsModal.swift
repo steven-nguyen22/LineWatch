@@ -154,5 +154,9 @@ struct PlayerStatsModal: View {
         .background(AppColors.backgroundPrimary)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.hidden)
+        .trackScreen("player_stats_modal", properties: [
+            "sport": sport.rawValue,
+            "player": playerName
+        ])
     }
 }

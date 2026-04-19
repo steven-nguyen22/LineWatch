@@ -170,6 +170,10 @@ struct BetPage: View {
                 await dataService.fetchStats(for: sportCategory)
             }
         }
+        .trackScreen("bet_page", properties: [
+            "sport": sportCategory.rawValue,
+            "market": marketType.rawValue
+        ])
     }
 
     // MARK: - Standard Market Content
@@ -263,6 +267,10 @@ struct BetPage: View {
                             Button {
                                 if canShowStats {
                                     selectedTeamForStats = team
+                                    PostHogService.capture("stats_modal_opened", properties: [
+                                        "sport": sportCategory.rawValue,
+                                        "entity": "team"
+                                    ])
                                 } else {
                                     showPaywallForStats = true
                                 }
@@ -302,6 +310,10 @@ struct BetPage: View {
                             Button {
                                 if canShowStats {
                                     selectedTeamForStats = team
+                                    PostHogService.capture("stats_modal_opened", properties: [
+                                        "sport": sportCategory.rawValue,
+                                        "entity": "team"
+                                    ])
                                 } else {
                                     showPaywallForStats = true
                                 }
@@ -1049,6 +1061,10 @@ struct BetPage: View {
                     Button {
                         if canShowStats {
                             selectedPlayerForStats = line.playerName
+                            PostHogService.capture("stats_modal_opened", properties: [
+                                "sport": sportCategory.rawValue,
+                                "entity": "player"
+                            ])
                         } else {
                             showPaywallForStats = true
                         }

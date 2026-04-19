@@ -87,6 +87,7 @@ struct BestEVPage: View {
                 hasLoadedProps = true
             }
         }
+        .trackScreen("best_ev")
     }
 }
 

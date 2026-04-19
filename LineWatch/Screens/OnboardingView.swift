@@ -144,6 +144,10 @@ struct OnboardingView: View {
                 .padding(.bottom, 40)
             }
         }
+        .trackScreen("onboarding")
+        .onChange(of: currentPage) { _, newPage in
+            PostHogService.capture("onboarding_step", properties: ["step": newPage])
+        }
     }
 }
 
