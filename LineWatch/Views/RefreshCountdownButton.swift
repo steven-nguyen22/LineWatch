@@ -41,7 +41,7 @@ private struct CountdownPopover: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                if dataService.isRefreshing {
+                if shouldShowRefreshing(for: context.date) {
                     Text("Refreshing…")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundStyle(AppColors.primaryGreen)
@@ -59,5 +59,17 @@ private struct CountdownPopover: View {
         guard let next = dataService.nextRefreshAt else { return "—" }
         let remaining = max(0, Int(next.timeIntervalSince(now)))
         return String(format: "%d:%02d", remaining / 60, remaining % 60)
+    }
+
+    /// True when we should show the "Refreshing…" label instead of a countdown.
+    /// Covers both the in-flight fetch (`isRefreshing`) AND the brief gap between
+    /// the display ticking to 0:00 and the refresh task flipping `isRefreshing` —
+    /// `Task.sleep` wakeup isn't instantaneous, so without this the popover sits
+    /// on "0:00" for 3–5s before the label changes. Gated on `nextRefreshAt != nil`
+    /// so signed-out / pre-load state still shows "—".
+    private func shouldShowRefreshing(for now: Date) -> Bool {
+        if dataService.isRefreshing { return true }
+        guard let next = dataService.nextRefreshAt else { return false }
+        return next.timeIntervalSince(now) <= 0
     }
 }
