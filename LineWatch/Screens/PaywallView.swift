@@ -270,7 +270,7 @@ struct PaywallView: View {
                     .font(.system(size: 11))
                     .foregroundStyle(AppColors.textSecondary.opacity(0.5))
 
-                Link("Privacy Policy", destination: URL(string: "https://steven-nguyen22.github.io/LineWatch-Website/privacy")!)
+                Link("Privacy Policy", destination: URL(string: "https://steven-nguyen22.github.io/LineWatch-Website/#/privacy")!)
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(AppColors.textSecondary)
             }
