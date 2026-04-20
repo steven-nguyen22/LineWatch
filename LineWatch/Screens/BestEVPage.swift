@@ -94,9 +94,11 @@ struct BestEVPage: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
         BestEVPage()
             .environment(previewDataService)
     }
 }
+#endif

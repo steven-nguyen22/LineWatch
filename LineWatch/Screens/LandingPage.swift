@@ -249,6 +249,7 @@ private struct OffSeasonCard: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
         LandingPage()
@@ -256,3 +257,4 @@ private struct OffSeasonCard: View {
             .environment(AuthService())
     }
 }
+#endif

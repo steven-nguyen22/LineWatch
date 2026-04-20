@@ -1429,6 +1429,7 @@ struct BetPage: View {
     }
 }
 
+#if DEBUG
 #Preview("Moneyline") {
     NavigationStack {
         BetPage(event: previewBasketball[0], marketType: .h2h)
@@ -1460,3 +1461,4 @@ struct BetPage: View {
             .environment(AuthService())
     }
 }
+#endif

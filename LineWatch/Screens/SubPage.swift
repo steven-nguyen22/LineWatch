@@ -441,6 +441,7 @@ struct FighterCircle: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationStack {
         SubPage(sport: .basketball)
@@ -448,3 +449,4 @@ struct FighterCircle: View {
             .environment(AuthService())
     }
 }
+#endif
