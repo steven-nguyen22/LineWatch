@@ -87,18 +87,49 @@ async function fetchTeamRoster(teamId: number): Promise<string[]> {
   }
 }
 
-/** Build a player name → team name mapping for an event */
+/**
+ * Normalize a player name for cross-source matching.
+ * Handles variance between ESPN ("Odell Beckham Jr.", "Patrick Mahomes II",
+ * "D.K. Metcalf") and The Odds API ("Odell Beckham Jr", "Patrick Mahomes",
+ * "DK Metcalf"). Strips:
+ *  - diacritics / accents
+ *  - all periods and commas
+ *  - trailing generational suffixes (jr/sr/ii/iii/iv)
+ *  - case and extra whitespace
+ */
+function normalizePlayerName(name: string): string {
+  return name
+    .normalize("NFD")                        // decompose accents (é → e + combining-acute)
+    .replace(/[\u0300-\u036f]/g, "")         // remove combining diacritic marks
+    .toLowerCase()
+    .replace(/[.,]/g, "")                    // remove periods, commas
+    .replace(/\s+(jr|sr|ii|iii|iv)\b/g, "")  // strip generational suffix
+    .replace(/\s+/g, " ")                    // collapse whitespace
+    .trim();
+}
+
+/**
+ * Build a player → team mapping and a raw-name → canonical-name map for an event.
+ *
+ * `teams` is keyed by the canonical ESPN displayName (e.g. "Odell Beckham Jr."),
+ * matching what the iOS client already keys headshots by.
+ * `canonical` lets the caller rewrite Odds-API outcome descriptions to the
+ * ESPN spelling before caching, so the client renders correct headshots too.
+ */
 async function buildPlayerTeamMap(
   homeTeam: string,
   awayTeam: string,
   // deno-lint-ignore no-explicit-any
   propsData: any
-): Promise<Record<string, string>> {
+): Promise<{
+  teams: Record<string, string>;
+  canonical: Record<string, string>;
+}> {
   const homeId = NFL_TEAM_IDS[homeTeam];
   const awayId = NFL_TEAM_IDS[awayTeam];
 
   if (!homeId && !awayId) {
-    return {};
+    return { teams: {}, canonical: {} };
   }
 
   const [homeRoster, awayRoster] = await Promise.all([
@@ -106,8 +137,11 @@ async function buildPlayerTeamMap(
     awayId ? fetchTeamRoster(awayId) : Promise.resolve([]),
   ]);
 
-  const homeSet = new Set(homeRoster.map((n) => n.toLowerCase()));
-  const awaySet = new Set(awayRoster.map((n) => n.toLowerCase()));
+  // Normalized → ESPN displayName per team
+  const homeMap = new Map<string, string>();
+  for (const n of homeRoster) homeMap.set(normalizePlayerName(n), n);
+  const awayMap = new Map<string, string>();
+  for (const n of awayRoster) awayMap.set(normalizePlayerName(n), n);
 
   const playerNames = new Set<string>();
   for (const bookmaker of propsData.bookmakers || []) {
@@ -120,17 +154,17 @@ async function buildPlayerTeamMap(
     }
   }
 
-  const mapping: Record<string, string> = {};
-  for (const name of playerNames) {
-    const lower = name.toLowerCase();
-    if (homeSet.has(lower)) {
-      mapping[name] = homeTeam;
-    } else if (awaySet.has(lower)) {
-      mapping[name] = awayTeam;
-    }
+  const teams: Record<string, string> = {};
+  const canonical: Record<string, string> = {};
+  for (const raw of playerNames) {
+    const key = normalizePlayerName(raw);
+    const espnName = homeMap.get(key) ?? awayMap.get(key);
+    if (!espnName) continue;
+    canonical[raw] = espnName;
+    teams[espnName] = homeMap.has(key) ? homeTeam : awayTeam;
   }
 
-  return mapping;
+  return { teams, canonical };
 }
 
 Deno.serve(async (req) => {
@@ -188,11 +222,23 @@ Deno.serve(async (req) => {
         const propsData = await propsRes.json();
 
         // Build player → team mapping using ESPN rosters
-        const playerTeams = await buildPlayerTeamMap(
+        const { teams: playerTeams, canonical } = await buildPlayerTeamMap(
           propsData.home_team || "",
           propsData.away_team || "",
           propsData
         );
+
+        // Rewrite Odds-API names to ESPN canonical spellings so client-side
+        // headshot lookups (keyed by ESPN displayName) succeed.
+        for (const bookmaker of propsData.bookmakers || []) {
+          for (const market of bookmaker.markets || []) {
+            for (const outcome of market.outcomes || []) {
+              if (outcome.description && canonical[outcome.description]) {
+                outcome.description = canonical[outcome.description];
+              }
+            }
+          }
+        }
 
         // Step 3: Upsert into cached_player_props
         const { error } = await supabase.from("cached_player_props").upsert({
