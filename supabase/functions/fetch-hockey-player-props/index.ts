@@ -97,7 +97,7 @@ async function fetchTeamRoster(teamId: number): Promise<string[]> {
  * Handles variance between ESPN ("J.T. Miller", "T.J. Oshie", "Björn Bjugstad")
  * and The Odds API ("JT Miller", "TJ Oshie", "Bjorn Bjugstad"). Strips:
  *  - diacritics / accents (Björn → Bjorn)
- *  - all periods and commas
+ *  - periods, commas, apostrophes, hyphens
  *  - trailing generational suffixes (jr/sr/ii/iii/iv)
  *  - case and extra whitespace
  */
@@ -106,7 +106,7 @@ function normalizePlayerName(name: string): string {
     .normalize("NFD")                        // decompose accents (é → e + combining-acute)
     .replace(/[\u0300-\u036f]/g, "")         // remove combining diacritic marks
     .toLowerCase()
-    .replace(/[.,]/g, "")                    // remove periods, commas
+    .replace(/[.,'-]/g, "")                  // remove periods, commas, apostrophes, hyphens
     .replace(/\s+(jr|sr|ii|iii|iv)\b/g, "")  // strip generational suffix
     .replace(/\s+/g, " ")                    // collapse whitespace
     .trim();

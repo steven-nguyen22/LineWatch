@@ -90,10 +90,10 @@ async function fetchTeamRoster(teamId: number): Promise<string[]> {
 /**
  * Normalize a player name for cross-source matching.
  * Handles variance between ESPN ("Odell Beckham Jr.", "Patrick Mahomes II",
- * "D.K. Metcalf") and The Odds API ("Odell Beckham Jr", "Patrick Mahomes",
- * "DK Metcalf"). Strips:
+ * "D.K. Metcalf", "D'Andre Swift") and The Odds API ("Odell Beckham Jr",
+ * "Patrick Mahomes", "DK Metcalf", "DAndre Swift"). Strips:
  *  - diacritics / accents
- *  - all periods and commas
+ *  - periods, commas, apostrophes, hyphens
  *  - trailing generational suffixes (jr/sr/ii/iii/iv)
  *  - case and extra whitespace
  */
@@ -102,7 +102,7 @@ function normalizePlayerName(name: string): string {
     .normalize("NFD")                        // decompose accents (é → e + combining-acute)
     .replace(/[\u0300-\u036f]/g, "")         // remove combining diacritic marks
     .toLowerCase()
-    .replace(/[.,]/g, "")                    // remove periods, commas
+    .replace(/[.,'-]/g, "")                  // remove periods, commas, apostrophes, hyphens
     .replace(/\s+(jr|sr|ii|iii|iv)\b/g, "")  // strip generational suffix
     .replace(/\s+/g, " ")                    // collapse whitespace
     .trim();

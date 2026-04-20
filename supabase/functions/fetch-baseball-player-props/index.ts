@@ -93,7 +93,7 @@ async function fetchTeamRoster(teamId: number): Promise<string[]> {
  * "A.J. Puk") and The Odds API ("Vladimir Guerrero Jr", "Jose Ramirez",
  * "AJ Puk"). Strips:
  *  - diacritics / accents (José → Jose, Ramírez → Ramirez)
- *  - all periods and commas
+ *  - periods, commas, apostrophes, hyphens
  *  - trailing generational suffixes (jr/sr/ii/iii/iv)
  *  - case and extra whitespace
  */
@@ -102,7 +102,7 @@ function normalizePlayerName(name: string): string {
     .normalize("NFD")                        // decompose accents (é → e + combining-acute)
     .replace(/[\u0300-\u036f]/g, "")         // remove combining diacritic marks
     .toLowerCase()
-    .replace(/[.,]/g, "")                    // remove periods, commas
+    .replace(/[.,'-]/g, "")                  // remove periods, commas, apostrophes, hyphens
     .replace(/\s+(jr|sr|ii|iii|iv)\b/g, "")  // strip generational suffix
     .replace(/\s+/g, " ")                    // collapse whitespace
     .trim();
