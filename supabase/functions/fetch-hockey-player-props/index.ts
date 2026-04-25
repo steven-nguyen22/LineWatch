@@ -5,7 +5,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const SPORT_KEY = "icehockey_nhl";
-const PROP_MARKETS = "player_goals,player_shots_on_goal,player_points";
+const PROP_MARKETS = "player_goals,player_goals_alternate,player_shots_on_goal,player_points";
 
 // ESPN team name → ESPN numeric team ID mapping
 // Team names match The Odds API format

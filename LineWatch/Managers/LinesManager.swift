@@ -216,13 +216,14 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
     /// All Odds API market keys this prop reads from. Most prop types fetch
     /// a single key; HR merges Over/Under (`batter_home_runs`) with Yes/No
     /// (`batter_first_home_run`) since they represent the same bet at line 0.5,
-    /// and many books only publish under one key or the other. Hits merges
-    /// the standard 0.5/1.5 market with `batter_hits_alternate` because
-    /// FanDuel and Caesars publish hits exclusively via the alternate key.
+    /// and many books only publish under one key or the other. Hits and NHL
+    /// Goals merge standard with their `_alternate` key because FanDuel,
+    /// Caesars, Bovada etc. publish exclusively via the alternate market.
     var marketKeys: [String] {
         switch self {
         case .homeRuns: return ["batter_home_runs", "batter_first_home_run"]
-        case .hits: return ["batter_hits", "batter_hits_alternate"]
+        case .hits:    return ["batter_hits", "batter_hits_alternate"]
+        case .goals:   return ["player_goals", "player_goals_alternate"]
         default: return [marketKey]
         }
     }
