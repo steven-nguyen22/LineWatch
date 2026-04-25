@@ -1251,6 +1251,12 @@ struct BetPage: View {
             for market in matchingMarkets {
                 for outcome in market.outcomes {
                     guard let playerName = outcome.description else { continue }
+                    // Skip "field"-style synthetic outcomes published in some
+                    // Yes/No markets (e.g. FanDuel/Caesars publish a
+                    // "No Home Run" / "No Goalscorer" entry meaning "no
+                    // batter on either team hits a HR"). These aren't real
+                    // players and would render as a phantom row.
+                    if playerName.hasPrefix("No ") { continue }
                     var perBook = raw[playerName]?[bookmaker.title] ?? PerBook()
 
                     // Normalize Yes/No → Over/Under, and synthesize point=0.5 when
