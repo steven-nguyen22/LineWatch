@@ -1228,59 +1228,102 @@ struct BetPage: View {
 
         let isYesNo = propType.isYesNo
 
-        // Collect all (playerName, line) → [(bookmakerTitle, over/yes, under/no)]
-        var playerMap: [String: (line: Double?, bookmakers: [(bookmakerTitle: String, over: Int?, under: Int?)])] = [:]
+        // Per-bookmaker bucket. For Over/Under markets we keep every threshold the
+        // book offers (Bovada offers 7-10 alts per player); for Yes/No markets we
+        // only need the single yes/no pair.
+        struct PerBook {
+            var byPoint: [Double: (over: Int?, under: Int?)] = [:]
+            var yes: Int? = nil
+            var no: Int? = nil
+        }
+
+        // playerName -> bookmakerTitle -> PerBook
+        var raw: [String: [String: PerBook]] = [:]
 
         for bookmaker in propsData.bookmakers {
             guard let market = bookmaker.markets.first(where: { $0.key == propType.marketKey }) else { continue }
 
-            // Group outcomes by player (description field)
-            var playerOutcomes: [String: (over: Int?, under: Int?, line: Double?)] = [:]
             for outcome in market.outcomes {
                 guard let playerName = outcome.description else { continue }
-                var entry = playerOutcomes[playerName] ?? (over: nil, under: nil, line: nil)
+                var perBook = raw[playerName]?[bookmaker.title] ?? PerBook()
 
                 if isYesNo {
-                    // Yes/No market (e.g., Anytime Goal Scorer): map Yes→over, No→under
+                    // Yes/No market (e.g., Anytime Goal Scorer): map Yes→over, No→under.
                     if outcome.name == "Yes" {
-                        entry.over = outcome.price
+                        perBook.yes = outcome.price
                     } else if outcome.name == "No" {
-                        entry.under = outcome.price
+                        perBook.no = outcome.price
                     }
-                    // No line/point for Yes/No markets
                 } else {
-                    // Standard Over/Under market
+                    // Standard Over/Under market — keyed by threshold so alt lines stay separate.
+                    guard let pt = outcome.point else { continue }
+                    var entry = perBook.byPoint[pt] ?? (over: nil, under: nil)
                     if outcome.name == "Over" {
                         entry.over = outcome.price
-                        entry.line = outcome.point
                     } else if outcome.name == "Under" {
                         entry.under = outcome.price
-                        if entry.line == nil { entry.line = outcome.point }
                     }
+                    perBook.byPoint[pt] = entry
                 }
-                playerOutcomes[playerName] = entry
-            }
 
-            // Merge into playerMap
-            for (playerName, outcomes) in playerOutcomes {
-                let line: Double? = isYesNo ? nil : (outcomes.line ?? 0)
-                if var existing = playerMap[playerName] {
-                    existing.bookmakers.append((bookmakerTitle: bookmaker.title, over: outcomes.over, under: outcomes.under))
-                    playerMap[playerName] = existing
-                } else {
-                    playerMap[playerName] = (line: line, bookmakers: [(bookmakerTitle: bookmaker.title, over: outcomes.over, under: outcomes.under)])
-                }
+                raw[playerName, default: [:]][bookmaker.title] = perBook
             }
         }
 
         // Look up player-to-team mapping
         let teamMap = dataService.playerTeamsByEvent[event.id] ?? [:]
 
-        // Convert to array and sort alphabetically
-        return playerMap.map { name, data in
-            PlayerPropLine(playerName: name, line: data.line, teamName: teamMap[name], bookmakerOdds: data.bookmakers)
+        var rows: [PlayerPropLine] = []
+
+        for (playerName, perBookByBookie) in raw {
+            if isYesNo {
+                let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)] =
+                    perBookByBookie.map { (title, pb) in
+                        (bookmakerTitle: title, over: pb.yes, under: pb.no)
+                    }
+                rows.append(PlayerPropLine(
+                    playerName: playerName,
+                    line: nil,
+                    teamName: teamMap[playerName],
+                    bookmakerOdds: bookmakerOdds
+                ))
+                continue
+            }
+
+            // Pick the consensus threshold: the most-common `point` value across
+            // all bookmakers for this player. Tie-break: lower threshold wins
+            // (deterministic; biases toward the "main" line, which is usually the
+            // lowest among Bovada's alts).
+            var counts: [Double: Int] = [:]
+            for (_, pb) in perBookByBookie {
+                for pt in pb.byPoint.keys {
+                    counts[pt, default: 0] += 1
+                }
+            }
+            guard let chosen = counts.max(by: { a, b in
+                a.value != b.value ? a.value < b.value : a.key > b.key
+            })?.key else { continue }
+
+            // For each bookmaker, only surface odds that match the chosen
+            // threshold. Books that don't offer that exact threshold get nil
+            // odds → the existing UI cell renders "—".
+            let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)] =
+                perBookByBookie.map { (title, pb) -> (bookmakerTitle: String, over: Int?, under: Int?) in
+                    let entry = pb.byPoint[chosen] ?? (over: nil, under: nil)
+                    return (bookmakerTitle: title, over: entry.over, under: entry.under)
+                }
+
+            rows.append(PlayerPropLine(
+                playerName: playerName,
+                line: chosen,
+                teamName: teamMap[playerName],
+                bookmakerOdds: bookmakerOdds
+            ))
         }
-        .sorted { $0.playerName.localizedCaseInsensitiveCompare($1.playerName) == .orderedAscending }
+
+        return rows.sorted {
+            $0.playerName.localizedCaseInsensitiveCompare($1.playerName) == .orderedAscending
+        }
     }
 
     // MARK: - Player Search Bar
