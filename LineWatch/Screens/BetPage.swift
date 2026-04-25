@@ -1275,11 +1275,18 @@ struct BetPage: View {
 
         var rows: [PlayerPropLine] = []
 
+        // Walk bookmakers in their upstream API order so the per-row column
+        // order is stable across re-renders. Iterating `raw` (a Dictionary)
+        // directly would shuffle bookmakers every time SwiftUI re-invoked
+        // this function (e.g. on Bet Simulator open).
+        let bookmakerOrder = propsData.bookmakers.map(\.title)
+
         for (playerName, perBookByBookie) in raw {
             if isYesNo {
                 let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)] =
-                    perBookByBookie.map { (title, pb) in
-                        (bookmakerTitle: title, over: pb.yes, under: pb.no)
+                    bookmakerOrder.compactMap { title in
+                        guard let pb = perBookByBookie[title] else { return nil }
+                        return (bookmakerTitle: title, over: pb.yes, under: pb.no)
                     }
                 rows.append(PlayerPropLine(
                     playerName: playerName,
@@ -1304,11 +1311,12 @@ struct BetPage: View {
                 a.value != b.value ? a.value < b.value : a.key > b.key
             })?.key else { continue }
 
-            // For each bookmaker, only surface odds that match the chosen
-            // threshold. Books that don't offer that exact threshold get nil
-            // odds → the existing UI cell renders "—".
+            // For each bookmaker (in upstream order), only surface odds that
+            // match the chosen threshold. Books that don't offer that exact
+            // threshold get nil odds → the existing UI cell renders "—".
             let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)] =
-                perBookByBookie.map { (title, pb) -> (bookmakerTitle: String, over: Int?, under: Int?) in
+                bookmakerOrder.compactMap { title -> (bookmakerTitle: String, over: Int?, under: Int?)? in
+                    guard let pb = perBookByBookie[title] else { return nil }
                     let entry = pb.byPoint[chosen] ?? (over: nil, under: nil)
                     return (bookmakerTitle: title, over: entry.over, under: entry.under)
                 }
