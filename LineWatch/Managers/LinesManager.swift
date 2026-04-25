@@ -213,10 +213,30 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         }
     }
 
+    /// All Odds API market keys this prop reads from. Most prop types fetch
+    /// a single key; HR merges Over/Under (`batter_home_runs`) with Yes/No
+    /// (`batter_first_home_run`) since they represent the same bet at line 0.5,
+    /// and many books only publish under one key or the other.
+    var marketKeys: [String] {
+        switch self {
+        case .homeRuns: return ["batter_home_runs", "batter_first_home_run"]
+        default: return [marketKey]
+        }
+    }
+
     /// Whether this prop uses Yes/No outcomes instead of Over/Under
     var isYesNo: Bool {
         switch self {
-        case .soccerGoalScorer: return true
+        case .soccerGoalScorer, .homeRuns: return true
+        default: return false
+        }
+    }
+
+    /// True when only one outcome side is shown — used for "anytime"-style
+    /// props where the No/Under side is meaningless or unpublished.
+    var hidesSecondaryOutcome: Bool {
+        switch self {
+        case .homeRuns: return true
         default: return false
         }
     }

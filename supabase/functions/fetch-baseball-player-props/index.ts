@@ -5,7 +5,11 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const SPORT_KEY = "baseball_mlb";
-const PROP_MARKETS = "batter_hits,pitcher_strikeouts,batter_home_runs";
+// `batter_first_home_run` is the Yes/No "Player to hit a Home Run" market.
+// It's economically identical to `batter_home_runs` Over 0.5 but several
+// books (e.g. Bovada) only publish HR odds under this key, so we fetch
+// both and merge client-side.
+const PROP_MARKETS = "batter_hits,pitcher_strikeouts,batter_home_runs,batter_first_home_run";
 
 // ESPN team name → ESPN numeric team ID mapping
 // Team names match The Odds API format

@@ -1105,9 +1105,12 @@ struct BetPage: View {
 
                 Spacer()
 
-                if let lineValue = line.line {
-                    Text(formatPoint(lineValue))
-                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                // Yes/No props (HR, soccer goal scorer) read as "Anytime" even
+                // though the underlying line is now 0.5 after the unified
+                // pipeline. Numeric line chip only shows for true Over/Under.
+                if selectedPropType.isYesNo {
+                    Text("Anytime")
+                        .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -1115,9 +1118,9 @@ struct BetPage: View {
                             Capsule()
                                 .fill(AppColors.primaryGreen)
                         )
-                } else {
-                    Text("Anytime")
-                        .font(.system(size: 13, weight: .bold))
+                } else if let lineValue = line.line {
+                    Text(formatPoint(lineValue))
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -1137,8 +1140,10 @@ struct BetPage: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Text(selectedPropType.isYesNo ? "Yes" : "Over")
                     .frame(width: 80, alignment: .center)
-                Text(selectedPropType.isYesNo ? "No" : "Under")
-                    .frame(width: 80, alignment: .center)
+                if !selectedPropType.hidesSecondaryOutcome {
+                    Text(selectedPropType.isYesNo ? "No" : "Under")
+                        .frame(width: 80, alignment: .center)
+                }
             }
             .font(.system(size: 11, weight: .semibold))
             .foregroundStyle(AppColors.textSecondary)
@@ -1168,16 +1173,19 @@ struct BetPage: View {
                         width: 80
                     )
 
-                    // Under / No cell
-                    propOddsCell(
-                        odds: bm.under,
-                        outcomeName: selectedPropType.isYesNo
-                            ? "\(line.playerName) No"
-                            : "\(line.playerName) U \(formatPoint(line.line))",
-                        bookmakerTitle: bm.bookmakerTitle,
-                        allPrices: allUnderPrices,
-                        width: 80
-                    )
+                    // Under / No cell — hidden for one-sided props (e.g. HR
+                    // anytime), where the No/Under side is meaningless.
+                    if !selectedPropType.hidesSecondaryOutcome {
+                        propOddsCell(
+                            odds: bm.under,
+                            outcomeName: selectedPropType.isYesNo
+                                ? "\(line.playerName) No"
+                                : "\(line.playerName) U \(formatPoint(line.line))",
+                            bookmakerTitle: bm.bookmakerTitle,
+                            allPrices: allUnderPrices,
+                            width: 80
+                        )
+                    }
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -1226,47 +1234,46 @@ struct BetPage: View {
     private func buildPlayerPropLines(for propType: PlayerPropType) -> [PlayerPropLine] {
         guard let propsData = dataService.playerPropsByEvent[event.id] else { return [] }
 
-        let isYesNo = propType.isYesNo
-
-        // Per-bookmaker bucket. For Over/Under markets we keep every threshold the
-        // book offers (Bovada offers 7-10 alts per player); for Yes/No markets we
-        // only need the single yes/no pair.
+        // Per-bookmaker bucket — every threshold the book offers (Bovada offers
+        // 7-10 alts per player). Yes/No outcomes synthesize point=0.5 so they
+        // flow through the same byPoint pipeline as Over/Under.
         struct PerBook {
             var byPoint: [Double: (over: Int?, under: Int?)] = [:]
-            var yes: Int? = nil
-            var no: Int? = nil
         }
 
         // playerName -> bookmakerTitle -> PerBook
         var raw: [String: [String: PerBook]] = [:]
 
         for bookmaker in propsData.bookmakers {
-            guard let market = bookmaker.markets.first(where: { $0.key == propType.marketKey }) else { continue }
+            // Walk every market matching ANY of the prop's keys. Most props
+            // have one key; HR merges `batter_home_runs` and `batter_first_home_run`.
+            let matchingMarkets = bookmaker.markets.filter { propType.marketKeys.contains($0.key) }
+            for market in matchingMarkets {
+                for outcome in market.outcomes {
+                    guard let playerName = outcome.description else { continue }
+                    var perBook = raw[playerName]?[bookmaker.title] ?? PerBook()
 
-            for outcome in market.outcomes {
-                guard let playerName = outcome.description else { continue }
-                var perBook = raw[playerName]?[bookmaker.title] ?? PerBook()
-
-                if isYesNo {
-                    // Yes/No market (e.g., Anytime Goal Scorer): map Yes→over, No→under.
-                    if outcome.name == "Yes" {
-                        perBook.yes = outcome.price
-                    } else if outcome.name == "No" {
-                        perBook.no = outcome.price
+                    // Normalize Yes/No → Over/Under, and synthesize point=0.5 when
+                    // the API doesn't provide one (Yes/No markets don't have a
+                    // `point`). At line 0.5, "Yes" ≡ "Over" and "No" ≡ "Under".
+                    let isOverSide: Bool
+                    switch outcome.name {
+                    case "Over", "Yes":  isOverSide = true
+                    case "Under", "No":  isOverSide = false
+                    default: continue
                     }
-                } else {
-                    // Standard Over/Under market — keyed by threshold so alt lines stay separate.
-                    guard let pt = outcome.point else { continue }
+
+                    let pt = outcome.point ?? 0.5
                     var entry = perBook.byPoint[pt] ?? (over: nil, under: nil)
-                    if outcome.name == "Over" {
+                    if isOverSide {
                         entry.over = outcome.price
-                    } else if outcome.name == "Under" {
+                    } else {
                         entry.under = outcome.price
                     }
                     perBook.byPoint[pt] = entry
-                }
 
-                raw[playerName, default: [:]][bookmaker.title] = perBook
+                    raw[playerName, default: [:]][bookmaker.title] = perBook
+                }
             }
         }
 
@@ -1282,25 +1289,11 @@ struct BetPage: View {
         let bookmakerOrder = propsData.bookmakers.map(\.title)
 
         for (playerName, perBookByBookie) in raw {
-            if isYesNo {
-                let bookmakerOdds: [(bookmakerTitle: String, over: Int?, under: Int?)] =
-                    bookmakerOrder.compactMap { title in
-                        guard let pb = perBookByBookie[title] else { return nil }
-                        return (bookmakerTitle: title, over: pb.yes, under: pb.no)
-                    }
-                rows.append(PlayerPropLine(
-                    playerName: playerName,
-                    line: nil,
-                    teamName: teamMap[playerName],
-                    bookmakerOdds: bookmakerOdds
-                ))
-                continue
-            }
-
             // Pick the consensus threshold: the most-common `point` value across
             // all bookmakers for this player. Tie-break: lower threshold wins
             // (deterministic; biases toward the "main" line, which is usually the
-            // lowest among Bovada's alts).
+            // lowest among Bovada's alts). For Yes/No props every outcome lives
+            // at 0.5, so 0.5 wins unambiguously.
             var counts: [Double: Int] = [:]
             for (_, pb) in perBookByBookie {
                 for pt in pb.byPoint.keys {
