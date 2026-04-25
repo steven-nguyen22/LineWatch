@@ -120,32 +120,39 @@ interface TransformedEvent {
 }
 
 /**
- * Deduplicate markets by event_ticker and transform each game into a
- * single TransformedEvent with both team outcomes.
+ * Group markets by event_ticker and transform each game into a single
+ * TransformedEvent with both team outcomes.
  *
- * Each game has two Kalshi markets (one per team as YES). We group by
- * event_ticker and use whichever market we see first — it already has
- * yes_ask_dollars for one team and no_ask_dollars for the other.
+ * Each game has TWO Kalshi markets — one with YES=home, one with YES=away.
+ * Each market has its own order book, so yes_ask on the home market and
+ * no_ask on the away market can drift independently when one side's
+ * orders go stale. Trusting `no_ask` as the inverse of the other side's
+ * `yes_ask` produces wrong odds when the two markets disagree (see
+ * Spurs @ Trail Blazers Game 3: stale SAS market said yes_ask=0.61 while
+ * fresh POR market said yes_ask=0.47 → relying on the SAS market's
+ * no_ask=0.39 inflated POR's odds to +156 instead of the correct +113).
  *
- * yes_sub_title / no_sub_title give us city/nickname strings ("Phoenix",
- * "Oklahoma City") so we match them against the last token(s) of the
- * full team names from our map to identify which side is which.
+ * Fix: derive each side's American odds from THAT side's own market's
+ * `yes_ask_dollars`. This mirrors what Kalshi's UI charges to actually
+ * buy each contract. Use `no_ask` only as a fallback when the matching
+ * market is missing entirely.
  */
 function transformMarkets(
   markets: KalshiMarket[],
   teams: Record<string, string>,
   nowIso: string,
 ): TransformedEvent[] {
-  // Deduplicate: one entry per event_ticker
-  const seen = new Map<string, KalshiMarket>();
+  // Group all markets by event_ticker (no dedup — we want both sides).
+  const grouped = new Map<string, KalshiMarket[]>();
   for (const m of markets) {
     const key = m.event_ticker ?? m.ticker;
-    if (!seen.has(key)) seen.set(key, m);
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key)!.push(m);
   }
 
   const out: TransformedEvent[] = [];
 
-  for (const [eventTicker, market] of seen) {
+  for (const [eventTicker, eventMarkets] of grouped) {
     const parsed = parseEventTicker(eventTicker, teams);
     if (!parsed) continue;
 
@@ -153,36 +160,50 @@ function transformMarkets(
     const homeName = teams[parsed.homeAbbr];
     if (!awayName || !homeName) continue;
 
-    const yesAskStr = market.yes_ask_dollars;
-    const noAskStr = market.no_ask_dollars;
-    if (!yesAskStr || !noAskStr) continue;
+    // For each market, identify which team is YES via the ticker suffix
+    // (shape: "<event_ticker>-<YES_TEAM_ABBR>") and pull THAT team's
+    // probability from this market's yes_ask. The other team's price comes
+    // from the other market's yes_ask, not from this market's no_ask.
+    let awayProb: number | undefined;
+    let homeProb: number | undefined;
+    let awayNoAskFallback: number | undefined;
+    let homeNoAskFallback: number | undefined;
 
-    const yesProb = parseFloat(yesAskStr);
-    const noProb = parseFloat(noAskStr);
-    if (!Number.isFinite(yesProb) || !Number.isFinite(noProb)) continue;
-    if (yesProb <= 0 || noProb <= 0) continue;
+    for (const m of eventMarkets) {
+      const ticker = m.ticker ?? "";
+      const suffix = ticker.startsWith(eventTicker + "-")
+        ? ticker.slice(eventTicker.length + 1)
+        : "";
+      if (!suffix) continue;
 
-    // Determine which team YES refers to via the market ticker suffix.
-    // Market tickers are shaped "<event_ticker>-<YES_TEAM_ABBR>", e.g.
-    // "KXNHLGAME-26APR26EDMANA-EDM" → YES=EDM. This is more reliable
-    // than sub_titles, which Kalshi sometimes leaves as the same string
-    // on both sides (e.g. yes_sub="EDM Oilers" AND no_sub="EDM Oilers").
-    const marketTicker = market.ticker ?? "";
-    const suffix = marketTicker.startsWith(eventTicker + "-")
-      ? marketTicker.slice(eventTicker.length + 1)
-      : "";
-    if (!suffix) continue;
+      const yesAsk = parseFloat(m.yes_ask_dollars ?? "");
+      const noAsk = parseFloat(m.no_ask_dollars ?? "");
+      const yesAskValid = Number.isFinite(yesAsk) && yesAsk > 0 && yesAsk < 1;
+      const noAskValid = Number.isFinite(noAsk) && noAsk > 0 && noAsk < 1;
+      if (!yesAskValid) continue;
 
-    let awayProb: number, homeProb: number;
-    if (suffix === parsed.awayAbbr) {
-      awayProb = yesProb;
-      homeProb = noProb;
-    } else if (suffix === parsed.homeAbbr) {
-      homeProb = yesProb;
-      awayProb = noProb;
-    } else {
-      continue; // unknown suffix
+      if (suffix === parsed.awayAbbr) {
+        awayProb = yesAsk;
+        // Capture this market's no_ask as a fallback for the home side
+        // if the home market is missing from this batch.
+        if (noAskValid) homeNoAskFallback = noAsk;
+      } else if (suffix === parsed.homeAbbr) {
+        homeProb = yesAsk;
+        if (noAskValid) awayNoAskFallback = noAsk;
+      }
     }
+
+    // Fallback: if either side's own market wasn't present, use the
+    // counterpart market's no_ask (preserves coverage parity with
+    // pre-fix behavior when only one market is returned).
+    if (awayProb === undefined && awayNoAskFallback !== undefined) {
+      awayProb = awayNoAskFallback;
+    }
+    if (homeProb === undefined && homeNoAskFallback !== undefined) {
+      homeProb = homeNoAskFallback;
+    }
+
+    if (awayProb === undefined || homeProb === undefined) continue;
 
     const awayPrice = probToAmerican(awayProb);
     const homePrice = probToAmerican(homeProb);
