@@ -9,7 +9,7 @@ const SPORT_KEY = "baseball_mlb";
 // It's economically identical to `batter_home_runs` Over 0.5 but several
 // books (e.g. Bovada) only publish HR odds under this key, so we fetch
 // both and merge client-side.
-const PROP_MARKETS = "batter_hits,pitcher_strikeouts,batter_home_runs,batter_first_home_run";
+const PROP_MARKETS = "batter_hits,batter_hits_alternate,pitcher_strikeouts,batter_home_runs,batter_first_home_run";
 
 // ESPN team name → ESPN numeric team ID mapping
 // Team names match The Odds API format
