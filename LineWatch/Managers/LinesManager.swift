@@ -224,6 +224,7 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .homeRuns: return ["batter_home_runs", "batter_first_home_run"]
         case .hits:    return ["batter_hits", "batter_hits_alternate"]
         case .goals:   return ["player_goals", "player_goals_alternate"]
+        case .hockeyPoints: return ["player_points", "player_points_alternate"]
         default: return [marketKey]
         }
     }

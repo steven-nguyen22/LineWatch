@@ -1245,10 +1245,15 @@ struct BetPage: View {
         var raw: [String: [String: PerBook]] = [:]
 
         for bookmaker in propsData.bookmakers {
-            // Walk every market matching ANY of the prop's keys. Most props
-            // have one key; HR merges `batter_home_runs` and `batter_first_home_run`.
-            let matchingMarkets = bookmaker.markets.filter { propType.marketKeys.contains($0.key) }
-            for market in matchingMarkets {
+            // Walk markets in `marketKeys` declared order so the primary key
+            // wins on duplicate (player, point, side) entries. When a book
+            // publishes the same line in both standard and alternate markets
+            // at different prices (e.g. McDavid Pts 1.5 Over: DK -115 standard
+            // vs -130 alternate), the standard price reflects the book's
+            // headline line and is what users compare against — so primary
+            // claims first, alternate only fills empty slots.
+            for key in propType.marketKeys {
+                guard let market = bookmaker.markets.first(where: { $0.key == key }) else { continue }
                 for outcome in market.outcomes {
                     guard let playerName = outcome.description else { continue }
                     // Skip "field"-style synthetic outcomes published in some
@@ -1271,10 +1276,13 @@ struct BetPage: View {
 
                     let pt = outcome.point ?? 0.5
                     var entry = perBook.byPoint[pt] ?? (over: nil, under: nil)
+                    // Only fill an empty slot — the first marketKey to write
+                    // wins, so later (alternate) keys can't overwrite the
+                    // standard market's published price.
                     if isOverSide {
-                        entry.over = outcome.price
+                        if entry.over == nil { entry.over = outcome.price }
                     } else {
-                        entry.under = outcome.price
+                        if entry.under == nil { entry.under = outcome.price }
                     }
                     perBook.byPoint[pt] = entry
 
