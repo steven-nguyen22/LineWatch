@@ -6,7 +6,7 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const SPORT_KEY = "soccer_uefa_champs_league";
 const PROP_MARKETS =
-  "player_goal_scorer_anytime,player_shots_on_target,player_assists";
+  "player_goal_scorer_anytime,player_shots_on_target,player_shots_on_target_alternate,player_assists";
 
 // ESPN team name -> ESPN numeric team ID mapping
 // Team names match The Odds API format for UEFA Champions League

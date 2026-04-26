@@ -225,6 +225,7 @@ enum PlayerPropType: String, CaseIterable, Identifiable, Hashable {
         case .hits:    return ["batter_hits", "batter_hits_alternate"]
         case .goals:   return ["player_goals", "player_goals_alternate"]
         case .hockeyPoints: return ["player_points", "player_points_alternate"]
+        case .soccerShotsOnTarget: return ["player_shots_on_target", "player_shots_on_target_alternate"]
         default: return [marketKey]
         }
     }
