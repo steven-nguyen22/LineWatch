@@ -335,6 +335,60 @@ class SupabaseService {
         }
         return try JSONDecoder().decode([T].self, from: data)
     }
+
+    // MARK: - Hit Rates (Recent Trends)
+
+    /// Fetches the player's last 15 graded games for `propType` (only rows
+    /// where the post-game job has filled in `actual_value`). The caller
+    /// can slice locally to compute L5 / L10 / L15 hit rates without
+    /// re-querying.
+    ///
+    /// `playerName` must be the canonical ESPN spelling (the same name
+    /// shown in the BetPage UI). Snapshot rows are written under that
+    /// name so a direct equality match works.
+    func fetchHitRateRows(
+        playerName: String,
+        sportKey: String,
+        propType: String
+    ) async throws -> [HitRateRow] {
+        // PostgREST: filter graded rows (hit not null), order by date desc, cap at 15.
+        let nameEncoded = playerName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? playerName
+        let endpoint = "\(baseURL)/player_game_results"
+            + "?player_name=eq.\(nameEncoded)"
+            + "&sport_key=eq.\(sportKey)"
+            + "&prop_type=eq.\(propType)"
+            + "&hit=not.is.null"
+            + "&order=game_date.desc"
+            + "&limit=15"
+            + "&select=hit,game_date,line_value,actual_value"
+
+        guard let url = URL(string: endpoint) else { throw GHError.invalidURL }
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+        return try JSONDecoder().decode([HitRateRow].self, from: data)
+    }
+}
+
+/// One graded row from `player_game_results`. The fields beyond `hit` are
+/// kept around for future UI (e.g. a tap-through "show last 5 games" sheet).
+struct HitRateRow: Codable {
+    let hit: Bool
+    let gameDate: String
+    let lineValue: Double
+    let actualValue: Double
+
+    enum CodingKeys: String, CodingKey {
+        case hit
+        case gameDate = "game_date"
+        case lineValue = "line_value"
+        case actualValue = "actual_value"
+    }
 }
 
 struct NBATeamRow: Codable {

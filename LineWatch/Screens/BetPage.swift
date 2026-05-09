@@ -75,6 +75,16 @@ struct BetPage: View {
         supportsStats && authService.effectiveTier.canAccessStats
     }
 
+    /// Whether to render the hit-rate badge on player prop rows. NBA-only
+    /// for now (the snapshot/results pipeline is wired up only for NBA);
+    /// gated by feature flag, tier, and supported prop types.
+    private var shouldShowHitRateBadge: Bool {
+        guard Features.hitRatesEnabled else { return false }
+        guard authService.effectiveTier.canAccessHitRates else { return false }
+        guard sportCategory == .basketball else { return false }
+        return [PlayerPropType.points, .rebounds, .assists].contains(selectedPropType)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -1101,6 +1111,14 @@ struct BetPage: View {
                     Text(line.playerName)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(AppColors.textPrimary)
+                }
+
+                if shouldShowHitRateBadge {
+                    HitRateBadge(
+                        playerName: line.playerName,
+                        propType: selectedPropType,
+                        sportKey: sportCategory.rawValue
+                    )
                 }
 
                 Spacer()
