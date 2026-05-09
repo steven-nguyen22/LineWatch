@@ -57,6 +57,10 @@ struct BetPage: View {
     @State private var golfSearchText: String = ""
     @State private var selectedTeamForStats: String?
     @State private var selectedPlayerForStats: String?
+    /// Captured at the moment the player stats modal opens so the modal
+    /// can render the matching hit-rate history section. nil when the
+    /// modal is opened from a non-player-prop context.
+    @State private var modalPropType: PlayerPropType?
     @State private var showPaywallForStats = false
     @FocusState private var focusedBet: Int?
 
@@ -154,11 +158,18 @@ struct BetPage: View {
         }
         .sheet(isPresented: Binding(
             get: { selectedPlayerForStats != nil },
-            set: { if !$0 { selectedPlayerForStats = nil } }
+            set: { if !$0 {
+                selectedPlayerForStats = nil
+                modalPropType = nil
+            } }
         )) {
             if let player = selectedPlayerForStats {
-                PlayerStatsModal(playerName: player, sport: sportCategory)
-                    .environment(dataService)
+                PlayerStatsModal(
+                    playerName: player,
+                    sport: sportCategory,
+                    propType: modalPropType
+                )
+                .environment(dataService)
             }
         }
         .navigationDestination(isPresented: $showPaywallForStats) {
@@ -1090,6 +1101,11 @@ struct BetPage: View {
                 if supportsStats {
                     Button {
                         if canShowStats {
+                            // We're inside playerPropCard → the stats sheet
+                            // should open with the current prop tab so the
+                            // hit-rate history section in the modal renders
+                            // for the same prop the user was just looking at.
+                            modalPropType = selectedPropType
                             selectedPlayerForStats = line.playerName
                             PostHogService.capture("stats_modal_opened", properties: [
                                 "sport": sportCategory.rawValue,
@@ -1117,7 +1133,22 @@ struct BetPage: View {
                     HitRateBadge(
                         playerName: line.playerName,
                         propType: selectedPropType,
-                        sportKey: sportCategory.rawValue
+                        sportKey: sportCategory.rawValue,
+                        onTap: {
+                            // Reuse the same gating the player-name button uses:
+                            // open the stats modal for HoF users (which includes
+                            // anyone who can see this badge), paywall otherwise.
+                            if canShowStats {
+                                modalPropType = selectedPropType
+                                selectedPlayerForStats = line.playerName
+                                PostHogService.capture("hit_rate_badge_tapped", properties: [
+                                    "sport": sportCategory.rawValue,
+                                    "prop_type": selectedPropType.rawValue
+                                ])
+                            } else {
+                                showPaywallForStats = true
+                            }
+                        }
                     )
                 }
 
