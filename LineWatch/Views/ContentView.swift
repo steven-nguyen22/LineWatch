@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var dataService = OddsDataService()
     @State private var purchaseManager = PurchaseManager()
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+    @AppStorage("hasAgreedToTerms") private var hasAgreedToTerms = false
     @Environment(AuthService.self) private var authService
     @Environment(\.scenePhase) private var scenePhase
 
@@ -35,6 +36,13 @@ struct ContentView: View {
                 OnboardingView {
                     withAnimation(.easeInOut(duration: 0.4)) {
                         hasSeenOnboarding = true
+                    }
+                }
+                .transition(.opacity)
+            } else if !hasAgreedToTerms {
+                TermsOfServiceView {
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        hasAgreedToTerms = true
                     }
                 }
                 .transition(.opacity)
@@ -73,6 +81,7 @@ struct ContentView: View {
         .environment(purchaseManager)
         .animation(.easeInOut(duration: 0.4), value: isLoading)
         .animation(.easeInOut(duration: 0.4), value: hasSeenOnboarding)
+        .animation(.easeInOut(duration: 0.4), value: hasAgreedToTerms)
         .animation(.easeInOut(duration: 0.4), value: authService.isAuthenticated)
         .fullScreenCover(isPresented: Binding(
             get: { authService.needsPostTrialPaywall },
