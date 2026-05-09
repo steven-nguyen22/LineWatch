@@ -98,8 +98,20 @@ Deno.serve(async (req) => {
     if (sportKey === "basketball_nba" && active) {
       await applyJob(supabase, `${cfg.jobName}-snapshot`, "snapshot-lines-nba", true);
       jobs.push(`${cfg.jobName}-snapshot`);
+
+      // Post-game results: daily at 13:00 UTC (= 9am EDT / 8am EST).
+      // All NBA games — even West Coast — are final by then.
+      await applyJob(
+        supabase,
+        `${cfg.jobName}-results`,
+        "fetch-nba-game-results",
+        true,
+        "0 13 * * *",
+      );
+      jobs.push(`${cfg.jobName}-results`);
     } else if (sportKey === "basketball_nba") {
       await applyJob(supabase, `${cfg.jobName}-snapshot`, "snapshot-lines-nba", false);
+      await applyJob(supabase, `${cfg.jobName}-results`, "fetch-nba-game-results", false);
     }
 
     decisions[sportKey] = { active, jobs };
@@ -140,12 +152,13 @@ async function applyJob(
   jobName: string,
   fnName: string,
   active: boolean,
+  cron: string = SCHEDULE,
 ) {
   if (active) {
     const { error } = await supabase.rpc("schedule_sport_job", {
       p_job_name: jobName,
       p_fn_name: fnName,
-      p_cron: SCHEDULE,
+      p_cron: cron,
     });
     if (error) console.error(`schedule ${jobName} failed:`, error);
   } else {

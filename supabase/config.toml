@@ -422,6 +422,9 @@ verify_jwt = true
 [functions.snapshot-lines-nba]
 verify_jwt = true
 
+[functions.fetch-nba-game-results]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327
