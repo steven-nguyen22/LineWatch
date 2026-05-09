@@ -92,6 +92,16 @@ Deno.serve(async (req) => {
       jobs.push(`${cfg.jobName}-props`);
     }
 
+    // Hit-rate snapshot: only NBA wired up so far. Same 5-min cadence —
+    // each function call is cheap (only writes for games tipping in 25-35
+    // min) and the unique constraint makes repeats no-ops.
+    if (sportKey === "basketball_nba" && active) {
+      await applyJob(supabase, `${cfg.jobName}-snapshot`, "snapshot-lines-nba", true);
+      jobs.push(`${cfg.jobName}-snapshot`);
+    } else if (sportKey === "basketball_nba") {
+      await applyJob(supabase, `${cfg.jobName}-snapshot`, "snapshot-lines-nba", false);
+    }
+
     decisions[sportKey] = { active, jobs };
   }
 

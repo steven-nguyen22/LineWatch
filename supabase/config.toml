@@ -419,6 +419,9 @@ verify_jwt = true
 [functions.fetch-kalshi-odds]
 verify_jwt = true
 
+[functions.snapshot-lines-nba]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327
