@@ -46,15 +46,14 @@ interface ESPNAthlete {
   position?: { abbreviation?: string };
 }
 
+type NFLPosition = "QB" | "RB" | "WR" | "TE";
+
 interface PlayerRow {
   player_name: string;
   espn_id: number;
   headshot_url: string;
   team_name: string;
-}
-
-interface ReceiverRow extends PlayerRow {
-  position: "WR" | "TE";
+  position: NFLPosition;
 }
 
 Deno.serve(async (_req) => {
@@ -79,10 +78,10 @@ Deno.serve(async (_req) => {
       );
     }
 
-    // Step 2: Fetch rosters from ESPN for all 32 teams
-    const qbRows: PlayerRow[] = [];
-    const rbRows: PlayerRow[] = [];
-    const receiverRows: ReceiverRow[] = [];
+    // Step 2: Fetch rosters from ESPN for all 32 teams. Position is recorded
+    // per player on the unified `nfl_players` table — fetch-stats reads it
+    // to dispatch to QB/RB/WR/TE-specific stat formatters.
+    const playerRows: PlayerRow[] = [];
     let failedTeams = 0;
 
     for (const [teamName, espnId] of Object.entries(NFL_TEAM_IDS)) {
@@ -110,16 +109,13 @@ Deno.serve(async (_req) => {
                 athlete.headshot?.href ||
                 `https://a.espncdn.com/i/headshots/nfl/players/full/${athlete.id}.png`;
 
-              const base: PlayerRow = {
+              playerRows.push({
                 player_name: athlete.displayName,
                 espn_id: parseInt(athlete.id, 10),
                 headshot_url: headshotUrl,
                 team_name: teamName,
-              };
-
-              if (pos === "QB") qbRows.push(base);
-              else if (pos === "RB") rbRows.push(base);
-              else receiverRows.push({ ...base, position: pos });
+                position: pos,
+              });
             }
           }
         }
@@ -131,53 +127,46 @@ Deno.serve(async (_req) => {
       }
     }
 
-    // Step 3: Upsert each player table in batches of 100
-    async function upsertBatched<T extends { player_name: string; team_name: string }>(
-      table: string,
-      rows: T[],
-    ): Promise<void> {
-      for (let i = 0; i < rows.length; i += 100) {
-        const batch = rows.slice(i, i + 100);
-        const { error } = await supabase
-          .from(table)
-          .upsert(batch, { onConflict: "player_name,team_name" });
-        if (error) console.error(`${table} upsert batch error: ${error.message}`);
-      }
+    // Step 3: Upsert nfl_players in batches of 100
+    for (let i = 0; i < playerRows.length; i += 100) {
+      const batch = playerRows.slice(i, i + 100);
+      const { error } = await supabase
+        .from("nfl_players")
+        .upsert(batch, { onConflict: "player_name,team_name" });
+      if (error) console.error(`nfl_players upsert batch error: ${error.message}`);
     }
 
-    await upsertBatched("nfl_qbs", qbRows);
-    await upsertBatched("nfl_rbs", rbRows);
-    await upsertBatched("nfl_receivers", receiverRows);
-
     // Step 4: Clean up players no longer on any roster
-    async function cleanupStale<T extends { player_name: string; team_name: string }>(
-      table: string,
-      freshRows: T[],
-    ): Promise<void> {
-      const freshKeys = new Set(freshRows.map((p) => `${p.player_name}|${p.team_name}`));
-      const { data: existing } = await supabase
-        .from(table)
-        .select("id,player_name,team_name");
-      if (!existing) return;
+    const freshKeys = new Set(
+      playerRows.map((p) => `${p.player_name}|${p.team_name}`),
+    );
+    const { data: existing } = await supabase
+      .from("nfl_players")
+      .select("id,player_name,team_name");
+    if (existing) {
       const staleIds = existing
         .filter((p) => !freshKeys.has(`${p.player_name}|${p.team_name}`))
         .map((p) => p.id);
       if (staleIds.length > 0) {
-        await supabase.from(table).delete().in("id", staleIds);
+        await supabase.from("nfl_players").delete().in("id", staleIds);
       }
     }
 
-    await cleanupStale("nfl_qbs", qbRows);
-    await cleanupStale("nfl_rbs", rbRows);
-    await cleanupStale("nfl_receivers", receiverRows);
+    // Per-position counts for response telemetry — the table is now unified
+    // but the response shape preserves the same QB / RB / WR+TE breakdown
+    // callers (manage-sport-schedules, debug invocations) expect.
+    const qbCount = playerRows.filter((p) => p.position === "QB").length;
+    const rbCount = playerRows.filter((p) => p.position === "RB").length;
+    const receiverCount = playerRows.length - qbCount - rbCount;
 
     return new Response(
       JSON.stringify({
         success: true,
         teams: teamRows.length,
-        qbs: qbRows.length,
-        rbs: rbRows.length,
-        receivers: receiverRows.length,
+        players: playerRows.length,
+        qbs: qbCount,
+        rbs: rbCount,
+        receivers: receiverCount,
         failed_teams: failedTeams,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }

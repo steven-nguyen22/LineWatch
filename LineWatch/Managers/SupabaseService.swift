@@ -281,19 +281,12 @@ class SupabaseService {
         return try await fetchRows(path: "nfl_teams?select=team_name,logo_url")
     }
 
-    /// Fetches QB headshots.
-    func fetchNFLQBs() async throws -> [NFLPlayerRow] {
-        return try await fetchRows(path: "nfl_qbs?select=player_name,headshot_url,team_name")
-    }
-
-    /// Fetches RB headshots.
-    func fetchNFLRBs() async throws -> [NFLPlayerRow] {
-        return try await fetchRows(path: "nfl_rbs?select=player_name,headshot_url,team_name")
-    }
-
-    /// Fetches WR/TE headshots.
-    func fetchNFLReceivers() async throws -> [NFLPlayerRow] {
-        return try await fetchRows(path: "nfl_receivers?select=player_name,headshot_url,team_name")
+    /// Fetches NFL player headshots from the unified `nfl_players` table
+    /// (QBs, RBs, WRs, TEs all in one table). Position is stored as a
+    /// column server-side but isn't needed for client-side headshot
+    /// lookups — players are keyed by name.
+    func fetchNFLPlayers() async throws -> [NFLPlayerRow] {
+        return try await fetchRows(path: "nfl_players?select=player_name,headshot_url,team_name")
     }
 
     // MARK: - Team & Player Stats

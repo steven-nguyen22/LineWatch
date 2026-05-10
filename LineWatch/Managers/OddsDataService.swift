@@ -273,21 +273,21 @@ class OddsDataService {
 
     // MARK: - NFL Assets (Logos & Headshots)
 
-    /// Fetch team logos and player headshots from Supabase for NFL (run once on launch)
+    /// Fetch team logos and player headshots from Supabase for NFL (run once on launch).
+    /// Reads from the unified `nfl_players` table — see consolidation
+    /// migration `20260510000000_consolidate_nfl_players.sql`.
     func fetchNFLAssets() async {
         do {
             async let teamsTask = supabaseService.fetchNFLTeamLogos()
-            async let qbsTask = supabaseService.fetchNFLQBs()
-            async let rbsTask = supabaseService.fetchNFLRBs()
-            async let receiversTask = supabaseService.fetchNFLReceivers()
+            async let playersTask = supabaseService.fetchNFLPlayers()
 
-            let (teams, qbs, rbs, receivers) = try await (teamsTask, qbsTask, rbsTask, receiversTask)
+            let (teams, players) = try await (teamsTask, playersTask)
 
             await MainActor.run {
                 for team in teams {
                     teamLogoURLs[team.teamName] = team.logoUrl
                 }
-                for player in qbs + rbs + receivers {
+                for player in players {
                     playerHeadshotURLs[player.playerName] = player.headshotUrl
                 }
             }
