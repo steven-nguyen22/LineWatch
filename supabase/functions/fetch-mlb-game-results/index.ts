@@ -26,6 +26,39 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
+const ESPN_USER_AGENT = "LineWatch/1.0";
+
+/**
+ * fetch() wrapper for ESPN endpoints. Sets a real User-Agent (default
+ * Deno UA looks bot-like) and logs non-2xx responses to `espn_failures`
+ * for visibility — every other call site swallows these silently.
+ */
+// deno-lint-ignore no-explicit-any
+async function espnFetch(url: string, supabase: any, fnName: string): Promise<Response> {
+  let res: Response;
+  try {
+    res = await fetch(url, { headers: { "User-Agent": ESPN_USER_AGENT } });
+  } catch (err) {
+    await supabase.from("espn_failures").insert({
+      function_name: fnName,
+      url,
+      status: null,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
+  }
+  if (!res.ok) {
+    await supabase.from("espn_failures").insert({
+      function_name: fnName,
+      url,
+      status: res.status,
+      error: null,
+    });
+  }
+  return res;
+}
+
+
 const SPORT_KEY = "baseball_mlb";
 
 // Maps prop_type → { ESPN box-score group name, ESPN key label }.
@@ -115,7 +148,7 @@ Deno.serve(async (req) => {
   const dateStr = yesterdayETDate();
   const scoreboardUrl =
     `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?dates=${dateStr}`;
-  const sbRes = await fetch(scoreboardUrl);
+  const sbRes = await espnFetch(scoreboardUrl, supabase, "fetch-mlb-game-results");
   if (!sbRes.ok) {
     return new Response(
       JSON.stringify({ error: "espn-scoreboard-failed", status: sbRes.status }),
@@ -145,6 +178,28 @@ Deno.serve(async (req) => {
   let teamRowsUpdated = 0;
   let playerRowsUpdated = 0;
   const errors: string[] = [];
+
+  // Bulk-load all pending player_game_results rows for the day's games.
+  // Replaces per-athlete SELECTs inside the box-score loop — one query
+  // here vs ~hundreds of round-trips. Map keyed by `${event.id}|${player}|${prop}`.
+  const completedIds = completed.map((e) => e.id);
+  const { data: pendingPlayerRows } = await supabase
+    .from("player_game_results")
+    .select("id, game_id, player_espn_id, prop_type, line_value")
+    .in("game_id", completedIds)
+    .eq("sport_key", SPORT_KEY)
+    .is("actual_value", null);
+
+  const pendingByKey = new Map<string, { id: number; line_value: number }>();
+  for (const r of pendingPlayerRows ?? []) {
+    pendingByKey.set(
+      `${r.game_id}|${r.player_espn_id}|${r.prop_type}`,
+      { id: r.id, line_value: r.line_value },
+    );
+  }
+
+  // Accumulate updates across all games — flush in one bulk upsert at the end.
+  const playerUpdates: Array<{ id: number; actual_value: number; hit: boolean }> = [];
 
   for (const event of completed) {
     try {
@@ -188,7 +243,7 @@ Deno.serve(async (req) => {
       // direct us to the right group + key.
       const summaryUrl =
         `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/summary?event=${event.id}`;
-      const sumRes = await fetch(summaryUrl);
+      const sumRes = await espnFetch(summaryUrl, supabase, "fetch-mlb-game-results");
       if (!sumRes.ok) {
         errors.push(`summary ${event.id}: HTTP ${sumRes.status}`);
         continue;
@@ -218,28 +273,28 @@ Deno.serve(async (req) => {
               const actual = parseStat(a.stats?.[idx]);
               if (actual === null) continue;
 
-              const { data: pending } = await supabase
-                .from("player_game_results")
-                .select("id, line_value")
-                .eq("game_id", event.id)
-                .eq("player_espn_id", athleteId)
-                .eq("prop_type", propType)
-                .eq("sport_key", SPORT_KEY)
-                .maybeSingle();
-
+              const pending = pendingByKey.get(`${event.id}|${athleteId}|${propType}`);
               if (!pending) continue; // not snapshotted — skip
               const hit = actual >= Number(pending.line_value);
-              const { error } = await supabase
-                .from("player_game_results")
-                .update({ actual_value: actual, hit })
-                .eq("id", pending.id);
-              if (!error) playerRowsUpdated++;
+              playerUpdates.push({ id: pending.id, actual_value: actual, hit });
+              playerRowsUpdated++;
             }
           }
         }
       }
     } catch (err) {
       errors.push(`${event.id}: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  // 3. Flush all accumulated player updates in a single bulk upsert.
+  if (playerUpdates.length > 0) {
+    const { error: bulkErr } = await supabase
+      .from("player_game_results")
+      .upsert(playerUpdates, { onConflict: "id" });
+    if (bulkErr) {
+      errors.push(`bulk player upsert: ${bulkErr.message}`);
+      playerRowsUpdated = 0;
     }
   }
 

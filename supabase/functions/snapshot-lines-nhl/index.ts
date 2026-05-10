@@ -36,6 +36,39 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
+const ESPN_USER_AGENT = "LineWatch/1.0";
+
+/**
+ * fetch() wrapper for ESPN endpoints. Sets a real User-Agent (default
+ * Deno UA looks bot-like) and logs non-2xx responses to `espn_failures`
+ * for visibility — every other call site swallows these silently.
+ */
+// deno-lint-ignore no-explicit-any
+async function espnFetch(url: string, supabase: any, fnName: string): Promise<Response> {
+  let res: Response;
+  try {
+    res = await fetch(url, { headers: { "User-Agent": ESPN_USER_AGENT } });
+  } catch (err) {
+    await supabase.from("espn_failures").insert({
+      function_name: fnName,
+      url,
+      status: null,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
+  }
+  if (!res.ok) {
+    await supabase.from("espn_failures").insert({
+      function_name: fnName,
+      url,
+      status: res.status,
+      error: null,
+    });
+  }
+  return res;
+}
+
+
 const SPORT_KEY = "icehockey_nhl";
 
 // 10-minute band centered ~30 min before puck drop — a 5-minute cron
@@ -116,47 +149,6 @@ function consensusPoint(points: number[]): number | null {
   return bestPoint;
 }
 
-/** Look up ESPN event ID for a game by hitting the daily scoreboard. */
-async function findESPNGameId(
-  homeTeam: string,
-  awayTeam: string,
-  commenceTime: Date,
-): Promise<string | null> {
-  // Try both the local-date and UTC-date views in case the game crosses
-  // midnight ET (late NHL games can show up on either day).
-  const datesToTry = new Set<string>();
-  for (const offsetHours of [-5, 0]) {
-    const d = new Date(commenceTime.getTime() + offsetHours * 3600_000);
-    const yyyy = d.getUTCFullYear();
-    const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-    const dd = String(d.getUTCDate()).padStart(2, "0");
-    datesToTry.add(`${yyyy}${mm}${dd}`);
-  }
-
-  for (const dateStr of datesToTry) {
-    const url = `https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?dates=${dateStr}`;
-    try {
-      const res = await fetch(url);
-      if (!res.ok) continue;
-      const body = await res.json();
-      const events: ESPNScoreboardEvent[] = body?.events ?? [];
-      for (const ev of events) {
-        const comps = ev.competitions?.[0]?.competitors ?? [];
-        const home = comps.find((c) => c.homeAway === "home")?.team?.displayName ?? "";
-        const away = comps.find((c) => c.homeAway === "away")?.team?.displayName ?? "";
-        if (
-          home.toLowerCase() === homeTeam.toLowerCase() &&
-          away.toLowerCase() === awayTeam.toLowerCase()
-        ) {
-          return ev.id;
-        }
-      }
-    } catch {
-      // try next date
-    }
-  }
-  return null;
-}
 
 Deno.serve(async (req) => {
   // service-role JWT gate (same pattern as every other edge fn)
@@ -182,6 +174,57 @@ Deno.serve(async (req) => {
   const now = Date.now();
   const minTipMs = now + SNAPSHOT_MIN_MINUTES * 60_000;
   const maxTipMs = now + SNAPSHOT_MAX_MINUTES * 60_000;
+
+  // Cache scoreboard responses for the lifetime of this invocation.
+  // Multiple games in the same start window share dates → without this
+  // we'd re-fetch the same scoreboard URL once per game.
+  const scoreboardCache = new Map<string, ESPNScoreboardEvent[]>();
+
+  async function getScoreboardEvents(dateStr: string): Promise<ESPNScoreboardEvent[]> {
+    if (scoreboardCache.has(dateStr)) return scoreboardCache.get(dateStr)!;
+    const url = `https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard?dates=${dateStr}`;
+    try {
+      const res = await espnFetch(url, supabase, "snapshot-lines-nhl");
+      const events: ESPNScoreboardEvent[] = res.ok ? ((await res.json())?.events ?? []) : [];
+      scoreboardCache.set(dateStr, events);
+      return events;
+    } catch {
+      scoreboardCache.set(dateStr, []);
+      return [];
+    }
+  }
+
+  /** Look up ESPN event ID for a game, using the per-invocation scoreboard cache. */
+  async function findESPNGameId(
+    homeTeam: string,
+    awayTeam: string,
+    commenceTime: Date,
+  ): Promise<string | null> {
+    const datesToTry = new Set<string>();
+    for (const offsetHours of [-5, 0]) {
+      const d = new Date(commenceTime.getTime() + offsetHours * 3600_000);
+      const yyyy = d.getUTCFullYear();
+      const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const dd = String(d.getUTCDate()).padStart(2, "0");
+      datesToTry.add(`${yyyy}${mm}${dd}`);
+    }
+    for (const dateStr of datesToTry) {
+      const events = await getScoreboardEvents(dateStr);
+      for (const ev of events) {
+        const comps = ev.competitions?.[0]?.competitors ?? [];
+        const home = comps.find((c) => c.homeAway === "home")?.team?.displayName ?? "";
+        const away = comps.find((c) => c.homeAway === "away")?.team?.displayName ?? "";
+        if (
+          home.toLowerCase() === homeTeam.toLowerCase() &&
+          away.toLowerCase() === awayTeam.toLowerCase()
+        ) {
+          return ev.id;
+        }
+      }
+    }
+    return null;
+  }
+
 
   // ---------------------------------------------------------------------------
   // Load NHL cached_odds → find events dropping the puck in our snapshot window

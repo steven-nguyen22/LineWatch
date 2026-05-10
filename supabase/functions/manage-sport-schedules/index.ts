@@ -112,15 +112,24 @@ Deno.serve(async (req) => {
       await applyJob(supabase, `${cfg.jobName}-snapshot`, hitRate.snapshotFn, active);
       if (active) jobs.push(`${cfg.jobName}-snapshot`);
 
-      // Post-game grader: daily at 13:00 UTC (= 9am EDT / 8am EST). All NBA
-      // games — even West Coast — are final by then; MLB late-night West
-      // Coast games are also long done before this.
+      // Post-game grader: daily at 13:0X UTC (= 9am EDT / 8am EST). All
+      // NBA / MLB / NHL / NFL games — even West Coast — are final by then.
+      //
+      // Staggered minute offsets per sport: avoids 4 graders bursting on
+      // ESPN simultaneously, which would be the spike-iest pattern in the
+      // whole pipeline. Spread across 15 min instead of <1 min.
+      const RESULTS_CRON: Record<string, string> = {
+        basketball_nba:       "0 13 * * *",
+        baseball_mlb:         "5 13 * * *",
+        icehockey_nhl:        "10 13 * * *",
+        americanfootball_nfl: "15 13 * * *",
+      };
       await applyJob(
         supabase,
         `${cfg.jobName}-results`,
         hitRate.resultsFn,
         active,
-        "0 13 * * *",
+        RESULTS_CRON[sportKey] ?? "0 13 * * *",
       );
       if (active) jobs.push(`${cfg.jobName}-results`);
     }
