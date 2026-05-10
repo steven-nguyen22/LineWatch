@@ -161,6 +161,19 @@ Deno.serve(async (req) => {
   await applyJob(supabase, "refresh-kalshi", "fetch-kalshi-odds", true);
   decisions["kalshi"] = { active: true, jobs: ["refresh-kalshi"] };
 
+  // --- hot streaks (single daily aggregate, not per-sport) ---
+  // Run at 13:30 UTC, after the 4 graders finish (NBA 13:00, MLB 13:05,
+  // NHL 13:10, NFL 13:15). Always-on — the function itself skips sports
+  // with no graded rows.
+  await applyJob(
+    supabase,
+    "compute-hot-streaks",
+    "compute-hot-streaks",
+    true,
+    "30 13 * * *",
+  );
+  decisions["hot_streaks"] = { active: true, jobs: ["compute-hot-streaks"] };
+
   return new Response(
     JSON.stringify({ success: true, decisions }, null, 2),
     { headers: { "Content-Type": "application/json" } },

@@ -74,6 +74,7 @@ struct PaywallView: View {
                     featureComparisonRow("Moneyline, Spreads & Totals", rookie: true, pro: true, hof: true)
                     featureComparisonRow("Player Props", rookie: false, pro: true, hof: true)
                     featureComparisonRow("Best EV Bets", rookie: false, pro: false, hof: true)
+                    featureComparisonRow("Hot Streaks", rookie: false, pro: false, hof: true)
                     featureComparisonRow("Team & Player Stats", rookie: false, pro: false, hof: true)
                 }
                 .background(

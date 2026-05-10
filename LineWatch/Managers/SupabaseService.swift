@@ -399,6 +399,30 @@ class SupabaseService {
         }
         return try JSONDecoder().decode([TeamHitRateRow].self, from: data)
     }
+
+    /// Fetches the top-3 hot streaks per in-season sport, populated daily
+    /// by the `compute-hot-streaks` edge function at ~13:30 UTC. Returns
+    /// at most 12 rows (3 × 4 sports) when all four are in season; fewer
+    /// if a sport has no graded games yet (off-season).
+    ///
+    /// Ordering: by `sport_key` then `rank` so the caller can group by
+    /// sport without sorting locally.
+    func fetchHotStreaks() async throws -> [HotStreak] {
+        let endpoint = "\(baseURL)/hot_streaks"
+            + "?select=*"
+            + "&order=sport_key.asc,rank.asc"
+
+        guard let url = URL(string: endpoint) else { throw GHError.invalidURL }
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+        return try JSONDecoder().decode([HotStreak].self, from: data)
+    }
 }
 
 /// One graded row from `player_game_results`. The fields beyond `hit` are

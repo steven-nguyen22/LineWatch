@@ -24,6 +24,12 @@ class OddsDataService {
     /// `nil` = not yet fetched, `[]` = fetched but no data, populated = render.
     var playerHitRatesByKey: [String: [HitRateRow]] = [:]   // key = "playerName|propTypeMarketKey"
     var teamHitRatesByName:  [String: [TeamHitRateRow]] = [:]
+
+    /// Top-3 hot streaks per in-season sport, written daily by the
+    /// `compute-hot-streaks` edge function. `nil` = not yet fetched (loading);
+    /// `[]` = fetched but empty (off-season for all 4 sports — rare).
+    /// Session-lifetime cache, same rationale as the hit-rate caches.
+    var hotStreaks: [HotStreak]?
     var isLoading = false
     var error: Error?
 
@@ -442,6 +448,25 @@ class OddsDataService {
         } catch {
             await MainActor.run {
                 teamHitRatesByName[teamName] = []
+            }
+        }
+    }
+
+    /// Lazy-loads + caches the top-3-per-sport hot streaks. Powers the
+    /// HotStreaksPage discovery surface. One round-trip per app session;
+    /// data only changes once daily after the 13:30 UTC compute job.
+    func fetchHotStreaksIfNeeded() async {
+        guard hotStreaks == nil else { return }   // already cached this session
+
+        do {
+            let rows = try await supabaseService.fetchHotStreaks()
+            await MainActor.run {
+                hotStreaks = rows
+            }
+        } catch {
+            // Empty cache → page renders "no streaks yet" placeholder.
+            await MainActor.run {
+                hotStreaks = []
             }
         }
     }

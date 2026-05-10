@@ -69,6 +69,12 @@ struct ContentView: View {
                                 } else {
                                     PaywallView()
                                 }
+                            case .hotStreaks:
+                                if authService.effectiveTier.canAccessHotStreaks {
+                                    HotStreaksPage()
+                                } else {
+                                    PaywallView()
+                                }
                             case .paywall:
                                 PaywallView()
                             }

@@ -351,6 +351,151 @@ struct MockBestEVCard: View {
     }
 }
 
+/// Mock Hot Streaks section (for Hot Streaks onboarding page).
+/// Renders a tight version of HotStreaksPage: a sport header + three
+/// ranked mini cards. Static content (Lakers / Curry / Celtics) so the
+/// onboarding looks the same regardless of live data.
+struct MockHotStreaksCard: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Sport section header — mirrors HotStreaksPage.sportSection
+            HStack(spacing: 6) {
+                Image(systemName: "basketball.fill")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(AppColors.primaryGreen)
+
+                Text("Basketball")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppColors.textPrimary)
+            }
+            .padding(.leading, 2)
+
+            VStack(spacing: 6) {
+                mockHotStreakRow(
+                    rank: 1,
+                    isPlayer: false,
+                    imageURL: "https://a.espncdn.com/i/teamlogos/nba/500/13.png",   // Lakers
+                    name: "Lakers",
+                    description: "Wins",
+                    streakCount: 9
+                )
+                mockHotStreakRow(
+                    rank: 2,
+                    isPlayer: true,
+                    imageURL: "https://a.espncdn.com/i/headshots/nba/players/full/3975.png", // Stephen Curry
+                    name: "Stephen Curry",
+                    description: "Points",
+                    streakCount: 6
+                )
+                mockHotStreakRow(
+                    rank: 3,
+                    isPlayer: false,
+                    imageURL: "https://a.espncdn.com/i/teamlogos/nba/500/2.png",    // Celtics
+                    name: "Celtics",
+                    description: "Spread",
+                    streakCount: 5
+                )
+            }
+        }
+    }
+
+    /// A single hot-streak card scaled down for onboarding. Visual order
+    /// matches HotStreakCard: medal, logo/headshot, name + description,
+    /// flame badge.
+    @ViewBuilder
+    private func mockHotStreakRow(
+        rank: Int,
+        isPlayer: Bool,
+        imageURL: String,
+        name: String,
+        description: String,
+        streakCount: Int
+    ) -> some View {
+        HStack(spacing: 10) {
+            // Medal
+            Image(systemName: "medal.fill")
+                .font(.system(size: 18))
+                .foregroundStyle(medalColor(for: rank))
+                .frame(width: 22)
+
+            // Avatar — circular headshot for players, square logo for teams
+            avatarImage(isPlayer: isPlayer, imageURL: imageURL)
+
+            // Name + description
+            VStack(alignment: .leading, spacing: 1) {
+                Text(name)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .lineLimit(1)
+
+                Text(description)
+                    .font(.system(size: 9))
+                    .foregroundStyle(AppColors.textSecondary)
+                    .lineLimit(1)
+            }
+
+            Spacer(minLength: 4)
+
+            // Flame + streak count
+            HStack(spacing: 2) {
+                Image(systemName: "flame.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.orange)
+                Text("\(streakCount)")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(AppColors.textPrimary)
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(AppColors.backgroundCard)
+                .shadow(color: AppColors.cardShadow, radius: 4, x: 0, y: 2)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(AppColors.primaryGreen.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    /// Same gold/silver/bronze palette as HotStreakCard.
+    private func medalColor(for rank: Int) -> Color {
+        switch rank {
+        case 1: return Color(red: 1.0, green: 0.84, blue: 0.0)
+        case 2: return Color(white: 0.75)
+        case 3: return Color(red: 0.80, green: 0.50, blue: 0.20)
+        default: return AppColors.textSecondary
+        }
+    }
+
+    /// Player headshots get a circular crop (matches HotStreakCard);
+    /// team logos render as transparent PNGs and don't need clipping.
+    @ViewBuilder
+    private func avatarImage(isPlayer: Bool, imageURL: String) -> some View {
+        let image = LazyImage(url: URL(string: imageURL)) { state in
+            if let img = state.image {
+                if isPlayer {
+                    img.resizable().scaledToFill()
+                } else {
+                    img.resizable().scaledToFit()
+                }
+            } else {
+                Image(systemName: isPlayer ? "person.circle.fill" : "shield.lefthalf.filled")
+                    .font(.system(size: 22))
+                    .foregroundStyle(AppColors.textSecondary.opacity(0.4))
+            }
+        }
+        .frame(width: 28, height: 28)
+
+        if isPlayer {
+            image.clipShape(Circle())
+        } else {
+            image
+        }
+    }
+}
+
 /// Mock player stats card (for Team & Player Stats page)
 struct MockStatsCard: View {
     var body: some View {
@@ -404,6 +549,22 @@ struct MockStatsCard: View {
                 mockStatRow("FG%", value: "49.2")
             }
             .padding(.horizontal, 10)
+
+            Divider().foregroundStyle(AppColors.divider).padding(.horizontal, 10)
+
+            // Points History — mirrors HitRateHistoryGrid in PlayerStatsModal.
+            // Two-cell preview: Last 5 fraction + flame streak.
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Points History")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(AppColors.textPrimary)
+
+                HStack(spacing: 6) {
+                    mockHistoryCell(label: "Last 5 Games", valueText: "4/5")
+                    mockHistoryCell(label: "Streak", valueText: nil, streakCount: 3)
+                }
+            }
+            .padding(.horizontal, 10)
             .padding(.bottom, 8)
         }
         .background(AppColors.backgroundCard)
@@ -421,6 +582,38 @@ struct MockStatsCard: View {
                 .font(.system(size: 11, weight: .semibold, design: .monospaced))
                 .foregroundStyle(AppColors.textPrimary)
         }
+    }
+
+    /// One cell of the mini history grid. Pass `valueText` for fractions
+    /// like "4/5"; pass `streakCount` instead to render a flame + count.
+    @ViewBuilder
+    private func mockHistoryCell(label: String, valueText: String?, streakCount: Int? = nil) -> some View {
+        VStack(spacing: 3) {
+            Text(label)
+                .font(.system(size: 8))
+                .foregroundStyle(AppColors.textSecondary)
+
+            if let valueText = valueText {
+                Text(valueText)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppColors.textPrimary)
+            } else if let streakCount = streakCount {
+                HStack(spacing: 2) {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.orange)
+                    Text("\(streakCount)")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(AppColors.textPrimary)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(AppColors.backgroundPrimary.opacity(0.5))
+        )
     }
 }
 
