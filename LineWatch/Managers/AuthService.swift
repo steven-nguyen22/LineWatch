@@ -144,7 +144,11 @@ class AuthService {
 
     // MARK: - Sign In with Apple
 
-    func signInWithApple(idToken: String, nonce: String) async {
+    func signInWithApple(
+        idToken: String,
+        nonce: String,
+        fullName: PersonNameComponents? = nil
+    ) async {
         do {
             let session = try await SupabaseManager.shared.auth.signInWithIdToken(
                 credentials: .init(
@@ -157,6 +161,16 @@ class AuthService {
                 isAuthenticated = true
                 authError = nil
             }
+
+            // Apple only hands us fullName on the very first sign-in. When
+            // it's present, persist to both auth user_metadata AND the
+            // profiles row — the handle_new_user trigger already ran during
+            // signInWithIdToken with empty metadata, so profiles.full_name
+            // is currently ''. We have to backfill it directly.
+            if let formatted = formattedName(from: fullName), !formatted.isEmpty {
+                await persistAppleFullName(formatted, userId: session.user.id)
+            }
+
             await fetchProfile()
             await syncRevenueCatIdentity()
             identifyInPostHog(session: session)
@@ -164,6 +178,40 @@ class AuthService {
             await MainActor.run {
                 authError = "Apple sign-in failed: \(error.localizedDescription)"
             }
+        }
+    }
+
+    /// Joins `givenName` + `familyName` into a single display string. Returns
+    /// nil for nil/empty components (Apple sometimes sends all-blank components
+    /// on re-sign-in scenarios — treat those as no-data).
+    private func formattedName(from components: PersonNameComponents?) -> String? {
+        guard let components else { return nil }
+        let formatter = PersonNameComponentsFormatter()
+        formatter.style = .default
+        let result = formatter.string(from: components).trimmingCharacters(in: .whitespaces)
+        return result.isEmpty ? nil : result
+    }
+
+    /// Writes the Apple-provided name into both auth user_metadata and the
+    /// profiles table. Best-effort — failures are logged but don't surface
+    /// to the user, since sign-in itself already succeeded.
+    private func persistAppleFullName(_ name: String, userId: UUID) async {
+        do {
+            _ = try await SupabaseManager.shared.auth.update(
+                user: UserAttributes(data: ["full_name": .string(name)])
+            )
+        } catch {
+            print("AuthService: failed to update user_metadata with Apple fullName: \(error)")
+        }
+
+        do {
+            try await SupabaseManager.shared
+                .from("profiles")
+                .update(["full_name": name])
+                .eq("id", value: userId)
+                .execute()
+        } catch {
+            print("AuthService: failed to update profiles.full_name with Apple fullName: \(error)")
         }
     }
 
