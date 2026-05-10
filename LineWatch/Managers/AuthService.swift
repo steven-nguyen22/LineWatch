@@ -71,18 +71,52 @@ class AuthService {
     func restoreSession() async {
         do {
             let session = try await SupabaseManager.shared.auth.session
+
+            // The Supabase SDK happily restores any structurally-valid JWT
+            // from Keychain, even one whose underlying auth.users row was
+            // deleted server-side (account removed via dashboard, GDPR
+            // request, etc.). Keychain survives app reinstalls, so a
+            // freshly-rebuilt app can land on the home screen authenticated
+            // as a ghost. Verify the user's profile row still exists and
+            // clear the stale session if not.
+            let profileExists = await verifyProfileExists(userId: session.user.id)
+            if !profileExists {
+                print("AuthService: orphaned session detected (profile row missing), signing out")
+                await signOut()
+                return
+            }
+
             await MainActor.run {
-                isAuthenticated = (session.user.id != nil)
+                isAuthenticated = true
             }
-            if session.user.id != nil {
-                await fetchProfile()
-                await syncRevenueCatIdentity()
-                identifyInPostHog(session: session)
-            }
+            await fetchProfile()
+            await syncRevenueCatIdentity()
+            identifyInPostHog(session: session)
         } catch {
             await MainActor.run {
                 isAuthenticated = false
             }
+        }
+    }
+
+    /// Returns true if the user's profiles row exists, false only if the
+    /// query succeeded AND returned zero rows. Any thrown error (network
+    /// down, transient 5xx, RLS denial) is treated as "exists" so we don't
+    /// nuke a legit session over a flaky lookup.
+    private func verifyProfileExists(userId: UUID) async -> Bool {
+        struct Row: Decodable { let id: UUID }
+        do {
+            let rows: [Row] = try await SupabaseManager.shared
+                .from("profiles")
+                .select("id")
+                .eq("id", value: userId)
+                .execute()
+                .value
+            return !rows.isEmpty
+        } catch {
+            // Any failure — assume transient; keep the session.
+            print("AuthService: verifyProfileExists failed (treated as exists): \(error)")
+            return true
         }
     }
 
