@@ -79,10 +79,12 @@ struct PlayerStatsModal: View {
     /// Whether to render the Hit Rate History section. Only when:
     /// - Feature is enabled
     /// - The modal was opened with a propType (via player-prop row tap)
-    /// - The propType is one we have a backend pipeline for (NBA points/reb/ast)
+    /// - The propType is one we have a backend pipeline for
+    ///   (NBA points/reb/ast, MLB hits/strikeouts/home runs)
     private var showHitRateSection: Bool {
         guard Features.hitRatesEnabled, let propType else { return false }
-        return [.points, .rebounds, .assists].contains(propType)
+        return [.points, .rebounds, .assists,
+                .hits, .strikeouts, .homeRuns].contains(propType)
     }
 
     var body: some View {
@@ -211,10 +213,13 @@ struct PlayerStatsModal: View {
     private var propTitleText: String {
         guard let propType else { return "Recent History" }
         switch propType {
-        case .points:    return "Points History"
-        case .rebounds:  return "Rebounds History"
-        case .assists:   return "Assists History"
-        default:         return "Recent History"
+        case .points:      return "Points History"
+        case .rebounds:    return "Rebounds History"
+        case .assists:     return "Assists History"
+        case .hits:        return "Hits History"
+        case .strikeouts:  return "Strikeouts History"
+        case .homeRuns:    return "Home Runs History"
+        default:           return "Recent History"
         }
     }
 
