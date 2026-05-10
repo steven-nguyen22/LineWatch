@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
   const activeKeys = new Set(allSports.filter((s) => s.active).map((s) => s.key));
   const golfActive = allSports.some((s) => s.group === "Golf" && s.active);
 
-  const decisions: Record<string, { active: boolean; jobs: string[] }> = {};
+  const decisions: Record<string, { active: boolean; jobs: string[]; wiped?: boolean }> = {};
 
   // --- per-sport decisions ---
   for (const [sportKey, cfg] of Object.entries(SPORT_MAP)) {
@@ -134,7 +134,18 @@ Deno.serve(async (req) => {
       if (active) jobs.push(`${cfg.jobName}-results`);
     }
 
-    decisions[sportKey] = { active, jobs };
+    // When a hit-rate sport goes off-season, wipe its history so the next
+    // season starts at zero (no carryover streaks, no last-season-tinged
+    // "X of 5" badges). Runs AFTER the snapshot+grader jobs are unscheduled
+    // above to avoid racing with an in-flight insert. Idempotent — once
+    // empty, future daily runs delete 0 rows.
+    let wiped = false;
+    if (hitRate && !active) {
+      await wipeHitRatesForSport(supabase, sportKey);
+      wiped = true;
+    }
+
+    decisions[sportKey] = { active, jobs, wiped };
   }
 
   // --- fighting (combined) ---
@@ -179,6 +190,38 @@ Deno.serve(async (req) => {
     { headers: { "Content-Type": "application/json" } },
   );
 });
+
+// Delete all hit-rates history for a sport. Called once per off-season
+// transition (and harmlessly each subsequent off-season day — once empty,
+// the DELETEs match 0 rows).
+//
+// IMPORTANT: callers must unschedule the sport's snapshot + grader cron
+// jobs BEFORE invoking this, so a still-running job can't re-insert a row
+// during the wipe. The Odds API `active` flag is the trigger — see the
+// `if (hitRate && !active)` guard at the call site.
+//
+// hot_streaks is technically redundant — the daily 13:30 compute would
+// clear the off-season sport's rows within ~24h since there are no
+// graded candidates left — but doing it inline closes the UI gap where
+// stale streaks would still appear on the iOS Hot Streaks page until
+// the next compute run.
+async function wipeHitRatesForSport(
+  supabase: ReturnType<typeof createClient>,
+  sportKey: string,
+) {
+  const tables = ["player_game_results", "team_game_results", "hot_streaks"];
+  for (const table of tables) {
+    const { error, count } = await supabase
+      .from(table)
+      .delete({ count: "exact" })
+      .eq("sport_key", sportKey);
+    if (error) {
+      console.error(`wipe ${table} for ${sportKey} failed:`, error);
+    } else {
+      console.log(`wiped ${count ?? 0} rows from ${table} for ${sportKey}`);
+    }
+  }
+}
 
 async function applyJob(
   supabase: ReturnType<typeof createClient>,
