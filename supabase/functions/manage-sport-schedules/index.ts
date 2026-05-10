@@ -1,17 +1,50 @@
 // manage-sport-schedules
 //
-// Runs once a day. Calls The Odds API's /v4/sports endpoint to discover which
-// leagues are currently in-season, then adds or removes pg_cron jobs so the
-// 5-minute refreshers only run for active sports.
+// Runs once a day. Decides which leagues are currently in-season using a
+// calendar-based `SEASON_RANGES` map (mirrors iOS `SportCategory.seasonRange`
+// in `LineWatch/Managers/LinesManager.swift`), then adds or removes pg_cron
+// jobs so the 5-minute refreshers only run for in-season sports.
+//
+// Date-based detection replaced the Odds API `/v4/sports` `active` flag
+// because the Odds API marks NFL/NBA/etc as `active: true` year-round to
+// expose futures markets — which causes the system to keep burning API
+// credits refreshing off-season odds nobody can navigate to (off-season
+// cards are non-tappable in the iOS UI). Ranges are padded ±14 days to
+// absorb preseason matchups and tail-end postseason slippage.
 //
 // Triggered by a daily pg_cron entry (see schedule_sport_job / unschedule_sport_job
 // RPC helpers and the "manage-sport-schedules" cron job in the database).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const ODDS_API_KEY = Deno.env.get("ODDS_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+// Season date ranges as [startMonth, startDay, endMonth, endDay].
+// MUST be kept in sync with `SportCategory.seasonRange` in
+// `LineWatch/Managers/LinesManager.swift`. Sports omitted from this map
+// (fighting, golf, kalshi) are year-round.
+const SEASON_RANGES: Record<string, [number, number, number, number]> = {
+  basketball_nba:            [9, 17, 7, 14], // NBA: Oct 1 – Jun 30 ±14d
+  americanfootball_nfl:      [8, 18, 3, 1],  // NFL: Sep 1 – Feb 15 ±14d
+  baseball_mlb:              [3, 6, 11, 19], // MLB: Mar 20 – Nov 5 ±14d
+  icehockey_nhl:             [9, 17, 7, 14], // NHL: Oct 1 – Jun 30 ±14d
+  soccer_uefa_champs_league: [8, 18, 6, 29], // UEFA CL: Sep 1 – Jun 15 ±14d
+};
+
+function isInSeason(sportKey: string, now: Date = new Date()): boolean {
+  const range = SEASON_RANGES[sportKey];
+  if (!range) return true; // year-round
+  const [startMonth, startDay, endMonth, endDay] = range;
+  const month = now.getUTCMonth() + 1; // getUTCMonth is 0-indexed
+  const day = now.getUTCDate();
+  const today = month * 100 + day;
+  const start = startMonth * 100 + startDay;
+  const end = endMonth * 100 + endDay;
+  return start <= end
+    ? today >= start && today <= end           // doesn't wrap year
+    : today >= start || today <= end;          // wraps year (e.g. NFL)
+}
 
 // sport_key → { jobName prefix, Edge Function names }
 // Job naming convention: "{jobName}-odds" and "{jobName}-props".
@@ -33,12 +66,11 @@ const HIT_RATE_SPORTS: Record<string, { snapshotFn: string; resultsFn: string }>
   americanfootball_nfl: { snapshotFn: "snapshot-lines-nfl", resultsFn: "fetch-nfl-game-results" },
 };
 
-// Fighting (MMA + Boxing) share one odds function.
-const FIGHTING_KEYS = ["mma_mixed_martial_arts", "boxing_boxing"];
+// Fighting (MMA + Boxing) share one odds function. Year-round on iOS.
 const FIGHTING_JOB = { jobName: "refresh-fighting", oddsFn: "fetch-fighting-odds" };
 
-// Golf: fetch-golf-odds internally auto-discovers active tournaments; we just
-// decide whether the meta-cron for it should be running at all.
+// Golf: fetch-golf-odds internally auto-discovers active tournaments via
+// its own /v4/sports call. Year-round on iOS.
 const GOLF_JOB = { jobName: "refresh-golf", oddsFn: "fetch-golf-odds" };
 
 const SCHEDULE = "*/5 * * * *"; // every 5 minutes
@@ -67,31 +99,11 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-  // --- discover active sports ---
-  const sportsRes = await fetch(
-    `https://api.the-odds-api.com/v4/sports?apiKey=${ODDS_API_KEY}`,
-  );
-  if (!sportsRes.ok) {
-    return new Response(
-      JSON.stringify({ error: "odds-api-failed", status: sportsRes.status }),
-      { status: 502, headers: { "Content-Type": "application/json" } },
-    );
-  }
-  const allSports: Array<{
-    key: string;
-    group: string;
-    active: boolean;
-    has_outrights: boolean;
-  }> = await sportsRes.json();
-
-  const activeKeys = new Set(allSports.filter((s) => s.active).map((s) => s.key));
-  const golfActive = allSports.some((s) => s.group === "Golf" && s.active);
-
   const decisions: Record<string, { active: boolean; jobs: string[]; wiped?: boolean }> = {};
 
   // --- per-sport decisions ---
   for (const [sportKey, cfg] of Object.entries(SPORT_MAP)) {
-    const active = activeKeys.has(sportKey);
+    const active = isInSeason(sportKey);
     const jobs: string[] = [];
 
     await applyJob(supabase, `${cfg.jobName}-odds`, cfg.oddsFn, active);
@@ -149,22 +161,25 @@ Deno.serve(async (req) => {
   }
 
   // --- fighting (combined) ---
-  const fightingActive = FIGHTING_KEYS.some((k) => activeKeys.has(k));
+  // Year-round on iOS — always scheduled. fetch-fighting-odds gracefully
+  // returns an empty list when no MMA/boxing events are upcoming.
   await applyJob(
     supabase,
     `${FIGHTING_JOB.jobName}-odds`,
     FIGHTING_JOB.oddsFn,
-    fightingActive,
+    true,
   );
   decisions["fighting"] = {
-    active: fightingActive,
+    active: true,
     jobs: [`${FIGHTING_JOB.jobName}-odds`],
   };
 
   // --- golf ---
-  await applyJob(supabase, `${GOLF_JOB.jobName}-odds`, GOLF_JOB.oddsFn, golfActive);
+  // Year-round on iOS — always scheduled. fetch-golf-odds self-discovers
+  // active tournaments via its own /v4/sports call and no-ops when none.
+  await applyJob(supabase, `${GOLF_JOB.jobName}-odds`, GOLF_JOB.oddsFn, true);
   decisions["golf"] = {
-    active: golfActive,
+    active: true,
     jobs: [`${GOLF_JOB.jobName}-odds`],
   };
 
@@ -197,8 +212,8 @@ Deno.serve(async (req) => {
 //
 // IMPORTANT: callers must unschedule the sport's snapshot + grader cron
 // jobs BEFORE invoking this, so a still-running job can't re-insert a row
-// during the wipe. The Odds API `active` flag is the trigger — see the
-// `if (hitRate && !active)` guard at the call site.
+// during the wipe. The date-based `isInSeason()` check is the trigger —
+// see the `if (hitRate && !active)` guard at the call site.
 //
 // hot_streaks is technically redundant — the daily 13:30 compute would
 // clear the off-season sport's rows within ~24h since there are no

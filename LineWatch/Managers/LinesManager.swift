@@ -64,13 +64,20 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
 
     /// Season date range as (startMonth, startDay, endMonth, endDay).
     /// Returns nil for year-round sports (always in season).
+    ///
+    /// Ranges are padded by 2 weeks on both sides of the actual season to
+    /// absorb early preseason matchups and tail-end postseason slippage
+    /// (e.g. a Finals that runs past the typical wrap date). MUST be kept
+    /// in sync with `SEASON_RANGES` in
+    /// `supabase/functions/manage-sport-schedules/index.ts` — both drive
+    /// the same in-season decision, just at different layers.
     private var seasonRange: (startMonth: Int, startDay: Int, endMonth: Int, endDay: Int)? {
         switch self {
-        case .basketball: return (10, 1, 6, 30)   // Oct 1 – Jun 30 (includes NBA playoffs/finals)
-        case .football:   return (9, 1, 2, 15)    // Sep 1 – Feb 15 (includes NFL playoffs/Super Bowl)
-        case .baseball:   return (3, 20, 11, 5)   // Mar 20 – Nov 5 (includes MLB postseason/World Series)
-        case .hockey:     return (10, 1, 6, 30)   // Oct 1 – Jun 30 (includes NHL playoffs/Stanley Cup)
-        case .soccer:     return (9, 1, 6, 15)    // Sep 1 – Jun 15 (UEFA CL group stage through final)
+        case .basketball: return (9, 17, 7, 14)   // Sep 17 – Jul 14 (NBA: Oct 1 – Jun 30 ±14d)
+        case .football:   return (8, 18, 3, 1)    // Aug 18 – Mar 1  (NFL: Sep 1 – Feb 15 ±14d)
+        case .baseball:   return (3, 6, 11, 19)   // Mar 6  – Nov 19 (MLB: Mar 20 – Nov 5 ±14d)
+        case .hockey:     return (9, 17, 7, 14)   // Sep 17 – Jul 14 (NHL: Oct 1 – Jun 30 ±14d)
+        case .soccer:     return (8, 18, 6, 29)   // Aug 18 – Jun 29 (UEFA CL: Sep 1 – Jun 15 ±14d)
         case .fighting:   return nil               // Year-round
         case .golf:       return nil               // Year-round
         }
