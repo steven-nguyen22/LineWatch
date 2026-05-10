@@ -373,6 +373,39 @@ class SupabaseService {
         }
         return try JSONDecoder().decode([HitRateRow].self, from: data)
     }
+
+    /// Fetches the team's last 15 graded games (only rows where the post-game
+    /// job has filled in `covered` / `actual_margin`). The caller can slice
+    /// locally to compute Wins L5/L10/L15 and Spreads L5/L10/L15 from the
+    /// same array — no need for a second round-trip.
+    ///
+    /// `teamName` must match the canonical name written by the snapshot
+    /// function (which sources it from `nba_teams.team_name`). For NBA this
+    /// is the same string shown in BetPage / TeamStatsModal headers.
+    func fetchTeamHitRateRows(
+        teamName: String,
+        sportKey: String
+    ) async throws -> [TeamHitRateRow] {
+        let nameEncoded = teamName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? teamName
+        let endpoint = "\(baseURL)/team_game_results"
+            + "?team_name=eq.\(nameEncoded)"
+            + "&sport_key=eq.\(sportKey)"
+            + "&covered=not.is.null"
+            + "&order=game_date.desc"
+            + "&limit=15"
+            + "&select=covered,game_date,spread_line,actual_margin"
+
+        guard let url = URL(string: endpoint) else { throw GHError.invalidURL }
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+        return try JSONDecoder().decode([TeamHitRateRow].self, from: data)
+    }
 }
 
 /// One graded row from `player_game_results`. The fields beyond `hit` are
@@ -388,6 +421,28 @@ struct HitRateRow: Codable {
         case gameDate = "game_date"
         case lineValue = "line_value"
         case actualValue = "actual_value"
+    }
+}
+
+/// One graded row from `team_game_results`. Drives both the Wins History and
+/// Spreads History sections in `TeamStatsModal` — wins are derived locally
+/// from `actualMargin > 0` so we don't need a second column or query.
+struct TeamHitRateRow: Codable {
+    let covered: Bool          // grader: (actual_margin + spread_line) > 0
+    let gameDate: String
+    let spreadLine: Double
+    let actualMargin: Double   // team_score - opp_score; >0 means win
+
+    /// Derived locally — the post-game grader stores `actual_margin` and
+    /// `covered`, but the win is just the sign of the margin, so we don't
+    /// burn a column for it.
+    var won: Bool { actualMargin > 0 }
+
+    enum CodingKeys: String, CodingKey {
+        case covered
+        case gameDate = "game_date"
+        case spreadLine = "spread_line"
+        case actualMargin = "actual_margin"
     }
 }
 

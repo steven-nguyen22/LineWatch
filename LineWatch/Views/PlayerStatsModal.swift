@@ -209,7 +209,7 @@ struct PlayerStatsModal: View {
                 }
                 HStack(spacing: 12) {
                     historyBox(label: "Last 15 Games", value: fractionText(window: 15))
-                    historyBox(label: "Streak", value: streakText)
+                    streakHistoryBox
                 }
             }
             .padding(.horizontal, 16)
@@ -242,6 +242,66 @@ struct PlayerStatsModal: View {
         .cornerRadius(12)
     }
 
+    /// Streak box uses SF Symbol icons (flame.fill / snowflake) instead of
+    /// emoji so they render correctly regardless of font design variant.
+    private var streakHistoryBox: some View {
+        VStack(spacing: 6) {
+            Text("Streak")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(AppColors.textSecondary)
+            Group {
+                if let rows = hitRateRows {
+                    if rows.isEmpty {
+                        Text("—")
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(AppColors.textPrimary)
+                    } else {
+                        let parts = streakParts(from: rows)
+                        HStack(spacing: 5) {
+                            Image(systemName: parts.symbol)
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundStyle(parts.color)
+                            Text("\(parts.count)")
+                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .foregroundStyle(AppColors.textPrimary)
+                                .monospacedDigit()
+                        }
+                    }
+                } else {
+                    Text("···")
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundStyle(AppColors.textPrimary)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 18)
+        .background(AppColors.backgroundCard)
+        .cornerRadius(12)
+    }
+
+    private struct StreakParts {
+        let symbol: String
+        let color: Color
+        let count: Int
+    }
+
+    /// Computes the streak icon, color, and length from date-desc ordered rows.
+    /// Hot streak  →  flame.fill  (orange)
+    /// Cold streak →  snowflake   (cyan)
+    private func streakParts(from rows: [HitRateRow]) -> StreakParts {
+        guard let first = rows.first else {
+            return StreakParts(symbol: "minus", color: AppColors.textSecondary, count: 0)
+        }
+        var count = 0
+        for row in rows {
+            if row.hit == first.hit { count += 1 } else { break }
+        }
+        return first.hit
+            ? StreakParts(symbol: "flame.fill", color: .orange, count: count)
+            : StreakParts(symbol: "snowflake",  color: .cyan,   count: count)
+    }
+
     /// "x/N" with N capped at the window size. If we have fewer graded games
     /// than the window, denominator is the actual count (e.g. "2/3"). When
     /// the request is still loading shows "···"; on empty/no-data shows "—".
@@ -251,19 +311,6 @@ struct PlayerStatsModal: View {
         let slice = rows.prefix(window)
         let hits = slice.filter(\.hit).count
         return "\(hits)/\(slice.count)"
-    }
-
-    /// 🔥 N for active hit streak, ❄️ N for active miss streak, "—" for no data.
-    /// Streak length = consecutive games from most-recent that share the same
-    /// hit value as the most-recent game.
-    private var streakText: String {
-        guard let rows = hitRateRows else { return "···" }
-        guard let first = rows.first else { return "—" }
-        var count = 0
-        for row in rows {
-            if row.hit == first.hit { count += 1 } else { break }
-        }
-        return first.hit ? "🔥 \(count)" : "❄️ \(count)"
     }
 
     private func loadHitRateRows() async {
