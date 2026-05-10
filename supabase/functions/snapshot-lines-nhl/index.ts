@@ -1,14 +1,14 @@
 // snapshot-lines-nhl
 //
-// Captures the consensus puck-line spread for NHL games starting in the next
-// 25-35 minutes. Runs every 5 minutes via pg_cron — each game gets caught
-// by at least one tick of this 10-minute window.
+// Captures the consensus puck-line spread AND consensus player-prop lines
+// (goals, shots on goal, hockey points = G+A) for NHL games starting in
+// the next 25-35 minutes. Runs every 5 minutes via pg_cron — each game
+// gets caught by at least one tick of this 10-minute window.
 //
-// Team-only V1 — player props (goals, shots on goal, hockey points) come
-// later as a separate task. Output rows in `team_game_results` have
-// `spread_line` set but `actual_margin` / `covered` left NULL. The
-// companion `fetch-nhl-game-results` function fills those in once the
-// scoreboard reports a final score.
+// Output rows in `team_game_results` and `player_game_results` have the
+// `spread_line` / `line_value` set but `actual_margin`/`actual_value` left
+// NULL. The companion `fetch-nhl-game-results` function fills those in
+// once the scoreboard / box score is final.
 //
 // Why ESPN event ID for game_id (not Odds API event ID): the post-game
 // grader pulls from ESPN, so using ESPN's ID as the canonical key makes the
@@ -18,6 +18,18 @@
 // OT / Shootout grading is a no-op here — final scores from the scoreboard
 // already include OT+SO with the convention that an SO winner's margin is
 // exactly 1, which is what books use to grade the puck line.
+//
+// Player-ID resolution (player props):
+//   `nhl_players` is the canonical (player_name, espn_id) lookup, populated
+//   upstream by the `fetch-nhl-assets` function (which scans ESPN rosters
+//   for all 32 teams). Mirrors the NBA + MLB pattern. Players missing
+//   from `nhl_players` are silently skipped here — the asset pipeline
+//   handles backfill.
+//
+// Note on `prop_type = "player_points"`:
+//   The Odds API market key for hockey points is the same string as NBA
+//   points. We store it as-is and rely on `sport_key='icehockey_nhl'`
+//   to disambiguate from basketball points at query time.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -30,6 +42,28 @@ const SPORT_KEY = "icehockey_nhl";
 // always catches every game at least once.
 const SNAPSHOT_MIN_MINUTES = 25;
 const SNAPSHOT_MAX_MINUTES = 35;
+
+// Canonical Odds-API market keys we snapshot consensus for. Only canonical
+// markets — not the *_alternate variants which are book-specific and noisy.
+const PLAYER_PROP_MARKETS = [
+  "player_goals",
+  "player_shots_on_goal",
+  "player_points", // hockey points = goals + assists
+];
+
+// Reuse the same name normalization as the player-props fetchers so we
+// can match Odds-API names against the ESPN-canonical names already
+// stored in `nhl_players.player_name`.
+function normalizePlayerName(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[.,'-]/g, "")
+    .replace(/\s+(jr|sr|ii|iii|iv)\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 interface OddsEvent {
   id: string;
@@ -49,6 +83,11 @@ interface OddsEvent {
       }>;
     }>;
   }>;
+}
+
+interface PropsRow {
+  event_id: string;
+  data: OddsEvent;
 }
 
 interface ESPNScoreboardEvent {
@@ -174,22 +213,53 @@ Deno.serve(async (req) => {
   }
 
   // ---------------------------------------------------------------------------
-  // Pre-load NHL team ID lookup (one query, cached for run)
+  // Pre-load NHL team + player ID lookups (one query each, cached for run)
   // ---------------------------------------------------------------------------
-  const { data: teamRows } = await supabase
-    .from("nhl_teams")
-    .select("team_name, espn_id");
+  const [{ data: teamRows }, { data: playerRows }] = await Promise.all([
+    supabase.from("nhl_teams").select("team_name, espn_id"),
+    supabase.from("nhl_players").select("player_name, espn_id, team_name"),
+  ]);
 
   const teamLookup = new Map<string, number>();
   for (const t of teamRows ?? []) {
     teamLookup.set(t.team_name, t.espn_id);
   }
 
+  // normalized player name -> { espn_id, canonical_name, team_name }
+  const playerLookup = new Map<
+    string,
+    { espn_id: number; player_name: string; team_name: string }
+  >();
+  for (const p of playerRows ?? []) {
+    if (!p.espn_id) continue;
+    playerLookup.set(normalizePlayerName(p.player_name), {
+      espn_id: p.espn_id,
+      player_name: p.player_name,
+      team_name: p.team_name,
+    });
+  }
+
   // ---------------------------------------------------------------------------
-  // For each upcoming game: capture consensus puck-line, resolve ESPN ID,
-  // and write rows to `team_game_results`.
+  // Pre-load cached player props for in-window event IDs (one shot)
+  // ---------------------------------------------------------------------------
+  const eventIds = dueEvents.map((e) => e.id);
+  const { data: propsRows } = await supabase
+    .from("cached_player_props")
+    .select("event_id, data")
+    .eq("sport_key", SPORT_KEY)
+    .in("event_id", eventIds);
+
+  const propsByEventId = new Map<string, PropsRow["data"]>();
+  for (const r of (propsRows as PropsRow[]) ?? []) {
+    propsByEventId.set(r.event_id, r.data);
+  }
+
+  // ---------------------------------------------------------------------------
+  // For each upcoming game: capture consensus puck-line + player props,
+  // resolve ESPN ID, and write rows.
   // ---------------------------------------------------------------------------
   let teamInserts = 0;
+  let playerInserts = 0;
   let skippedNoEspnId = 0;
 
   for (const event of dueEvents) {
@@ -202,6 +272,7 @@ Deno.serve(async (req) => {
       continue;
     }
 
+    // ---- TEAM SPREADS (puck line) ------------------------------------------
     // Walk spreads market across all bookmakers, group by team name. In NHL
     // the "spread" is the puck line — usually -1.5/+1.5 — but the OddsAPI
     // market key is still `spreads` (same as NBA/MLB), so the logic is identical.
@@ -240,6 +311,57 @@ Deno.serve(async (req) => {
         );
       if (!error) teamInserts++;
     }
+
+    // ---- PLAYER PROPS (goals, shots on goal, hockey points) ---------------
+    const props = propsByEventId.get(event.id);
+    if (!props) continue; // no player props cached for this event yet
+
+    // Group `point` values per (canonical player name, prop type)
+    type Bucket = Map<string, Map<string, number[]>>;
+    const buckets: Bucket = new Map();
+    for (const bm of props.bookmakers ?? []) {
+      for (const market of bm.markets ?? []) {
+        if (!PLAYER_PROP_MARKETS.includes(market.key)) continue;
+        for (const o of market.outcomes ?? []) {
+          if (o.point === undefined || !o.description) continue;
+          // One side is enough — line is symmetric. "Yes" appears for some
+          // boolean-style markets (anytime goal scorer occasionally).
+          if (o.name !== "Over" && o.name !== "Yes") continue;
+          const key = normalizePlayerName(o.description);
+          if (!buckets.has(key)) buckets.set(key, new Map());
+          const propMap = buckets.get(key)!;
+          if (!propMap.has(market.key)) propMap.set(market.key, []);
+          propMap.get(market.key)!.push(o.point);
+        }
+      }
+    }
+
+    if (buckets.size === 0) continue;
+
+    for (const [normKey, propMap] of buckets) {
+      const lookup = playerLookup.get(normKey);
+      if (!lookup) continue; // unknown player (not in nhl_players — let fetch-nhl-assets backfill)
+      for (const [propType, points] of propMap) {
+        const consensus = consensusPoint(points);
+        if (consensus === null) continue;
+        const { error } = await supabase
+          .from("player_game_results")
+          .upsert(
+            {
+              player_espn_id: lookup.espn_id,
+              player_name: lookup.player_name,
+              team_name: lookup.team_name,
+              sport_key: SPORT_KEY,
+              game_id: espnGameId,
+              game_date: gameDate,
+              prop_type: propType,
+              line_value: consensus,
+            },
+            { onConflict: "game_id,player_espn_id,prop_type", ignoreDuplicates: true },
+          );
+        if (!error) playerInserts++;
+      }
+    }
   }
 
   return new Response(
@@ -247,6 +369,7 @@ Deno.serve(async (req) => {
       success: true,
       games_in_window: dueEvents.length,
       team_rows_inserted: teamInserts,
+      player_rows_inserted: playerInserts,
       skipped_no_espn_id: skippedNoEspnId,
     }),
     { headers: { "Content-Type": "application/json" } },
