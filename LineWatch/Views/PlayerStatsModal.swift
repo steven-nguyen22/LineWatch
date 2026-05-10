@@ -81,12 +81,14 @@ struct PlayerStatsModal: View {
     /// - The modal was opened with a propType (via player-prop row tap)
     /// - The propType is one we have a backend pipeline for
     ///   (NBA points/reb/ast, MLB hits/strikeouts/home runs,
-    ///    NHL goals/shots on goal/hockey points)
+    ///    NHL goals/shots on goal/hockey points,
+    ///    NFL passing/rushing/receiving yards)
     private var showHitRateSection: Bool {
         guard Features.hitRatesEnabled, let propType else { return false }
         return [.points, .rebounds, .assists,
                 .hits, .strikeouts, .homeRuns,
-                .goals, .shotsOnGoal, .hockeyPoints].contains(propType)
+                .goals, .shotsOnGoal, .hockeyPoints,
+                .passingYards, .rushingYards, .receivingYards].contains(propType)
     }
 
     var body: some View {
@@ -224,6 +226,9 @@ struct PlayerStatsModal: View {
         case .goals:         return "Goals History"
         case .shotsOnGoal:   return "Shots on Goal History"
         case .hockeyPoints:  return "Points History"
+        case .passingYards:    return "Passing Yards History"
+        case .rushingYards:    return "Rushing Yards History"
+        case .receivingYards:  return "Receiving Yards History"
         default:             return "Recent History"
         }
     }

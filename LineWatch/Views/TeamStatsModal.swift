@@ -36,19 +36,19 @@ struct TeamStatsModal: View {
         case .hockey:
             return ["Record", "Home", "Road", "Points", "GF", "GA"]
         case .football:
-            return ["Record", "Home", "Road", "Div", "PF", "PA", "Streak"]
+            return ["Record", "Home", "Road", "Div", "PF", "PA"]
         default:
             return Array(stats.keys.sorted())
         }
     }
 
     /// Wins / Spreads history sections render for sports with a snapshot+grader
-    /// pipeline writing to `team_game_results`. Currently NBA, MLB, and NHL.
+    /// pipeline writing to `team_game_results`. Currently NBA, MLB, NHL, NFL.
     /// Other sports light up automatically once their backend pipeline lands
     /// and they're added here.
     private var showHistorySections: Bool {
         guard Features.hitRatesEnabled else { return false }
-        return sport == .basketball || sport == .baseball || sport == .hockey
+        return sport == .basketball || sport == .baseball || sport == .hockey || sport == .football
     }
 
     var body: some View {
