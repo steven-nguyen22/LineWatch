@@ -79,12 +79,13 @@ struct BetPage: View {
         supportsStats && authService.effectiveTier.canAccessStats
     }
 
-    /// Whether to render the hit-rate badge on player prop rows.
-    /// Gated by feature flag, tier, and the per-sport set of prop types
-    /// that have a snapshot/results pipeline wired up.
-    private var shouldShowHitRateBadge: Bool {
+    /// Whether to render the stats icon (hamburger) on player prop rows.
+    /// Visible to all tiers — tap behavior matches the player name (opens
+    /// the stats modal for HoF/trial users, routes lower tiers to the
+    /// paywall). Gated by the feature flag and the per-sport set of prop
+    /// types that have a snapshot/results pipeline wired up.
+    private var shouldShowStatsIcon: Bool {
         guard Features.hitRatesEnabled else { return false }
-        guard authService.effectiveTier.canAccessHitRates else { return false }
         switch sportCategory {
         case .basketball:
             return [PlayerPropType.points, .rebounds, .assists].contains(selectedPropType)
@@ -1139,27 +1140,30 @@ struct BetPage: View {
                         .foregroundStyle(AppColors.textPrimary)
                 }
 
-                if shouldShowHitRateBadge {
-                    HitRateBadge(
-                        playerName: line.playerName,
-                        propType: selectedPropType,
-                        sportKey: sportCategory.rawValue,
-                        onTap: {
-                            // Reuse the same gating the player-name button uses:
-                            // open the stats modal for HoF users (which includes
-                            // anyone who can see this badge), paywall otherwise.
-                            if canShowStats {
-                                modalPropType = selectedPropType
-                                selectedPlayerForStats = line.playerName
-                                PostHogService.capture("hit_rate_badge_tapped", properties: [
-                                    "sport": sportCategory.rawValue,
-                                    "prop_type": selectedPropType.rawValue
-                                ])
-                            } else {
-                                showPaywallForStats = true
-                            }
+                if shouldShowStatsIcon {
+                    Button {
+                        // Mirrors the player-name tap: HoF/trial users get the
+                        // stats modal with the current prop tab pre-selected;
+                        // lower tiers are routed to the paywall.
+                        if canShowStats {
+                            modalPropType = selectedPropType
+                            selectedPlayerForStats = line.playerName
+                            PostHogService.capture("stats_icon_tapped", properties: [
+                                "sport": sportCategory.rawValue,
+                                "prop_type": selectedPropType.rawValue
+                            ])
+                        } else {
+                            showPaywallForStats = true
                         }
-                    )
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 4)
+                            .background(Capsule().fill(AppColors.textSecondary.opacity(0.5)))
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 Spacer()
