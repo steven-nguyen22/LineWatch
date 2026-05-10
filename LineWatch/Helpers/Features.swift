@@ -14,5 +14,5 @@ enum Features {
     /// Backend (snapshot + post-game pipeline) is live, but the data
     /// accumulates over time — this stays off until 1.1 ships and we've
     /// collected ~2-3 weeks of NBA games for meaningful averages.
-    static let hitRatesEnabled = false
+    static let hitRatesEnabled = true
 }

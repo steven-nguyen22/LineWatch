@@ -17,12 +17,24 @@ struct PlayerStatsModal: View {
     var propType: PlayerPropType? = nil
 
     @Environment(OddsDataService.self) private var dataService
-    @State private var hitRateRows: [HitRateRow]?
-
-    private static let supabase = SupabaseService()
 
     private var stats: [String: String] {
         dataService.playerStatsByName[playerName] ?? [:]
+    }
+
+    /// Cache key into `dataService.playerHitRatesByKey`. Nil when there's no
+    /// propType (modal opened from a non-prop entry point).
+    private var hitRateCacheKey: String? {
+        guard let propType else { return nil }
+        return "\(playerName)|\(propType.marketKey)"
+    }
+
+    /// Reads through to the app-level cache so re-opening the same modal
+    /// inside one session is instant (no Supabase round-trip).
+    /// `nil` → not yet fetched (show "···"), `[]` → fetched, no data ("—").
+    private var hitRateRows: [HitRateRow]? {
+        guard let key = hitRateCacheKey else { return nil }
+        return dataService.playerHitRatesByKey[key]
     }
 
     /// Team name from player props data or stats
@@ -313,22 +325,16 @@ struct PlayerStatsModal: View {
         return "\(hits)/\(slice.count)"
     }
 
+    /// Delegates to `OddsDataService.fetchPlayerHitRates` which guards on
+    /// cache state — if the (player, propType) combo was already fetched
+    /// this session, this call is a no-op. The cached value is read back
+    /// via the `hitRateRows` computed property above.
     private func loadHitRateRows() async {
-        guard showHitRateSection, let propType else {
-            hitRateRows = nil
-            return
-        }
-        // Reset to "loading" state on player/prop change so the boxes
-        // visibly refresh rather than showing stale data from prior open.
-        hitRateRows = nil
-        do {
-            hitRateRows = try await Self.supabase.fetchHitRateRows(
-                playerName: playerName,
-                sportKey: sport.rawValue,
-                propType: propType.marketKey
-            )
-        } catch {
-            hitRateRows = []  // empty → boxes render "—"
-        }
+        guard showHitRateSection, let propType else { return }
+        await dataService.fetchPlayerHitRates(
+            playerName: playerName,
+            sportKey: sport.rawValue,
+            propType: propType
+        )
     }
 }

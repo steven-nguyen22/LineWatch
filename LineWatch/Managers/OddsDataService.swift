@@ -17,6 +17,13 @@ class OddsDataService {
     var teamStatsByName: [String: [String: String]] = [:]
     var playerStatsByName: [String: [String: String]] = [:]
     @ObservationIgnored private var statsFetchedForSports: Set<String> = []
+
+    /// Hit-rate caches. Keyed lookups so each modal open is at-most one fetch
+    /// per session — data only changes once daily after the 9am EDT grader,
+    /// so the cache lifetime can match the app session (no auto-refresh).
+    /// `nil` = not yet fetched, `[]` = fetched but no data, populated = render.
+    var playerHitRatesByKey: [String: [HitRateRow]] = [:]   // key = "playerName|propTypeMarketKey"
+    var teamHitRatesByName:  [String: [TeamHitRateRow]] = [:]
     var isLoading = false
     var error: Error?
 
@@ -383,6 +390,59 @@ class OddsDataService {
             }
         } catch {
             // Silent failure — modals will show "Stats unavailable"
+        }
+    }
+
+    // MARK: - Hit Rates
+
+    /// Lazy-loads + caches the player's last 15 graded games for a given prop.
+    /// Mirrors `fetchPlayerProps(eventId:)` — first call fetches, subsequent
+    /// calls return immediately. Cache lives for the app session; data only
+    /// changes once per day after the 9am EDT grader so this is sufficient.
+    func fetchPlayerHitRates(
+        playerName: String,
+        sportKey: String,
+        propType: PlayerPropType
+    ) async {
+        let key = "\(playerName)|\(propType.marketKey)"
+        guard playerHitRatesByKey[key] == nil else { return }   // already cached
+
+        do {
+            let rows = try await supabaseService.fetchHitRateRows(
+                playerName: playerName,
+                sportKey: sportKey,
+                propType: propType.marketKey
+            )
+            await MainActor.run {
+                playerHitRatesByKey[key] = rows
+            }
+        } catch {
+            // Empty cache entry → modal renders "—". Distinct from `nil`
+            // which still means "haven't fetched yet" (loading state).
+            await MainActor.run {
+                playerHitRatesByKey[key] = []
+            }
+        }
+    }
+
+    /// Lazy-loads + caches the team's last 15 graded games. Same pattern.
+    /// One cache entry covers both Wins History (derived from `actualMargin`)
+    /// and Spreads History (`covered`) — they're columns on the same row.
+    func fetchTeamHitRates(teamName: String, sportKey: String) async {
+        guard teamHitRatesByName[teamName] == nil else { return }
+
+        do {
+            let rows = try await supabaseService.fetchTeamHitRateRows(
+                teamName: teamName,
+                sportKey: sportKey
+            )
+            await MainActor.run {
+                teamHitRatesByName[teamName] = rows
+            }
+        } catch {
+            await MainActor.run {
+                teamHitRatesByName[teamName] = []
+            }
         }
     }
 

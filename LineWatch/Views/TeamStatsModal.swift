@@ -12,12 +12,16 @@ struct TeamStatsModal: View {
     let teamName: String
     let sport: SportCategory
     @Environment(OddsDataService.self) private var dataService
-    @State private var teamRows: [TeamHitRateRow]?
-
-    private static let supabase = SupabaseService()
 
     private var stats: [String: String] {
         dataService.teamStatsByName[teamName] ?? [:]
+    }
+
+    /// Reads through to the app-level cache so re-opening the same team
+    /// inside one session is instant. `nil` → not fetched yet (show "···"),
+    /// `[]` → fetched, no data available ("—").
+    private var teamRows: [TeamHitRateRow]? {
+        dataService.teamHitRatesByName[teamName]
     }
 
     /// Sport-specific stat display order. NBA drops L10 and Streak — those
@@ -264,21 +268,15 @@ struct TeamStatsModal: View {
 
     // MARK: - Loading
 
+    /// Delegates to `OddsDataService.fetchTeamHitRates` which guards on
+    /// cache state — re-opening the same team modal in one session is a
+    /// no-op. The cached value is read back via the `teamRows` computed
+    /// property above.
     private func loadTeamRows() async {
-        guard showHistorySections else {
-            teamRows = nil
-            return
-        }
-        // Reset to the loading state on team change so boxes visibly refresh
-        // rather than briefly showing stale data from the previously open team.
-        teamRows = nil
-        do {
-            teamRows = try await Self.supabase.fetchTeamHitRateRows(
-                teamName: teamName,
-                sportKey: "basketball_nba"
-            )
-        } catch {
-            teamRows = []  // empty → boxes render "—"
-        }
+        guard showHistorySections else { return }
+        await dataService.fetchTeamHitRates(
+            teamName: teamName,
+            sportKey: "basketball_nba"
+        )
     }
 }
