@@ -29,6 +29,7 @@ const SPORT_MAP: Record<string, { jobName: string; oddsFn: string; propsFn?: str
 const HIT_RATE_SPORTS: Record<string, { snapshotFn: string; resultsFn: string }> = {
   basketball_nba: { snapshotFn: "snapshot-lines-nba", resultsFn: "fetch-nba-game-results" },
   baseball_mlb:   { snapshotFn: "snapshot-lines-mlb", resultsFn: "fetch-mlb-game-results" },
+  icehockey_nhl:  { snapshotFn: "snapshot-lines-nhl", resultsFn: "fetch-nhl-game-results" },
 };
 
 // Fighting (MMA + Boxing) share one odds function.
