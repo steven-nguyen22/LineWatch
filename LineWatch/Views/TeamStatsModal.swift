@@ -24,15 +24,15 @@ struct TeamStatsModal: View {
         dataService.teamHitRatesByName[teamName]
     }
 
-    /// Sport-specific stat display order. NBA drops L10 and Streak — those
-    /// numbers are now visualized more prominently in the Wins History grid
-    /// below, so keeping them up here would just be redundant.
+    /// Sport-specific stat display order. NBA + MLB drop L10 and Streak —
+    /// those numbers are now visualized more prominently in the Wins History
+    /// grid below, so keeping them up here would just be redundant.
     private var statKeys: [String] {
         switch sport {
         case .basketball:
             return ["Record", "Home", "Road", "Pt Diff"]
         case .baseball:
-            return ["Record", "Home", "Road", "L10", "Streak", "RS", "RA"]
+            return ["Record", "Home", "Road", "RS", "RA"]
         case .hockey:
             return ["Record", "Home", "Road", "L10", "Points", "GF", "GA"]
         case .football:
@@ -42,11 +42,13 @@ struct TeamStatsModal: View {
         }
     }
 
-    /// Wins / Spreads history sections render only for NBA right now —
-    /// other sports don't have a snapshot+grader pipeline writing to
-    /// `team_game_results` yet. Gated by the same kill switch as player props.
+    /// Wins / Spreads history sections render for sports with a snapshot+grader
+    /// pipeline writing to `team_game_results`. Currently NBA and MLB. Other
+    /// sports light up automatically once their backend pipeline lands and
+    /// they're added here.
     private var showHistorySections: Bool {
-        Features.hitRatesEnabled && sport == .basketball
+        guard Features.hitRatesEnabled else { return false }
+        return sport == .basketball || sport == .baseball
     }
 
     var body: some View {
@@ -126,8 +128,16 @@ struct TeamStatsModal: View {
                 }
 
                 if showHistorySections {
-                    historySection(title: "Wins History",    predicate: \.won)
-                    historySection(title: "Spreads History", predicate: \.covered)
+                    HitRateHistoryGrid(
+                        title: "Wins History",
+                        rows: teamRows,
+                        predicate: \.won
+                    )
+                    HitRateHistoryGrid(
+                        title: "Spreads History",
+                        rows: teamRows,
+                        predicate: \.covered
+                    )
                 }
             }
             .padding(.bottom, 20)
@@ -144,139 +154,16 @@ struct TeamStatsModal: View {
         }
     }
 
-    // MARK: - History Sections
-
-    /// Generic 2×2 grid driven by a single `KeyPath<TeamHitRateRow, Bool>` so
-    /// Wins and Spreads share all the layout/streak code and only differ on
-    /// the boolean predicate they pull from each graded row.
-    private func historySection(title: String, predicate: KeyPath<TeamHitRateRow, Bool>) -> some View {
-        VStack(spacing: 12) {
-            Text(title)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(AppColors.textPrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 16)
-                .padding(.top, 24)
-
-            VStack(spacing: 12) {
-                HStack(spacing: 12) {
-                    historyBox(label: "Last 5 Games",  value: fractionText(window: 5,  predicate: predicate))
-                    historyBox(label: "Last 10 Games", value: fractionText(window: 10, predicate: predicate))
-                }
-                HStack(spacing: 12) {
-                    historyBox(label: "Last 15 Games", value: fractionText(window: 15, predicate: predicate))
-                    streakHistoryBox(predicate: predicate)
-                }
-            }
-            .padding(.horizontal, 16)
-        }
-    }
-
-    private func historyBox(label: String, value: String) -> some View {
-        VStack(spacing: 6) {
-            Text(label)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(AppColors.textSecondary)
-            Text(value)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundStyle(AppColors.textPrimary)
-                .monospacedDigit()
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 18)
-        .background(AppColors.backgroundCard)
-        .cornerRadius(12)
-    }
-
-    /// Streak box uses SF Symbols (flame.fill / snowflake) instead of emoji
-    /// so the icon renders as a color glyph regardless of the surrounding
-    /// font design — matches the player-props streak box convention.
-    private func streakHistoryBox(predicate: KeyPath<TeamHitRateRow, Bool>) -> some View {
-        VStack(spacing: 6) {
-            Text("Streak")
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(AppColors.textSecondary)
-            Group {
-                if let rows = teamRows {
-                    if rows.isEmpty {
-                        Text("—")
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundStyle(AppColors.textPrimary)
-                    } else {
-                        let parts = streakParts(from: rows, predicate: predicate)
-                        HStack(spacing: 5) {
-                            Image(systemName: parts.symbol)
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundStyle(parts.color)
-                            Text("\(parts.count)")
-                                .font(.system(size: 24, weight: .bold, design: .rounded))
-                                .foregroundStyle(AppColors.textPrimary)
-                                .monospacedDigit()
-                        }
-                    }
-                } else {
-                    Text("···")
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppColors.textPrimary)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 18)
-        .background(AppColors.backgroundCard)
-        .cornerRadius(12)
-    }
-
-    // MARK: - Computation
-
-    /// "x/N" with N capped at the window size. Mirrors `PlayerStatsModal.fractionText`
-    /// — partial windows are kept honest (a team with 7 graded games shows
-    /// L10 and L15 as `x/7`, while L5 caps at `x/5`).
-    private func fractionText(window: Int, predicate: KeyPath<TeamHitRateRow, Bool>) -> String {
-        guard let rows = teamRows else { return "···" }
-        if rows.isEmpty { return "—" }
-        let slice = rows.prefix(window)
-        let hits = slice.filter { $0[keyPath: predicate] }.count
-        return "\(hits)/\(slice.count)"
-    }
-
-    /// Walks rows in date-descending order from the most-recent game and
-    /// counts consecutive games sharing the same boolean as the most-recent.
-    /// Hot streak → flame.fill (orange); cold streak → snowflake (cyan).
-    private func streakParts(
-        from rows: [TeamHitRateRow],
-        predicate: KeyPath<TeamHitRateRow, Bool>
-    ) -> StreakParts {
-        guard let first = rows.first else {
-            return StreakParts(symbol: "minus", color: AppColors.textSecondary, count: 0)
-        }
-        let firstHit = first[keyPath: predicate]
-        var count = 0
-        for row in rows {
-            if row[keyPath: predicate] == firstHit { count += 1 } else { break }
-        }
-        return firstHit
-            ? StreakParts(symbol: "flame.fill", color: .orange, count: count)
-            : StreakParts(symbol: "snowflake",  color: .cyan,   count: count)
-    }
-
-    private struct StreakParts {
-        let symbol: String
-        let color: Color
-        let count: Int
-    }
-
-    // MARK: - Loading
-
     /// Delegates to `OddsDataService.fetchTeamHitRates` which guards on
     /// cache state — re-opening the same team modal in one session is a
     /// no-op. The cached value is read back via the `teamRows` computed
-    /// property above.
+    /// property above. Passes `sport.rawValue` through so the same call
+    /// site works for any sport with a hit-rate pipeline.
     private func loadTeamRows() async {
         guard showHistorySections else { return }
         await dataService.fetchTeamHitRates(
             teamName: teamName,
-            sportKey: "basketball_nba"
+            sportKey: sport.rawValue
         )
     }
 }

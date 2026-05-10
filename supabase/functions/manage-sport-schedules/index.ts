@@ -23,6 +23,14 @@ const SPORT_MAP: Record<string, { jobName: string; oddsFn: string; propsFn?: str
   soccer_uefa_champs_league: { jobName: "refresh-soccer", oddsFn: "fetch-soccer-odds",   propsFn: "fetch-soccer-player-props" },
 };
 
+// Hit-rate snapshot + post-game grader pairs. Adding a sport is one line
+// here plus the corresponding edge-function pair. The orchestration logic
+// below activates these jobs only when the sport is in-season.
+const HIT_RATE_SPORTS: Record<string, { snapshotFn: string; resultsFn: string }> = {
+  basketball_nba: { snapshotFn: "snapshot-lines-nba", resultsFn: "fetch-nba-game-results" },
+  baseball_mlb:   { snapshotFn: "snapshot-lines-mlb", resultsFn: "fetch-mlb-game-results" },
+};
+
 // Fighting (MMA + Boxing) share one odds function.
 const FIGHTING_KEYS = ["mma_mixed_martial_arts", "boxing_boxing"];
 const FIGHTING_JOB = { jobName: "refresh-fighting", oddsFn: "fetch-fighting-odds" };
@@ -92,26 +100,27 @@ Deno.serve(async (req) => {
       jobs.push(`${cfg.jobName}-props`);
     }
 
-    // Hit-rate snapshot: only NBA wired up so far. Same 5-min cadence —
-    // each function call is cheap (only writes for games tipping in 25-35
-    // min) and the unique constraint makes repeats no-ops.
-    if (sportKey === "basketball_nba" && active) {
-      await applyJob(supabase, `${cfg.jobName}-snapshot`, "snapshot-lines-nba", true);
-      jobs.push(`${cfg.jobName}-snapshot`);
+    // Hit-rate snapshot+grader: driven by HIT_RATE_SPORTS map above. NBA + MLB
+    // wired up. Each pair is cheap — snapshot is a no-op when no games are in
+    // the 25-35 min start window, and the unique constraint makes repeat writes
+    // no-ops too. Adding NHL/NFL is just one entry in HIT_RATE_SPORTS plus the
+    // corresponding edge-function pair.
+    const hitRate = HIT_RATE_SPORTS[sportKey];
+    if (hitRate) {
+      await applyJob(supabase, `${cfg.jobName}-snapshot`, hitRate.snapshotFn, active);
+      if (active) jobs.push(`${cfg.jobName}-snapshot`);
 
-      // Post-game results: daily at 13:00 UTC (= 9am EDT / 8am EST).
-      // All NBA games — even West Coast — are final by then.
+      // Post-game grader: daily at 13:00 UTC (= 9am EDT / 8am EST). All NBA
+      // games — even West Coast — are final by then; MLB late-night West
+      // Coast games are also long done before this.
       await applyJob(
         supabase,
         `${cfg.jobName}-results`,
-        "fetch-nba-game-results",
-        true,
+        hitRate.resultsFn,
+        active,
         "0 13 * * *",
       );
-      jobs.push(`${cfg.jobName}-results`);
-    } else if (sportKey === "basketball_nba") {
-      await applyJob(supabase, `${cfg.jobName}-snapshot`, "snapshot-lines-nba", false);
-      await applyJob(supabase, `${cfg.jobName}-results`, "fetch-nba-game-results", false);
+      if (active) jobs.push(`${cfg.jobName}-results`);
     }
 
     decisions[sportKey] = { active, jobs };
