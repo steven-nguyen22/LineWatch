@@ -79,14 +79,24 @@ struct BetPage: View {
         supportsStats && authService.effectiveTier.canAccessStats
     }
 
-    /// Whether to render the hit-rate badge on player prop rows. NBA-only
-    /// for now (the snapshot/results pipeline is wired up only for NBA);
-    /// gated by feature flag, tier, and supported prop types.
+    /// Whether to render the hit-rate badge on player prop rows.
+    /// Gated by feature flag, tier, and the per-sport set of prop types
+    /// that have a snapshot/results pipeline wired up.
     private var shouldShowHitRateBadge: Bool {
         guard Features.hitRatesEnabled else { return false }
         guard authService.effectiveTier.canAccessHitRates else { return false }
-        guard sportCategory == .basketball else { return false }
-        return [PlayerPropType.points, .rebounds, .assists].contains(selectedPropType)
+        switch sportCategory {
+        case .basketball:
+            return [PlayerPropType.points, .rebounds, .assists].contains(selectedPropType)
+        case .baseball:
+            return [PlayerPropType.hits, .strikeouts, .homeRuns].contains(selectedPropType)
+        case .hockey:
+            return [PlayerPropType.goals, .shotsOnGoal, .hockeyPoints].contains(selectedPropType)
+        case .football:
+            return [PlayerPropType.passingYards, .rushingYards, .receivingYards].contains(selectedPropType)
+        default:
+            return false
+        }
     }
 
     var body: some View {
