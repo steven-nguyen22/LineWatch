@@ -191,23 +191,51 @@ Deno.serve(async (req) => {
   // Replaces per-athlete SELECTs inside the box-score loop — one query
   // here vs ~hundreds of round-trips. Map keyed by `${event.id}|${player}|${prop}`.
   const completedIds = completed.map((e) => e.id);
+  // Pull all NOT-NULL columns alongside id/line_value — the bulk upsert at
+  // the bottom of this function needs to round-trip them. PostgREST's upsert
+  // evaluates NOT-NULL on the INSERT path of `INSERT ... ON CONFLICT DO UPDATE`
+  // even when every row conflicts, so a partial payload silently errors out.
   const { data: pendingPlayerRows } = await supabase
     .from("player_game_results")
-    .select("id, game_id, player_espn_id, prop_type, line_value")
+    .select("id, game_id, player_espn_id, prop_type, line_value, player_name, team_name, game_date")
     .in("game_id", completedIds)
     .eq("sport_key", SPORT_KEY)
     .is("actual_value", null);
 
-  const pendingByKey = new Map<string, { id: number; line_value: number }>();
+  const pendingByKey = new Map<string, {
+    id: string;
+    line_value: number;
+    player_name: string;
+    team_name: string;
+    game_date: string;
+  }>();
   for (const r of pendingPlayerRows ?? []) {
     pendingByKey.set(
       `${r.game_id}|${r.player_espn_id}|${r.prop_type}`,
-      { id: r.id, line_value: r.line_value },
+      {
+        id: r.id,
+        line_value: r.line_value,
+        player_name: r.player_name,
+        team_name: r.team_name,
+        game_date: r.game_date,
+      },
     );
   }
 
   // Accumulate updates across all games — flush in one bulk upsert at the end.
-  const playerUpdates: Array<{ id: number; actual_value: number; hit: boolean }> = [];
+  const playerUpdates: Array<{
+    id: string;
+    player_espn_id: number;
+    player_name: string;
+    team_name: string;
+    sport_key: string;
+    game_id: string;
+    game_date: string;
+    prop_type: string;
+    line_value: number;
+    actual_value: number;
+    hit: boolean;
+  }> = [];
 
   for (const event of completed) {
     try {
@@ -293,7 +321,19 @@ Deno.serve(async (req) => {
               const pending = pendingByKey.get(`${event.id}|${athleteId}|${propType}`);
               if (!pending) continue; // not snapshotted — skip
               const hit = actual >= Number(pending.line_value);
-              playerUpdates.push({ id: pending.id, actual_value: actual, hit });
+              playerUpdates.push({
+                id: pending.id,
+                player_espn_id: athleteId,
+                player_name: pending.player_name,
+                team_name: pending.team_name,
+                sport_key: SPORT_KEY,
+                game_id: event.id,
+                game_date: pending.game_date,
+                prop_type: propType,
+                line_value: pending.line_value,
+                actual_value: actual,
+                hit,
+              });
               playerRowsUpdated++;
             }
           }
