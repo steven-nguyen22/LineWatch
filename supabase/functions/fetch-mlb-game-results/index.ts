@@ -61,14 +61,24 @@ async function espnFetch(url: string, supabase: any, fnName: string): Promise<Re
 
 const SPORT_KEY = "baseball_mlb";
 
-// Maps prop_type → { ESPN box-score group name, ESPN key label }.
-// `group` matches `boxscore.players[].statistics[].name`. `key` is the
-// label inside that group's `keys[]` array (positional alongside `stats[]`).
-const PLAYER_STAT_MAP: Record<string, { group: string; key: string }> = {
-  batter_hits:        { group: "batting",  key: "H" },
-  batter_home_runs:   { group: "batting",  key: "HR" },
-  pitcher_strikeouts: { group: "pitching", key: "K" },
+// Maps prop_type → { ESPN box-score group, ESPN key label }.
+// MLB box-score `statistics[].name` is null — so we can't key off it.
+// Instead we discriminate batting vs pitching by a sentinel key only present
+// in one group: `hits-atBats` for batting, `fullInnings.partInnings` for
+// pitching. Stat key labels are the actual ESPN labels (lowercase, full
+// words) — NOT the H/HR/K abbreviations.
+const PLAYER_STAT_MAP: Record<string, { group: "batting" | "pitching"; key: string }> = {
+  batter_hits:        { group: "batting",  key: "hits" },
+  batter_home_runs:   { group: "batting",  key: "homeRuns" },
+  pitcher_strikeouts: { group: "pitching", key: "strikeouts" },
 };
+
+/** Classify an MLB stat group by inspecting its keys (since `name` is null). */
+function classifyMlbGroup(keys: string[]): "batting" | "pitching" | null {
+  if (keys.includes("hits-atBats")) return "batting";
+  if (keys.includes("fullInnings.partInnings")) return "pitching";
+  return null;
+}
 
 interface ESPNCompetitor {
   team?: { id?: string; displayName?: string };
@@ -281,9 +291,9 @@ Deno.serve(async (req) => {
 
       for (const team of boxTeams) {
         for (const statgroup of team.statistics ?? []) {
-          const groupName = statgroup.name;
-          if (!groupName) continue;
           const keys = statgroup.keys ?? [];
+          const groupName = classifyMlbGroup(keys);
+          if (!groupName) continue;
 
           // Find every prop_type whose mapping targets this group; each one
           // gets its own column index inside this group's `keys[]` array.

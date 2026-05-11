@@ -294,9 +294,13 @@ Deno.serve(async (req) => {
 
           // Skater group is identified by having both "G" and "A" keys.
           // (Goalies have keys like "SA", "GA", "SV", "SV%" — different shape.)
-          const goalsIdx = findKeyIndex(keys, ["G"]);
-          const assistsIdx = findKeyIndex(keys, ["A"]);
-          const shotsIdx = findKeyIndex(keys, ["SOG", "S"]);
+          // ESPN's NHL response uses full lowercase labels (`goals`, `assists`,
+          // `shotsTotal`), not the G/A/SOG abbreviations the original code
+          // assumed. We list the modern labels first and keep the short
+          // abbreviations as fallback in case ESPN ever changes back.
+          const goalsIdx = findKeyIndex(keys, ["goals", "G"]);
+          const assistsIdx = findKeyIndex(keys, ["assists", "A"]);
+          const shotsIdx = findKeyIndex(keys, ["shotsTotal", "SOG", "S"]);
           const isSkaterGroup = goalsIdx >= 0 && assistsIdx >= 0;
           if (!isSkaterGroup) continue;
 

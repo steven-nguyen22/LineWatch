@@ -74,6 +74,15 @@ const STAT_GROUP_TO_PROP: Record<string, string> = {
   receiving: "player_reception_yds",
 };
 
+// stat-group `name` → list of `keys[]` labels to try for the YDS column.
+// ESPN uses full lowercase labels in modern responses (e.g. `passingYards`),
+// not the `YDS` abbreviation — fall back to `YDS` defensively.
+const YDS_KEY_BY_GROUP: Record<string, string[]> = {
+  passing:   ["passingYards", "YDS"],
+  rushing:   ["rushingYards", "YDS"],
+  receiving: ["receivingYards", "YDS"],
+};
+
 interface ESPNCompetitor {
   team?: { id?: string; displayName?: string };
   score?: string;
@@ -290,10 +299,11 @@ Deno.serve(async (req) => {
 
       for (const team of boxTeams) {
         for (const statgroup of team.statistics ?? []) {
-          const propType = STAT_GROUP_TO_PROP[statgroup.name ?? ""];
+          const groupName = statgroup.name ?? "";
+          const propType = STAT_GROUP_TO_PROP[groupName];
           if (!propType) continue;
           const keys = statgroup.keys ?? [];
-          const ydsIdx = findKeyIndex(keys, ["YDS"]);
+          const ydsIdx = findKeyIndex(keys, YDS_KEY_BY_GROUP[groupName] ?? ["YDS"]);
           if (ydsIdx < 0) continue;
 
           for (const a of statgroup.athletes ?? []) {
