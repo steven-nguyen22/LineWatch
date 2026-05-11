@@ -996,9 +996,13 @@ struct BetPage: View {
                     .frame(width: 90, alignment: .trailing)
             }
 
-            // Place Bet button
-            if let urlString = sportsbookURLs[selection.bookmakerTitle],
-               let url = URL(string: urlString) {
+            // Place Bet button.
+            // `placeBetURL(for:)` tries the app scheme first for sportsbooks
+            // with a known custom URL scheme (see `sportsbookAppSchemes` in
+            // SportsbookURLs.swift) and falls back to the HTTPS URL otherwise.
+            // For most sportsbooks the HTTPS URL itself opens the app via
+            // Universal Links when installed.
+            if let url = placeBetURL(for: selection.bookmakerTitle) {
                 Button {
                     openURL(url)
                 } label: {
