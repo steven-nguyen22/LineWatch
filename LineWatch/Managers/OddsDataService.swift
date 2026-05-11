@@ -29,7 +29,12 @@ class OddsDataService {
     /// `compute-hot-streaks` edge function. `nil` = not yet fetched (loading);
     /// `[]` = fetched but empty (off-season for all 4 sports — rare).
     /// Session-lifetime cache, same rationale as the hit-rate caches.
-    var hotStreaks: [HotStreak]?
+    var hotStreaks: [Streak]?
+
+    /// Top-3 cold streaks per in-season sport, written by the same
+    /// `compute-hot-streaks` edge function (which writes both tables in
+    /// one run). Same caching semantics as `hotStreaks`.
+    var coldStreaks: [Streak]?
     var isLoading = false
     var error: Error?
 
@@ -453,8 +458,8 @@ class OddsDataService {
     }
 
     /// Lazy-loads + caches the top-3-per-sport hot streaks. Powers the
-    /// HotStreaksPage discovery surface. One round-trip per app session;
-    /// data only changes once daily after the 13:30 UTC compute job.
+    /// HotStreaksPage Hot tab. One round-trip per app session; data only
+    /// changes once daily after the 13:30 UTC compute job.
     func fetchHotStreaksIfNeeded() async {
         guard hotStreaks == nil else { return }   // already cached this session
 
@@ -467,6 +472,23 @@ class OddsDataService {
             // Empty cache → page renders "no streaks yet" placeholder.
             await MainActor.run {
                 hotStreaks = []
+            }
+        }
+    }
+
+    /// Lazy-loads + caches the top-3-per-sport cold streaks. Powers the
+    /// HotStreaksPage Cold tab. Same caching pattern as `fetchHotStreaksIfNeeded`.
+    func fetchColdStreaksIfNeeded() async {
+        guard coldStreaks == nil else { return }
+
+        do {
+            let rows = try await supabaseService.fetchColdStreaks()
+            await MainActor.run {
+                coldStreaks = rows
+            }
+        } catch {
+            await MainActor.run {
+                coldStreaks = []
             }
         }
     }

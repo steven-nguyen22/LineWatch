@@ -1,25 +1,28 @@
 //
-//  HotStreakCard.swift
+//  StreakCard.swift
 //  LineWatch
 //
 //  Created by Steven Nguyen on 5/9/26.
 //
-//  One row in the HotStreaksPage. Renders a single ranked streak with:
+//  One row in the HotStreaksPage (which hosts both Hot and Cold tabs).
+//  Renders a single ranked streak with:
 //   - medal icon (gold/silver/bronze) on the left
 //   - team logo or player headshot
-//   - display name + description (e.g. "Wins" / "Points Over 25.5")
-//   - flame icon + streak count on the right
+//   - display name + description (e.g. "Wins" / "Points")
+//   - direction-specific icon + streak count on the right
+//     (flame/orange for hot, snowflake/cyan for cold)
 //
-//  The visual chrome matches BestEVCard so Hot Streaks and Best EV feel
-//  like siblings on the home screen — same rounded corners, shadow, and
-//  green border accent.
+//  The visual chrome matches BestEVCard so the streaks surface and
+//  Best EV feel like siblings on the home screen — same rounded corners,
+//  shadow, and green border accent.
 //
 
 import SwiftUI
 import NukeUI
 
-struct HotStreakCard: View {
-    let streak: HotStreak
+struct StreakCard: View {
+    let streak: Streak
+    let direction: StreakDirection
     @Environment(OddsDataService.self) private var dataService
 
     /// Gold / silver / bronze for ranks 1 / 2 / 3. Anything beyond falls
@@ -60,11 +63,13 @@ struct HotStreakCard: View {
 
             Spacer(minLength: 8)
 
-            // Flame + streak count badge
+            // Direction icon + streak count badge.
+            // Flame/orange for hot, snowflake/cyan for cold — matches the
+            // snowflake tile already shown in HitRateHistoryGrid.
             HStack(spacing: 4) {
-                Image(systemName: "flame.fill")
+                Image(systemName: direction.iconName)
                     .font(.system(size: 18))
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(direction.iconColor)
 
                 Text("\(streak.streakCount)")
                     .font(AppFonts.title)

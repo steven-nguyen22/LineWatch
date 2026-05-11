@@ -215,16 +215,16 @@ Deno.serve(async (req) => {
 // during the wipe. The date-based `isInSeason()` check is the trigger —
 // see the `if (hitRate && !active)` guard at the call site.
 //
-// hot_streaks is technically redundant — the daily 13:30 compute would
-// clear the off-season sport's rows within ~24h since there are no
-// graded candidates left — but doing it inline closes the UI gap where
-// stale streaks would still appear on the iOS Hot Streaks page until
-// the next compute run.
+// hot_streaks / cold_streaks are technically redundant — the daily
+// 13:30 compute would clear the off-season sport's rows within ~24h
+// since there are no graded candidates left — but doing it inline
+// closes the UI gap where stale streaks would still appear on the iOS
+// Streaks page (both tabs) until the next compute run.
 async function wipeHitRatesForSport(
   supabase: ReturnType<typeof createClient>,
   sportKey: string,
 ) {
-  const tables = ["player_game_results", "team_game_results", "hot_streaks"];
+  const tables = ["player_game_results", "team_game_results", "hot_streaks", "cold_streaks"];
   for (const table of tables) {
     const { error, count } = await supabase
       .from(table)

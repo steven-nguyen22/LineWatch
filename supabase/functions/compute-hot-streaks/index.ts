@@ -1,11 +1,16 @@
 // compute-hot-streaks
 //
-// Daily aggregate that computes the top 3 hottest streaks per in-season
-// sport across team wins, team spreads, and player props. Powers the
-// iOS Hot Streaks discovery surface.
+// Daily aggregate that computes the top 3 hottest AND coldest streaks per
+// in-season sport across team wins, team spreads, and player props. Powers
+// both the Hot Streaks and Cold Streaks tabs on the iOS Streaks discovery
+// surface.
 //
 // Schedule: 13:30 UTC, after the four graders finish (NBA 13:00, MLB
 // 13:05, NHL 13:10, NFL 13:15). Registered via manage-sport-schedules.
+//
+// Despite the legacy function name (kept to avoid touching cron config),
+// this function writes BOTH `hot_streaks` and `cold_streaks` tables in
+// the same run from the same source-data fetch.
 //
 // Data sources (already populated by the existing graders):
 //   team_game_results   — actual_margin, covered, game_date per team-game
@@ -13,12 +18,13 @@
 //
 // Streak walk mirrors HitRateHistoryGrid.streakParts() in Swift: sort
 // newest-first, count consecutive matches at the head until the first
-// miss. Hot only — we ignore cold streaks here (the iOS feature is
-// titled "Hot Streaks", not "Streaks").
+// mismatch. For hot streaks the match predicate is win/cover/hit; for
+// cold streaks the predicate is loss/non-cover/miss. Ties
+// (actual_margin === 0) break both directions of the wins streak.
 //
-// Output: ≤3 rows per sport in the `hot_streaks` table. Replacement is
-// per-sport delete+insert (Supabase JS client has no transaction API;
-// the brief gap is acceptable for a discovery surface).
+// Output: ≤3 rows per sport per direction in `hot_streaks` / `cold_streaks`.
+// Replacement is per-sport delete+insert (Supabase JS client has no
+// transaction API; the brief gap is acceptable for a discovery surface).
 //
 // No minimum streak threshold — even streaks of 1 qualify. In practice,
 // once each sport has a few graded games, streaks ≥3 dominate the top.
@@ -94,7 +100,7 @@ interface Candidate {
  *
  * Mirrors HitRateHistoryGrid.streakParts() in Swift exactly (4-line core).
  */
-function hotStreakLength<T>(rows: T[], predicate: (row: T) => boolean): number {
+function streakLength<T>(rows: T[], predicate: (row: T) => boolean): number {
   let count = 0;
   for (const r of rows) {
     if (!predicate(r)) break;
@@ -126,11 +132,161 @@ function describeProp(propType: string): string {
   return PROP_LABELS[propType] ?? propType;
 }
 
+/** Predicate set for hot streaks (consecutive wins / covers / hits). */
+const HOT_PREDICATES = {
+  wins:   (r: TeamRow) => (r.actual_margin ?? 0) > 0,
+  spread: (r: TeamRow) => r.covered === true,
+  prop:   (r: PlayerRow) => r.hit === true,
+};
+
+/** Predicate set for cold streaks (consecutive losses / non-covers / misses). */
+const COLD_PREDICATES = {
+  // Ties (actual_margin === 0) break the cold streak — symmetric with
+  // hot wins (`> 0`), which also break on ties. Ties are vanishingly
+  // rare under modern league rules anyway.
+  wins:   (r: TeamRow) => (r.actual_margin ?? 0) < 0,
+  spread: (r: TeamRow) => r.covered === false,
+  prop:   (r: PlayerRow) => r.hit === false,
+};
+
+interface PredicateSet {
+  wins:   (r: TeamRow) => boolean;
+  spread: (r: TeamRow) => boolean;
+  prop:   (r: PlayerRow) => boolean;
+}
+
+/**
+ * Build candidate list for one direction (hot or cold). Walks the same
+ * source rows the caller fetched once, but applies the direction's
+ * predicates to count consecutive matches at the head.
+ */
+function buildCandidates(
+  teamsByEspnId: Map<string, TeamRow[]>,
+  propGroups: Map<string, PlayerRow[]>,
+  preds: PredicateSet,
+): Candidate[] {
+  const candidates: Candidate[] = [];
+
+  for (const [, rows] of teamsByEspnId) {
+    if (rows.length === 0) continue;
+    const winsLen = streakLength(rows, preds.wins);
+    if (winsLen > 0) {
+      candidates.push({
+        streak_type: "wins",
+        streak_count: winsLen,
+        last_game_date: rows[0].game_date,
+        team_espn_id: rows[0].team_espn_id,
+        team_name: rows[0].team_name,
+        espn_id_for_sort: rows[0].team_espn_id,
+      });
+    }
+    const spreadLen = streakLength(rows, preds.spread);
+    if (spreadLen > 0) {
+      candidates.push({
+        streak_type: "spread",
+        streak_count: spreadLen,
+        last_game_date: rows[0].game_date,
+        team_espn_id: rows[0].team_espn_id,
+        team_name: rows[0].team_name,
+        espn_id_for_sort: rows[0].team_espn_id,
+      });
+    }
+  }
+
+  for (const [, rows] of propGroups) {
+    if (rows.length === 0) continue;
+    const len = streakLength(rows, preds.prop);
+    if (len > 0) {
+      candidates.push({
+        streak_type: rows[0].prop_type,
+        streak_count: len,
+        last_game_date: rows[0].game_date,
+        player_espn_id: rows[0].player_espn_id,
+        player_name: rows[0].player_name,
+        team_name: rows[0].team_name ?? undefined,
+        espn_id_for_sort: rows[0].player_espn_id,
+      });
+    }
+  }
+
+  // Sort: streak_count desc → last_game_date desc → espn_id asc.
+  candidates.sort((a, b) => {
+    if (b.streak_count !== a.streak_count) return b.streak_count - a.streak_count;
+    if (b.last_game_date !== a.last_game_date) {
+      return b.last_game_date.localeCompare(a.last_game_date);
+    }
+    return a.espn_id_for_sort - b.espn_id_for_sort;
+  });
+
+  return candidates;
+}
+
+/** Format the top-3 candidates into rows ready for insert into a streak table. */
+function formatRows(
+  candidates: Candidate[],
+  sportKey: string,
+): Array<Record<string, unknown>> {
+  const top3 = candidates.slice(0, 3);
+  return top3.map((c, idx) => {
+    const isPlayer = c.player_espn_id !== undefined;
+    const displayName = isPlayer ? c.player_name! : c.team_name!;
+    let description: string;
+    if (c.streak_type === "wins") description = "Wins";
+    else if (c.streak_type === "spread") description = "Spread";
+    else description = describeProp(c.streak_type);
+
+    return {
+      sport_key: sportKey,
+      rank: idx + 1,
+      streak_count: c.streak_count,
+      streak_type: c.streak_type,
+      team_espn_id: c.team_espn_id ?? null,
+      team_name: c.team_name ?? null,
+      player_espn_id: c.player_espn_id ?? null,
+      player_name: c.player_name ?? null,
+      display_name: displayName,
+      description,
+      last_game_date: c.last_game_date,
+    };
+  });
+}
+
+/**
+ * Replace this sport's rows in the given streak table. Sequential
+ * delete+insert (brief gap acceptable for a discovery surface).
+ */
+async function replaceSportRows(
+  // deno-lint-ignore no-explicit-any
+  supabase: any,
+  table: "hot_streaks" | "cold_streaks",
+  sportKey: string,
+  rows: Array<Record<string, unknown>>,
+): Promise<void> {
+  const { error: delErr } = await supabase
+    .from(table)
+    .delete()
+    .eq("sport_key", sportKey);
+  if (delErr) throw new Error(`delete ${table} ${sportKey}: ${delErr.message}`);
+
+  if (rows.length > 0) {
+    const { error: insErr } = await supabase
+      .from(table)
+      .insert(rows);
+    if (insErr) throw new Error(`insert ${table} ${sportKey}: ${insErr.message}`);
+  }
+}
+
 async function computeForSport(
   // deno-lint-ignore no-explicit-any
   supabase: any,
   sportKey: string,
-): Promise<{ sport: string; rows_written: number; candidates_total: number }> {
+): Promise<{
+  sport: string;
+  hot_rows_written: number;
+  cold_rows_written: number;
+  candidates_hot: number;
+  candidates_cold: number;
+}> {
   // ---- 1. Pull all graded team rows for this sport ----
   const { data: teamRowsRaw, error: teamErr } = await supabase
     .from("team_game_results")
@@ -153,117 +309,31 @@ async function computeForSport(
   if (playerErr) throw new Error(`player fetch ${sportKey}: ${playerErr.message}`);
   const playerRows: PlayerRow[] = playerRowsRaw ?? [];
 
-  // ---- 3. Build candidate list ----
-  const candidates: Candidate[] = [];
-
-  // Wins streaks (per team, newest-first while actual_margin > 0).
+  // ---- 3. Group source rows once (same grouping serves both directions) ----
   const teamsByEspnId = groupBy(teamRows, (r) => String(r.team_espn_id));
-  for (const [, rows] of teamsByEspnId) {
-    if (rows.length === 0) continue;
-    const winsLen = hotStreakLength(rows, (r) => (r.actual_margin ?? 0) > 0);
-    if (winsLen > 0) {
-      candidates.push({
-        streak_type: "wins",
-        streak_count: winsLen,
-        last_game_date: rows[0].game_date,
-        team_espn_id: rows[0].team_espn_id,
-        team_name: rows[0].team_name,
-        espn_id_for_sort: rows[0].team_espn_id,
-      });
-    }
-    const spreadLen = hotStreakLength(rows, (r) => r.covered === true);
-    if (spreadLen > 0) {
-      candidates.push({
-        streak_type: "spread",
-        streak_count: spreadLen,
-        last_game_date: rows[0].game_date,
-        team_espn_id: rows[0].team_espn_id,
-        team_name: rows[0].team_name,
-        espn_id_for_sort: rows[0].team_espn_id,
-      });
-    }
-  }
-
-  // Prop streaks (per player+prop_type, newest-first while hit === true).
   const propGroups = groupBy(
     playerRows,
     (r) => `${r.player_espn_id}|${r.prop_type}`,
   );
-  for (const [, rows] of propGroups) {
-    if (rows.length === 0) continue;
-    const len = hotStreakLength(rows, (r) => r.hit === true);
-    if (len > 0) {
-      candidates.push({
-        streak_type: rows[0].prop_type,
-        streak_count: len,
-        last_game_date: rows[0].game_date,
-        player_espn_id: rows[0].player_espn_id,
-        player_name: rows[0].player_name,
-        // Player's team — populated so the iOS Hot Streaks tap-through
-        // can resolve the player's next upcoming game without needing
-        // `playerTeamsByEvent` to be pre-loaded for the sport.
-        team_name: rows[0].team_name ?? undefined,
-        espn_id_for_sort: rows[0].player_espn_id,
-      });
-    }
-  }
 
-  // ---- 4. Sort + take top 3 ----
-  // Primary: streak_count desc. Tiebreaker 1: last_game_date desc (more
-  // recent = "hotter"). Tiebreaker 2: espn_id asc for stable ordering.
-  candidates.sort((a, b) => {
-    if (b.streak_count !== a.streak_count) return b.streak_count - a.streak_count;
-    if (b.last_game_date !== a.last_game_date) {
-      return b.last_game_date.localeCompare(a.last_game_date);
-    }
-    return a.espn_id_for_sort - b.espn_id_for_sort;
-  });
+  // ---- 4. Build candidate lists per direction ----
+  const hotCandidates  = buildCandidates(teamsByEspnId, propGroups, HOT_PREDICATES);
+  const coldCandidates = buildCandidates(teamsByEspnId, propGroups, COLD_PREDICATES);
 
-  const top3 = candidates.slice(0, 3);
+  // ---- 5. Format top-3 for each table ----
+  const hotRows  = formatRows(hotCandidates,  sportKey);
+  const coldRows = formatRows(coldCandidates, sportKey);
 
-  // ---- 5. Format rows for insertion ----
-  const rowsToInsert = top3.map((c, idx) => {
-    const isPlayer = c.player_espn_id !== undefined;
-    const displayName = isPlayer ? c.player_name! : c.team_name!;
-    let description: string;
-    if (c.streak_type === "wins") description = "Wins";
-    else if (c.streak_type === "spread") description = "Spread";
-    else description = describeProp(c.streak_type);
-
-    return {
-      sport_key: sportKey,
-      rank: idx + 1,
-      streak_count: c.streak_count,
-      streak_type: c.streak_type,
-      team_espn_id: c.team_espn_id ?? null,
-      team_name: c.team_name ?? null,
-      player_espn_id: c.player_espn_id ?? null,
-      player_name: c.player_name ?? null,
-      display_name: displayName,
-      description,
-      last_game_date: c.last_game_date,
-    };
-  });
-
-  // ---- 6. Atomic-ish replace for this sport ----
-  // Sequential delete+insert. Brief gap acceptable for discovery surface.
-  const { error: delErr } = await supabase
-    .from("hot_streaks")
-    .delete()
-    .eq("sport_key", sportKey);
-  if (delErr) throw new Error(`delete ${sportKey}: ${delErr.message}`);
-
-  if (rowsToInsert.length > 0) {
-    const { error: insErr } = await supabase
-      .from("hot_streaks")
-      .insert(rowsToInsert);
-    if (insErr) throw new Error(`insert ${sportKey}: ${insErr.message}`);
-  }
+  // ---- 6. Replace each sport's rows in each table ----
+  await replaceSportRows(supabase, "hot_streaks",  sportKey, hotRows);
+  await replaceSportRows(supabase, "cold_streaks", sportKey, coldRows);
 
   return {
     sport: sportKey,
-    rows_written: rowsToInsert.length,
-    candidates_total: candidates.length,
+    hot_rows_written: hotRows.length,
+    cold_rows_written: coldRows.length,
+    candidates_hot: hotCandidates.length,
+    candidates_cold: coldCandidates.length,
   };
 }
 
@@ -291,7 +361,13 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-  const results: Array<{ sport: string; rows_written: number; candidates_total: number }> = [];
+  const results: Array<{
+    sport: string;
+    hot_rows_written: number;
+    cold_rows_written: number;
+    candidates_hot: number;
+    candidates_cold: number;
+  }> = [];
   const errors: string[] = [];
 
   for (const sportKey of SPORTS) {
@@ -303,13 +379,15 @@ Deno.serve(async (req) => {
     }
   }
 
-  const totalRows = results.reduce((s, r) => s + r.rows_written, 0);
+  const hotTotal  = results.reduce((s, r) => s + r.hot_rows_written, 0);
+  const coldTotal = results.reduce((s, r) => s + r.cold_rows_written, 0);
 
   return new Response(
     JSON.stringify({
       success: errors.length === 0,
       sports_processed: results.length,
-      rows_written: totalRows,
+      hot_rows_written: hotTotal,
+      cold_rows_written: coldTotal,
       results,
       errors,
     }, null, 2),

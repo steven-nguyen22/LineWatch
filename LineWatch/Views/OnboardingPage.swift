@@ -400,7 +400,7 @@ struct MockHotStreaksCard: View {
     }
 
     /// A single hot-streak card scaled down for onboarding. Visual order
-    /// matches HotStreakCard: medal, logo/headshot, name + description,
+    /// matches StreakCard: medal, logo/headshot, name + description,
     /// flame badge.
     @ViewBuilder
     private func mockHotStreakRow(
@@ -459,7 +459,7 @@ struct MockHotStreaksCard: View {
         )
     }
 
-    /// Same gold/silver/bronze palette as HotStreakCard.
+    /// Same gold/silver/bronze palette as StreakCard.
     private func medalColor(for rank: Int) -> Color {
         switch rank {
         case 1: return Color(red: 1.0, green: 0.84, blue: 0.0)
@@ -469,7 +469,7 @@ struct MockHotStreaksCard: View {
         }
     }
 
-    /// Player headshots get a circular crop (matches HotStreakCard);
+    /// Player headshots get a circular crop (matches StreakCard);
     /// team logos render as transparent PNGs and don't need clipping.
     @ViewBuilder
     private func avatarImage(isPlayer: Bool, imageURL: String) -> some View {

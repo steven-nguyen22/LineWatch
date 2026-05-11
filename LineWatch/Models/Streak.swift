@@ -1,12 +1,18 @@
 //
-//  HotStreak.swift
+//  Streak.swift
 //  LineWatch
 //
 //  Created by Steven Nguyen on 5/9/26.
 //
-//  One row from the `hot_streaks` table — a single ranked hot streak
-//  for a sport. Populated daily by the `compute-hot-streaks` edge function
-//  at ~13:30 UTC (after the four post-game graders finish).
+//  One row from either the `hot_streaks` or `cold_streaks` table — a
+//  single ranked streak for a sport. The struct is direction-agnostic;
+//  the caller knows which table the row came from based on which
+//  property it pulled from OddsDataService (`hotStreaks` vs
+//  `coldStreaks`). Direction is carried separately via `StreakDirection`
+//  at the rendering layer.
+//
+//  Both tables are populated daily by the `compute-hot-streaks` edge
+//  function at ~13:30 UTC (after the four post-game graders finish).
 //
 //  Display fields (`displayName`, `description`) are precomputed by the
 //  edge function so the iOS card just renders strings — no formatting
@@ -18,8 +24,67 @@
 //
 
 import Foundation
+import SwiftUI
 
-struct HotStreak: Codable, Identifiable, Hashable {
+/// Hot vs cold — drives icon, color, tab label, loading copy on the
+/// streaks page. Caller pairs a `[Streak]` array with one of these to
+/// know how to render and route.
+enum StreakDirection: Hashable {
+    case hot
+    case cold
+
+    /// SF Symbol for the streak count badge on the card.
+    var iconName: String {
+        switch self {
+        case .hot:  return "flame.fill"
+        case .cold: return "snowflake"
+        }
+    }
+
+    /// Foreground color for the badge icon. Matches the per-player
+    /// snowflake tile in HitRateHistoryGrid so the visual vocabulary
+    /// stays consistent across the app.
+    var iconColor: Color {
+        switch self {
+        case .hot:  return .orange
+        case .cold: return .cyan
+        }
+    }
+
+    /// Label shown in the segmented tab switcher on HotStreaksPage.
+    var tabLabel: String {
+        switch self {
+        case .hot:  return "Hot Streaks"
+        case .cold: return "Cold Streaks"
+        }
+    }
+
+    /// SF Symbol used in the empty state.
+    var emptyStateIconName: String {
+        switch self {
+        case .hot:  return "flame"
+        case .cold: return "snowflake"
+        }
+    }
+
+    /// PostHog screen tag.
+    var screenTag: String {
+        switch self {
+        case .hot:  return "hot_streaks"
+        case .cold: return "cold_streaks"
+        }
+    }
+
+    /// Loading-state copy.
+    var loadingCopy: String {
+        switch self {
+        case .hot:  return "Loading hot streaks…"
+        case .cold: return "Loading cold streaks…"
+        }
+    }
+}
+
+struct Streak: Codable, Identifiable, Hashable {
     let id: Int
     let sportKey: String
     let rank: Int
@@ -30,7 +95,7 @@ struct HotStreak: Codable, Identifiable, Hashable {
     let playerEspnId: Int?
     let playerName: String?
     let displayName: String         // e.g. "Lakers" or "James Harden"
-    let description: String         // e.g. "Wins" / "Spread" / "Points Over 25.5"
+    let description: String         // e.g. "Wins" / "Spread" / "Points"
     let lastGameDate: String        // ISO date (YYYY-MM-DD)
 
     enum CodingKeys: String, CodingKey {

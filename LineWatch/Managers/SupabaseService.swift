@@ -407,8 +407,21 @@ class SupabaseService {
     ///
     /// Ordering: by `sport_key` then `rank` so the caller can group by
     /// sport without sorting locally.
-    func fetchHotStreaks() async throws -> [HotStreak] {
-        let endpoint = "\(baseURL)/hot_streaks"
+    func fetchHotStreaks() async throws -> [Streak] {
+        try await fetchStreaks(from: "hot_streaks")
+    }
+
+    /// Fetches the top-3 cold streaks per in-season sport — populated by
+    /// the same edge function as `fetchHotStreaks`. Identical shape and
+    /// ordering; just reads from the parallel `cold_streaks` table.
+    func fetchColdStreaks() async throws -> [Streak] {
+        try await fetchStreaks(from: "cold_streaks")
+    }
+
+    /// Shared transport for the streak tables. Both have identical
+    /// schemas and ordering semantics, so we route through one helper.
+    private func fetchStreaks(from table: String) async throws -> [Streak] {
+        let endpoint = "\(baseURL)/\(table)"
             + "?select=*"
             + "&order=sport_key.asc,rank.asc"
 
@@ -421,7 +434,7 @@ class SupabaseService {
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             throw GHError.invalidResponse
         }
-        return try JSONDecoder().decode([HotStreak].self, from: data)
+        return try JSONDecoder().decode([Streak].self, from: data)
     }
 }
 
