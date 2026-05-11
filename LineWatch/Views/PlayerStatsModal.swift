@@ -11,10 +11,30 @@ import NukeUI
 struct PlayerStatsModal: View {
     let playerName: String
     let sport: SportCategory
+    /// Set when the modal is opened from a player-prop row. Drives the
+    /// "Points / Rebounds / Assists History" section below the season
+    /// averages. nil for non-prop entry points (e.g. moneyline rows).
+    var propType: PlayerPropType? = nil
+
     @Environment(OddsDataService.self) private var dataService
 
     private var stats: [String: String] {
         dataService.playerStatsByName[playerName] ?? [:]
+    }
+
+    /// Cache key into `dataService.playerHitRatesByKey`. Nil when there's no
+    /// propType (modal opened from a non-prop entry point).
+    private var hitRateCacheKey: String? {
+        guard let propType else { return nil }
+        return "\(playerName)|\(propType.marketKey)"
+    }
+
+    /// Reads through to the app-level cache so re-opening the same modal
+    /// inside one session is instant (no Supabase round-trip).
+    /// `nil` → not yet fetched (show "···"), `[]` → fetched, no data ("—").
+    private var hitRateRows: [HitRateRow]? {
+        guard let key = hitRateCacheKey else { return nil }
+        return dataService.playerHitRatesByKey[key]
     }
 
     /// Team name from player props data or stats
@@ -54,6 +74,21 @@ struct PlayerStatsModal: View {
         default:
             return Array(stats.keys.sorted())
         }
+    }
+
+    /// Whether to render the Hit Rate History section. Only when:
+    /// - Feature is enabled
+    /// - The modal was opened with a propType (via player-prop row tap)
+    /// - The propType is one we have a backend pipeline for
+    ///   (NBA points/reb/ast, MLB hits/strikeouts/home runs,
+    ///    NHL goals/shots on goal/hockey points,
+    ///    NFL passing/rushing/receiving yards)
+    private var showHitRateSection: Bool {
+        guard Features.hitRatesEnabled, let propType else { return false }
+        return [.points, .rebounds, .assists,
+                .hits, .strikeouts, .homeRuns,
+                .goals, .shotsOnGoal, .hockeyPoints,
+                .passingYards, .rushingYards, .receivingYards].contains(propType)
     }
 
     var body: some View {
@@ -148,6 +183,14 @@ struct PlayerStatsModal: View {
                     .cornerRadius(12)
                     .padding(.horizontal, 16)
                 }
+
+                if showHitRateSection {
+                    HitRateHistoryGrid(
+                        title: propTitleText,
+                        rows: hitRateRows,
+                        predicate: \.hit
+                    )
+                }
             }
             .padding(.bottom, 20)
         }
@@ -158,5 +201,48 @@ struct PlayerStatsModal: View {
             "sport": sport.rawValue,
             "player": playerName
         ])
+        .task(id: hitRateTaskKey) {
+            await loadHitRateRows()
+        }
+    }
+
+    // MARK: - Hit Rate History Section
+
+    /// Distinct task ID so SwiftUI re-runs the load when player or prop changes.
+    private var hitRateTaskKey: String {
+        "\(playerName)|\(propType?.marketKey ?? "none")"
+    }
+
+    /// Section title varies by prop — passed through to `HitRateHistoryGrid`.
+    private var propTitleText: String {
+        guard let propType else { return "Recent History" }
+        switch propType {
+        case .points:        return "Points History"
+        case .rebounds:      return "Rebounds History"
+        case .assists:       return "Assists History"
+        case .hits:          return "Hits History"
+        case .strikeouts:    return "Strikeouts History"
+        case .homeRuns:      return "Home Runs History"
+        case .goals:         return "Goals History"
+        case .shotsOnGoal:   return "Shots on Goal History"
+        case .hockeyPoints:  return "Points History"
+        case .passingYards:    return "Passing Yards History"
+        case .rushingYards:    return "Rushing Yards History"
+        case .receivingYards:  return "Receiving Yards History"
+        default:             return "Recent History"
+        }
+    }
+
+    /// Delegates to `OddsDataService.fetchPlayerHitRates` which guards on
+    /// cache state — if the (player, propType) combo was already fetched
+    /// this session, this call is a no-op. The cached value is read back
+    /// via the `hitRateRows` computed property above.
+    private func loadHitRateRows() async {
+        guard showHitRateSection, let propType else { return }
+        await dataService.fetchPlayerHitRates(
+            playerName: playerName,
+            sportKey: sport.rawValue,
+            propType: propType
+        )
     }
 }

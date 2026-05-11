@@ -281,19 +281,12 @@ class SupabaseService {
         return try await fetchRows(path: "nfl_teams?select=team_name,logo_url")
     }
 
-    /// Fetches QB headshots.
-    func fetchNFLQBs() async throws -> [NFLPlayerRow] {
-        return try await fetchRows(path: "nfl_qbs?select=player_name,headshot_url,team_name")
-    }
-
-    /// Fetches RB headshots.
-    func fetchNFLRBs() async throws -> [NFLPlayerRow] {
-        return try await fetchRows(path: "nfl_rbs?select=player_name,headshot_url,team_name")
-    }
-
-    /// Fetches WR/TE headshots.
-    func fetchNFLReceivers() async throws -> [NFLPlayerRow] {
-        return try await fetchRows(path: "nfl_receivers?select=player_name,headshot_url,team_name")
+    /// Fetches NFL player headshots from the unified `nfl_players` table
+    /// (QBs, RBs, WRs, TEs all in one table). Position is stored as a
+    /// column server-side but isn't needed for client-side headshot
+    /// lookups — players are keyed by name.
+    func fetchNFLPlayers() async throws -> [NFLPlayerRow] {
+        return try await fetchRows(path: "nfl_players?select=player_name,headshot_url,team_name")
     }
 
     // MARK: - Team & Player Stats
@@ -334,6 +327,152 @@ class SupabaseService {
             throw GHError.invalidResponse
         }
         return try JSONDecoder().decode([T].self, from: data)
+    }
+
+    // MARK: - Hit Rates (Recent Trends)
+
+    /// Fetches the player's last 15 graded games for `propType` (only rows
+    /// where the post-game job has filled in `actual_value`). The caller
+    /// can slice locally to compute L5 / L10 / L15 hit rates without
+    /// re-querying.
+    ///
+    /// `playerName` must be the canonical ESPN spelling (the same name
+    /// shown in the BetPage UI). Snapshot rows are written under that
+    /// name so a direct equality match works.
+    func fetchHitRateRows(
+        playerName: String,
+        sportKey: String,
+        propType: String
+    ) async throws -> [HitRateRow] {
+        // PostgREST: filter graded rows (hit not null), order by date desc, cap at 15.
+        let nameEncoded = playerName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? playerName
+        let endpoint = "\(baseURL)/player_game_results"
+            + "?player_name=eq.\(nameEncoded)"
+            + "&sport_key=eq.\(sportKey)"
+            + "&prop_type=eq.\(propType)"
+            + "&hit=not.is.null"
+            + "&order=game_date.desc"
+            + "&limit=15"
+            + "&select=hit,game_date,line_value,actual_value"
+
+        guard let url = URL(string: endpoint) else { throw GHError.invalidURL }
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+        return try JSONDecoder().decode([HitRateRow].self, from: data)
+    }
+
+    /// Fetches the team's last 15 graded games (only rows where the post-game
+    /// job has filled in `covered` / `actual_margin`). The caller can slice
+    /// locally to compute Wins L5/L10/L15 and Spreads L5/L10/L15 from the
+    /// same array — no need for a second round-trip.
+    ///
+    /// `teamName` must match the canonical name written by the snapshot
+    /// function (which sources it from `nba_teams.team_name`). For NBA this
+    /// is the same string shown in BetPage / TeamStatsModal headers.
+    func fetchTeamHitRateRows(
+        teamName: String,
+        sportKey: String
+    ) async throws -> [TeamHitRateRow] {
+        let nameEncoded = teamName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? teamName
+        let endpoint = "\(baseURL)/team_game_results"
+            + "?team_name=eq.\(nameEncoded)"
+            + "&sport_key=eq.\(sportKey)"
+            + "&covered=not.is.null"
+            + "&order=game_date.desc"
+            + "&limit=15"
+            + "&select=covered,game_date,spread_line,actual_margin"
+
+        guard let url = URL(string: endpoint) else { throw GHError.invalidURL }
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+        return try JSONDecoder().decode([TeamHitRateRow].self, from: data)
+    }
+
+    /// Fetches the top-3 hot streaks per in-season sport, populated daily
+    /// by the `compute-hot-streaks` edge function at ~13:30 UTC. Returns
+    /// at most 12 rows (3 × 4 sports) when all four are in season; fewer
+    /// if a sport has no graded games yet (off-season).
+    ///
+    /// Ordering: by `sport_key` then `rank` so the caller can group by
+    /// sport without sorting locally.
+    func fetchHotStreaks() async throws -> [Streak] {
+        try await fetchStreaks(from: "hot_streaks")
+    }
+
+    /// Fetches the top-3 cold streaks per in-season sport — populated by
+    /// the same edge function as `fetchHotStreaks`. Identical shape and
+    /// ordering; just reads from the parallel `cold_streaks` table.
+    func fetchColdStreaks() async throws -> [Streak] {
+        try await fetchStreaks(from: "cold_streaks")
+    }
+
+    /// Shared transport for the streak tables. Both have identical
+    /// schemas and ordering semantics, so we route through one helper.
+    private func fetchStreaks(from table: String) async throws -> [Streak] {
+        let endpoint = "\(baseURL)/\(table)"
+            + "?select=*"
+            + "&order=sport_key.asc,rank.asc"
+
+        guard let url = URL(string: endpoint) else { throw GHError.invalidURL }
+        var request = URLRequest(url: url)
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw GHError.invalidResponse
+        }
+        return try JSONDecoder().decode([Streak].self, from: data)
+    }
+}
+
+/// One graded row from `player_game_results`. The fields beyond `hit` are
+/// kept around for future UI (e.g. a tap-through "show last 5 games" sheet).
+struct HitRateRow: Codable {
+    let hit: Bool
+    let gameDate: String
+    let lineValue: Double
+    let actualValue: Double
+
+    enum CodingKeys: String, CodingKey {
+        case hit
+        case gameDate = "game_date"
+        case lineValue = "line_value"
+        case actualValue = "actual_value"
+    }
+}
+
+/// One graded row from `team_game_results`. Drives both the Wins History and
+/// Spreads History sections in `TeamStatsModal` — wins are derived locally
+/// from `actualMargin > 0` so we don't need a second column or query.
+struct TeamHitRateRow: Codable {
+    let covered: Bool          // grader: (actual_margin + spread_line) > 0
+    let gameDate: String
+    let spreadLine: Double
+    let actualMargin: Double   // team_score - opp_score; >0 means win
+
+    /// Derived locally — the post-game grader stores `actual_margin` and
+    /// `covered`, but the win is just the sign of the margin, so we don't
+    /// burn a column for it.
+    var won: Bool { actualMargin > 0 }
+
+    enum CodingKeys: String, CodingKey {
+        case covered
+        case gameDate = "game_date"
+        case spreadLine = "spread_line"
+        case actualMargin = "actual_margin"
     }
 }
 

@@ -17,6 +17,24 @@ class OddsDataService {
     var teamStatsByName: [String: [String: String]] = [:]
     var playerStatsByName: [String: [String: String]] = [:]
     @ObservationIgnored private var statsFetchedForSports: Set<String> = []
+
+    /// Hit-rate caches. Keyed lookups so each modal open is at-most one fetch
+    /// per session — data only changes once daily after the 9am EDT grader,
+    /// so the cache lifetime can match the app session (no auto-refresh).
+    /// `nil` = not yet fetched, `[]` = fetched but no data, populated = render.
+    var playerHitRatesByKey: [String: [HitRateRow]] = [:]   // key = "playerName|propTypeMarketKey"
+    var teamHitRatesByName:  [String: [TeamHitRateRow]] = [:]
+
+    /// Top-3 hot streaks per in-season sport, written daily by the
+    /// `compute-hot-streaks` edge function. `nil` = not yet fetched (loading);
+    /// `[]` = fetched but empty (off-season for all 4 sports — rare).
+    /// Session-lifetime cache, same rationale as the hit-rate caches.
+    var hotStreaks: [Streak]?
+
+    /// Top-3 cold streaks per in-season sport, written by the same
+    /// `compute-hot-streaks` edge function (which writes both tables in
+    /// one run). Same caching semantics as `hotStreaks`.
+    var coldStreaks: [Streak]?
     var isLoading = false
     var error: Error?
 
@@ -266,21 +284,21 @@ class OddsDataService {
 
     // MARK: - NFL Assets (Logos & Headshots)
 
-    /// Fetch team logos and player headshots from Supabase for NFL (run once on launch)
+    /// Fetch team logos and player headshots from Supabase for NFL (run once on launch).
+    /// Reads from the unified `nfl_players` table — see consolidation
+    /// migration `20260510000000_consolidate_nfl_players.sql`.
     func fetchNFLAssets() async {
         do {
             async let teamsTask = supabaseService.fetchNFLTeamLogos()
-            async let qbsTask = supabaseService.fetchNFLQBs()
-            async let rbsTask = supabaseService.fetchNFLRBs()
-            async let receiversTask = supabaseService.fetchNFLReceivers()
+            async let playersTask = supabaseService.fetchNFLPlayers()
 
-            let (teams, qbs, rbs, receivers) = try await (teamsTask, qbsTask, rbsTask, receiversTask)
+            let (teams, players) = try await (teamsTask, playersTask)
 
             await MainActor.run {
                 for team in teams {
                     teamLogoURLs[team.teamName] = team.logoUrl
                 }
-                for player in qbs + rbs + receivers {
+                for player in players {
                     playerHeadshotURLs[player.playerName] = player.headshotUrl
                 }
             }
@@ -383,6 +401,95 @@ class OddsDataService {
             }
         } catch {
             // Silent failure — modals will show "Stats unavailable"
+        }
+    }
+
+    // MARK: - Hit Rates
+
+    /// Lazy-loads + caches the player's last 15 graded games for a given prop.
+    /// Mirrors `fetchPlayerProps(eventId:)` — first call fetches, subsequent
+    /// calls return immediately. Cache lives for the app session; data only
+    /// changes once per day after the 9am EDT grader so this is sufficient.
+    func fetchPlayerHitRates(
+        playerName: String,
+        sportKey: String,
+        propType: PlayerPropType
+    ) async {
+        let key = "\(playerName)|\(propType.marketKey)"
+        guard playerHitRatesByKey[key] == nil else { return }   // already cached
+
+        do {
+            let rows = try await supabaseService.fetchHitRateRows(
+                playerName: playerName,
+                sportKey: sportKey,
+                propType: propType.marketKey
+            )
+            await MainActor.run {
+                playerHitRatesByKey[key] = rows
+            }
+        } catch {
+            // Empty cache entry → modal renders "—". Distinct from `nil`
+            // which still means "haven't fetched yet" (loading state).
+            await MainActor.run {
+                playerHitRatesByKey[key] = []
+            }
+        }
+    }
+
+    /// Lazy-loads + caches the team's last 15 graded games. Same pattern.
+    /// One cache entry covers both Wins History (derived from `actualMargin`)
+    /// and Spreads History (`covered`) — they're columns on the same row.
+    func fetchTeamHitRates(teamName: String, sportKey: String) async {
+        guard teamHitRatesByName[teamName] == nil else { return }
+
+        do {
+            let rows = try await supabaseService.fetchTeamHitRateRows(
+                teamName: teamName,
+                sportKey: sportKey
+            )
+            await MainActor.run {
+                teamHitRatesByName[teamName] = rows
+            }
+        } catch {
+            await MainActor.run {
+                teamHitRatesByName[teamName] = []
+            }
+        }
+    }
+
+    /// Lazy-loads + caches the top-3-per-sport hot streaks. Powers the
+    /// HotStreaksPage Hot tab. One round-trip per app session; data only
+    /// changes once daily after the 13:30 UTC compute job.
+    func fetchHotStreaksIfNeeded() async {
+        guard hotStreaks == nil else { return }   // already cached this session
+
+        do {
+            let rows = try await supabaseService.fetchHotStreaks()
+            await MainActor.run {
+                hotStreaks = rows
+            }
+        } catch {
+            // Empty cache → page renders "no streaks yet" placeholder.
+            await MainActor.run {
+                hotStreaks = []
+            }
+        }
+    }
+
+    /// Lazy-loads + caches the top-3-per-sport cold streaks. Powers the
+    /// HotStreaksPage Cold tab. Same caching pattern as `fetchHotStreaksIfNeeded`.
+    func fetchColdStreaksIfNeeded() async {
+        guard coldStreaks == nil else { return }
+
+        do {
+            let rows = try await supabaseService.fetchColdStreaks()
+            await MainActor.run {
+                coldStreaks = rows
+            }
+        } catch {
+            await MainActor.run {
+                coldStreaks = []
+            }
         }
     }
 

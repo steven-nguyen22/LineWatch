@@ -188,8 +188,12 @@ struct SignInView: View {
                 return
             }
 
+            // Apple sends fullName ONLY on the first sign-in. Nil on every
+            // subsequent sign-in — that's by Apple's design, not a bug.
+            let fullName = appleIDCredential.fullName
+
             Task {
-                await authService.signInWithApple(idToken: idToken, nonce: nonce)
+                await authService.signInWithApple(idToken: idToken, nonce: nonce, fullName: fullName)
                 if authService.isAuthenticated {
                     await NotificationManager.shared.requestAuthorization()
                 }

@@ -66,7 +66,9 @@ enum SubscriptionTier: String, Codable, CaseIterable, Comparable {
 
     var canAccessPlayerProps: Bool { self >= .pro }
     var canAccessBestEV: Bool { self >= .hallOfFame }
+    var canAccessHotStreaks: Bool { self >= .hallOfFame }
     var canAccessStats: Bool { self >= .hallOfFame }
+    var canAccessHitRates: Bool { self >= .hallOfFame }
 
     // MARK: - Comparable (rookie < pro < hallOfFame)
 

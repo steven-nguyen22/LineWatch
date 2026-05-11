@@ -13,5 +13,6 @@ enum AppRoute: Hashable {
     /// - `initialPlayerPropType`: optional prop tab to preselect when opening the Player Props market
     case eventDetail(ResponseBody, MarketType, String?, PlayerPropType?)
     case bestEV
+    case hotStreaks
     case paywall
 }

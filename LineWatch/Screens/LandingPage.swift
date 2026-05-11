@@ -53,6 +53,50 @@ struct LandingPage: View {
                     .padding(.horizontal, 20)
                 }
 
+                // Hot Streaks section entry — discovery surface ranking the
+                // top 3 hottest team/player streaks per in-season sport.
+                // Hall of Fame tier (free trial users have effective tier
+                // hallOfFame, so they pass the same gate). Mirrors Best EV
+                // — locked users route to the paywall instead.
+                NavigationLink(value: authService.effectiveTier.canAccessHotStreaks ? AppRoute.hotStreaks : AppRoute.paywall) {
+                    HStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(AppColors.primaryGreen)
+                                .frame(width: 52, height: 52)
+
+                            Image(systemName: "flame.fill")
+                                .font(.system(size: 24))
+                                .foregroundStyle(AppColors.textOnGreen)
+                        }
+
+                        Text("Hot Streaks")
+                            .font(AppFonts.title)
+                            .foregroundStyle(AppColors.textPrimary)
+
+                        Spacer()
+
+                        if !authService.effectiveTier.canAccessHotStreaks {
+                            Image(systemName: "lock.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                        }
+
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(AppColors.textSecondary.opacity(0.5))
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(AppColors.backgroundCard)
+                            .shadow(color: AppColors.cardShadow, radius: 6, x: 0, y: 3)
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, 20)
+
                 // Best EV section entry
                 NavigationLink(value: authService.effectiveTier.canAccessBestEV ? AppRoute.bestEV : AppRoute.paywall) {
                     HStack(spacing: 16) {

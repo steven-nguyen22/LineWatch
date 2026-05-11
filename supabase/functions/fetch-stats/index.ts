@@ -20,7 +20,7 @@ interface SportConfig {
   sportKey: string;
   espnSport: string; // e.g., "basketball/nba"
   espnLeague: string; // e.g., "nba"
-  playerTables: string[]; // e.g., ["nba_players"] or ["nfl_qbs", "nfl_rbs", "nfl_receivers"]
+  playerTables: string[]; // e.g., ["nba_players"], ["nfl_players"]
   formatTeamStats: (entry: any) => Record<string, string>;
   formatPlayerStats: (data: any, position?: string) => Record<string, string>;
   /** Date range when this sport is in season. null = year-round. */
@@ -77,7 +77,7 @@ const SPORT_CONFIGS: SportConfig[] = [
     sportKey: "americanfootball_nfl",
     espnSport: "football/nfl",
     espnLeague: "nfl",
-    playerTables: ["nfl_qbs", "nfl_rbs", "nfl_receivers"],
+    playerTables: ["nfl_players"],
     formatTeamStats: formatNFLTeamStats,
     formatPlayerStats: formatNFLPlayerStats,
     seasonRange: { startMonth: 9, startDay: 1, endMonth: 2, endDay: 15 }, // Sep 1 – Feb 15
@@ -402,21 +402,23 @@ Deno.serve(async (req) => {
       const espnIdMap = new Map<string, { espnId: number; position?: string }>();
 
       for (const table of config.playerTables) {
+        // Select position only when the table actually has the column.
+        // Currently only `nfl_players` carries position; all other sport
+        // tables (nba_players, mlb_players, nhl_players) don't define one,
+        // and Supabase rejects the SELECT if the column is missing.
+        const isNFL = table === "nfl_players";
+        const cols = isNFL ? "player_name, espn_id, position" : "player_name, espn_id";
         const { data: players } = await supabase
           .from(table)
-          .select("player_name, espn_id");
+          .select(cols);
 
         if (players) {
-          // Determine position from table name for NFL
           for (const p of players) {
-            let position: string | undefined;
-            if (table === "nfl_qbs") position = "QB";
-            else if (table === "nfl_rbs") position = "RB";
-            else if (table === "nfl_receivers") position = p.position || "WR";
-
             espnIdMap.set(p.player_name, {
               espnId: p.espn_id,
-              position,
+              // For NFL, position comes from the column; other sports
+              // pass undefined and `formatPlayerStats` ignores it.
+              position: isNFL ? p.position : undefined,
             });
           }
         }

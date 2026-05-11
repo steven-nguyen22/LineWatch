@@ -11,7 +11,7 @@ struct OnboardingView: View {
     let onComplete: () -> Void
 
     @State private var currentPage = 0
-    private let totalPages = 6
+    private let totalPages = 7
 
     var body: some View {
         ZStack {
@@ -75,7 +75,18 @@ struct OnboardingView: View {
                     }
                     .tag(3)
 
-                    // 5. Team & Player Stats
+                    // 5. Hot Streaks (Hall of Fame tier)
+                    OnboardingPage(
+                        systemImage: "flame.fill",
+                        title: "Hot Streaks",
+                        description: "See the hottest teams and players right now — ranked by current win, spread, and prop streaks across every sport in season. Available with Hall of Fame tier version.",
+                        tierBadge: .hallOfFame
+                    ) {
+                        MockHotStreaksCard()
+                    }
+                    .tag(4)
+
+                    // 6. Team & Player Stats
                     OnboardingPage(
                         systemImage: "chart.line.uptrend.xyaxis",
                         title: "Team & Player Stats",
@@ -84,9 +95,9 @@ struct OnboardingView: View {
                     ) {
                         MockStatsCard()
                     }
-                    .tag(4)
+                    .tag(5)
 
-                    // 6. Bet Simulator
+                    // 7. Bet Simulator
                     OnboardingPage(
                         systemImage: "hand.tap.fill",
                         title: "Bet Simulator & Place Bets",
@@ -94,7 +105,7 @@ struct OnboardingView: View {
                     ) {
                         MockBetSimulator()
                     }
-                    .tag(5)
+                    .tag(6)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut(duration: 0.3), value: currentPage)

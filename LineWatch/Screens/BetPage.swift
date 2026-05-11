@@ -57,6 +57,10 @@ struct BetPage: View {
     @State private var golfSearchText: String = ""
     @State private var selectedTeamForStats: String?
     @State private var selectedPlayerForStats: String?
+    /// Captured at the moment the player stats modal opens so the modal
+    /// can render the matching hit-rate history section. nil when the
+    /// modal is opened from a non-player-prop context.
+    @State private var modalPropType: PlayerPropType?
     @State private var showPaywallForStats = false
     @FocusState private var focusedBet: Int?
 
@@ -73,6 +77,27 @@ struct BetPage: View {
     /// Whether the current user can access stats (sport supports it + tier allows it)
     private var canShowStats: Bool {
         supportsStats && authService.effectiveTier.canAccessStats
+    }
+
+    /// Whether to render the stats icon (hamburger) on player prop rows.
+    /// Visible to all tiers — tap behavior matches the player name (opens
+    /// the stats modal for HoF/trial users, routes lower tiers to the
+    /// paywall). Gated by the feature flag and the per-sport set of prop
+    /// types that have a snapshot/results pipeline wired up.
+    private var shouldShowStatsIcon: Bool {
+        guard Features.hitRatesEnabled else { return false }
+        switch sportCategory {
+        case .basketball:
+            return [PlayerPropType.points, .rebounds, .assists].contains(selectedPropType)
+        case .baseball:
+            return [PlayerPropType.hits, .strikeouts, .homeRuns].contains(selectedPropType)
+        case .hockey:
+            return [PlayerPropType.goals, .shotsOnGoal, .hockeyPoints].contains(selectedPropType)
+        case .football:
+            return [PlayerPropType.passingYards, .rushingYards, .receivingYards].contains(selectedPropType)
+        default:
+            return false
+        }
     }
 
     var body: some View {
@@ -144,11 +169,18 @@ struct BetPage: View {
         }
         .sheet(isPresented: Binding(
             get: { selectedPlayerForStats != nil },
-            set: { if !$0 { selectedPlayerForStats = nil } }
+            set: { if !$0 {
+                selectedPlayerForStats = nil
+                modalPropType = nil
+            } }
         )) {
             if let player = selectedPlayerForStats {
-                PlayerStatsModal(playerName: player, sport: sportCategory)
-                    .environment(dataService)
+                PlayerStatsModal(
+                    playerName: player,
+                    sport: sportCategory,
+                    propType: modalPropType
+                )
+                .environment(dataService)
             }
         }
         .navigationDestination(isPresented: $showPaywallForStats) {
@@ -1080,6 +1112,11 @@ struct BetPage: View {
                 if supportsStats {
                     Button {
                         if canShowStats {
+                            // We're inside playerPropCard → the stats sheet
+                            // should open with the current prop tab so the
+                            // hit-rate history section in the modal renders
+                            // for the same prop the user was just looking at.
+                            modalPropType = selectedPropType
                             selectedPlayerForStats = line.playerName
                             PostHogService.capture("stats_modal_opened", properties: [
                                 "sport": sportCategory.rawValue,
@@ -1101,6 +1138,32 @@ struct BetPage: View {
                     Text(line.playerName)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(AppColors.textPrimary)
+                }
+
+                if shouldShowStatsIcon {
+                    Button {
+                        // Mirrors the player-name tap: HoF/trial users get the
+                        // stats modal with the current prop tab pre-selected;
+                        // lower tiers are routed to the paywall.
+                        if canShowStats {
+                            modalPropType = selectedPropType
+                            selectedPlayerForStats = line.playerName
+                            PostHogService.capture("stats_icon_tapped", properties: [
+                                "sport": sportCategory.rawValue,
+                                "prop_type": selectedPropType.rawValue
+                            ])
+                        } else {
+                            showPaywallForStats = true
+                        }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 4)
+                            .background(Capsule().fill(AppColors.textSecondary.opacity(0.5)))
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 Spacer()
