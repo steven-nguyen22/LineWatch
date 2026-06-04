@@ -30,6 +30,7 @@ const SEASON_RANGES: Record<string, [number, number, number, number]> = {
   baseball_mlb:              [3, 6, 11, 19], // MLB: Mar 20 – Nov 5 ±14d
   icehockey_nhl:             [9, 17, 7, 14], // NHL: Oct 1 – Jun 30 ±14d
   soccer_uefa_champs_league: [8, 18, 6, 29], // UEFA CL: Sep 1 – Jun 15 ±14d
+  soccer_fifa_world_cup:     [5, 28, 8, 2],  // FIFA WC 2026: Jun 11 – Jul 19 ±14d
 };
 
 function isInSeason(sportKey: string, now: Date = new Date()): boolean {
@@ -54,6 +55,10 @@ const SPORT_MAP: Record<string, { jobName: string; oddsFn: string; propsFn?: str
   icehockey_nhl:             { jobName: "refresh-nhl",    oddsFn: "fetch-hockey-odds",   propsFn: "fetch-hockey-player-props" },
   americanfootball_nfl:      { jobName: "refresh-nfl",    oddsFn: "fetch-football-odds", propsFn: "fetch-football-player-props" },
   soccer_uefa_champs_league: { jobName: "refresh-soccer", oddsFn: "fetch-soccer-odds",   propsFn: "fetch-soccer-player-props" },
+  // World Cup odds only (no props this pass). Own entry/cron so it schedules
+  // independently of Champions League — CL is off in July while the WC
+  // knockouts run.
+  soccer_fifa_world_cup:     { jobName: "refresh-worldcup", oddsFn: "fetch-worldcup-odds" },
 };
 
 // Hit-rate snapshot + post-game grader pairs. Adding a sport is one line

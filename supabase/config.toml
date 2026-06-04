@@ -398,6 +398,9 @@ verify_jwt = true
 [functions.fetch-soccer-odds]
 verify_jwt = true
 
+[functions.fetch-worldcup-odds]
+verify_jwt = true
+
 [functions.fetch-golf-odds]
 verify_jwt = true
 

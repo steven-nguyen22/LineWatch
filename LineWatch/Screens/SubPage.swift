@@ -197,6 +197,11 @@ struct SubPage: View {
         if sport == .fighting {
             all = all.filter { $0.sportKey == selectedLeague.rawValue }
         }
+        // Soccer merges two leagues (Champions League + FIFA World Cup) into one
+        // flat list — sort by kickoff so games interleave chronologically.
+        if sport == .soccer {
+            all.sort { ($0.commenceTime ?? "") < ($1.commenceTime ?? "") }
+        }
         guard !searchText.isEmpty else { return all }
         let query = searchText.lowercased()
         return all.filter {
@@ -274,6 +279,20 @@ private struct EventCard: View {
                         Text(formatGameTime(time))
                             .font(AppFonts.caption)
                             .foregroundStyle(AppColors.textSecondary)
+                    }
+
+                    // Merged soccer list spans two leagues (World Cup +
+                    // Champions League); label each card so they're distinguishable.
+                    if event.isSoccer {
+                        Text(event.sportTitle)
+                            .font(AppFonts.caption)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(AppColors.primaryGreen)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule().fill(AppColors.primaryGreen.opacity(0.15))
+                            )
                     }
 
                     if event.isInProgress {

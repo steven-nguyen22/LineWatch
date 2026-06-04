@@ -122,7 +122,7 @@ class OddsDataService {
 
         // Single-key sports via Supabase cache
         if sport == .basketball || sport == .baseball || sport == .hockey
-            || sport == .football || sport == .soccer || sport == .golf {
+            || sport == .football || sport == .golf {
             do {
                 let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                 let merged = await mergeKalshiIfSupported(events: events, sportKey: sport.rawValue)
@@ -136,8 +136,9 @@ class OddsDataService {
             return
         }
 
-        // Multi-key sports via Supabase cache (fighting only)
-        if sport == .fighting {
+        // Multi-key sports via Supabase cache: fighting (MMA + boxing) and
+        // soccer (Champions League + FIFA World Cup). Neither is Kalshi-merged.
+        if sport == .fighting || sport == .soccer {
             var allEvents: [ResponseBody] = []
             for key in sport.sportKeys {
                 do {
@@ -174,7 +175,7 @@ class OddsDataService {
         for sport in SportCategory.allCases {
             // Single-key sports via Supabase cache
             if sport == .basketball || sport == .baseball || sport == .hockey
-                || sport == .football || sport == .soccer || sport == .golf {
+                || sport == .football || sport == .golf {
                 do {
                     let events = try await supabaseService.fetchCachedOdds(sportKey: sport.rawValue)
                     let merged = await mergeKalshiIfSupported(events: events, sportKey: sport.rawValue)
@@ -188,8 +189,9 @@ class OddsDataService {
                 continue
             }
 
-            // Multi-key sports via Supabase cache (fighting only)
-            if sport == .fighting {
+            // Multi-key sports via Supabase cache: fighting (MMA + boxing) and
+            // soccer (Champions League + FIFA World Cup). Neither is Kalshi-merged.
+            if sport == .fighting || sport == .soccer {
                 var allEvents: [ResponseBody] = []
                 for key in sport.sportKeys {
                     do {

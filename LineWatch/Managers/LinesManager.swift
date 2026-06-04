@@ -51,7 +51,7 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         case .football: return ["americanfootball_nfl"]
         case .baseball: return ["baseball_mlb"]
         case .hockey: return ["icehockey_nhl"]
-        case .soccer: return ["soccer_uefa_champs_league"]
+        case .soccer: return ["soccer_uefa_champs_league", "soccer_fifa_world_cup"]
         case .fighting: return ["mma_mixed_martial_arts", "boxing_boxing"]
         case .golf: return ["golf"]
         }
@@ -77,7 +77,7 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
         case .football:   return (8, 18, 3, 1)    // Aug 18 – Mar 1  (NFL: Sep 1 – Feb 15 ±14d)
         case .baseball:   return (3, 6, 11, 19)   // Mar 6  – Nov 19 (MLB: Mar 20 – Nov 5 ±14d)
         case .hockey:     return (9, 17, 7, 14)   // Sep 17 – Jul 14 (NHL: Oct 1 – Jun 30 ±14d)
-        case .soccer:     return (8, 18, 6, 29)   // Aug 18 – Jun 29 (UEFA CL: Sep 1 – Jun 15 ±14d)
+        case .soccer:     return (8, 18, 8, 2)    // Aug 18 – Aug 2 (UEFA CL Sep–Jun + FIFA WC 2026 Jun 11 – Jul 19 ±14d)
         case .fighting:   return nil               // Year-round
         case .golf:       return nil               // Year-round
         }
@@ -345,6 +345,13 @@ struct ResponseBody: Codable, Identifiable {
     /// True when this event is a golf tournament (no home/away teams).
     var isGolf: Bool {
         sportKey.hasPrefix("golf_")
+    }
+
+    /// True when this event belongs to the merged Soccer category (Champions
+    /// League + FIFA World Cup). Used to show a per-card league label since the
+    /// soccer list flattens both competitions into one chronological feed.
+    var isSoccer: Bool {
+        sportKey.hasPrefix("soccer_")
     }
 
     /// True when the game has already started (commence_time is in the past).
