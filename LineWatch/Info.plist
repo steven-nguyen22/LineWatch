@@ -25,18 +25,5 @@
 	<string></string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<!--
-	  Schemes we may pass to UIApplication.canOpenURL. Required by iOS 9+
-	  for any sportsbook whose Universal Links don't work (only Kalshi
-	  currently — see Helpers/SportsbookURLs.swift). Without this entry
-	  canOpenURL silently returns false even when the app is installed.
-	-->
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>kalshi</string>
-		<string>betmgm</string>
-		<string>betrivers</string>
-		<string>fanaticssportsbook</string>
-	</array>
 </dict>
 </plist>

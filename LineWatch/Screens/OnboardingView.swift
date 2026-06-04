@@ -100,8 +100,8 @@ struct OnboardingView: View {
                     // 7. Bet Simulator
                     OnboardingPage(
                         systemImage: "hand.tap.fill",
-                        title: "Bet Simulator & Place Bets",
-                        description: "Tap any odds to simulate your payout, then go directly to the sportsbook to place your bet."
+                        title: "Bet Simulator",
+                        description: "Tap any odds to instantly simulate your potential payout across every sportsbook."
                     ) {
                         MockBetSimulator()
                     }

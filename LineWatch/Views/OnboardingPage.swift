@@ -667,17 +667,6 @@ struct MockBetSimulator: View {
                         .font(.system(size: 8))
                         .foregroundStyle(AppColors.textSecondary)
                 }
-
-                // Place bet button
-                Text("Place Bet")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(AppColors.primaryGreen)
-                    )
             }
             .padding(.horizontal, 10)
             .padding(.bottom, 8)

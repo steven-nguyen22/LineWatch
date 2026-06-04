@@ -44,7 +44,6 @@ struct BetPage: View {
 
     @Environment(OddsDataService.self) private var dataService
     @Environment(AuthService.self) private var authService
-    @Environment(\.openURL) private var openURL
     @State private var selections: [BetSelection] = []
     @State private var showDisclaimer = false
     @State private var betAmount1: Double = 50
@@ -994,28 +993,6 @@ struct BetPage: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
                     .frame(width: 90, alignment: .trailing)
-            }
-
-            // Place Bet button.
-            // `placeBetURL(for:)` tries the app scheme first for sportsbooks
-            // with a known custom URL scheme (see `sportsbookAppSchemes` in
-            // SportsbookURLs.swift) and falls back to the HTTPS URL otherwise.
-            // For most sportsbooks the HTTPS URL itself opens the app via
-            // Universal Links when installed.
-            if let url = placeBetURL(for: selection.bookmakerTitle) {
-                Button {
-                    openURL(url)
-                } label: {
-                    Text("Place Bet")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(AppColors.primaryGreen)
-                        )
-                }
             }
         }
     }
