@@ -18,25 +18,23 @@ const ESPN_TEAMS_URL =
   "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/teams";
 
 // The Odds API spelling → ESPN displayName, for the nations whose names differ.
-// Keys are normalized (see normalize()); add more here if `unresolved` is
-// non-empty after a run.
+// IMPORTANT: keys must be in normalized form (lowercase, no spaces/punctuation
+// — see normalize()), because lookups are done on the normalized Odds API name.
+// Values are matched after normalization, so they can stay human-readable.
+// Add more here if `unresolved` is non-empty after a run.
 const NAME_ALIASES: Record<string, string> = {
   "usa": "United States",
-  "united states of america": "United States",
-  "south korea": "Korea Republic",
-  "north korea": "Korea DPR",
-  "czech republic": "Czechia",
-  "bosnia and herzegovina": "Bosnia and Herzegovina",
-  "bosnia herzegovina": "Bosnia and Herzegovina",
-  "ir iran": "Iran",
-  "china pr": "China",
-  "ivory coast": "Côte d'Ivoire",
-  "cote divoire": "Côte d'Ivoire",
-  "cape verde": "Cabo Verde",
-  "curacao": "Curaçao",
+  "unitedstatesofamerica": "United States",
+  "southkorea": "Korea Republic",
+  "northkorea": "Korea DPR",
+  "czechrepublic": "Czechia",
+  "iriran": "Iran",
+  "chinapr": "China",
+  "ivorycoast": "Côte d'Ivoire",
+  "capeverde": "Cabo Verde",
   "turkey": "Türkiye",
-  "republic of ireland": "Ireland",
-  "dr congo": "Congo DR",
+  "republicofireland": "Ireland",
+  "drcongo": "Congo DR",
 };
 
 // Lowercase, strip diacritics and non-alphanumerics for tolerant matching.
