@@ -1,5 +1,5 @@
 {
-  "originHash" : "2daee83ad1876e46b6de0fdd167e984705ec7f380837a87eb50b640d2a3abbef",
+  "originHash" : "ace345893a89cb3fd8343fe4967e252b6dfc331b4055a26c8dfed12381817817",
   "pins" : [
     {
       "identity" : "app-check",
@@ -65,21 +65,12 @@
       }
     },
     {
-      "identity" : "plcrashreporter",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/microsoft/plcrashreporter.git",
-      "state" : {
-        "revision" : "0254f941c646b1ed17b243654723d0f071e990d0",
-        "version" : "1.12.2"
-      }
-    },
-    {
       "identity" : "posthog-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PostHog/posthog-ios",
       "state" : {
-        "revision" : "b9aa734f24973d5a017da0c18a87af2afcbc0c26",
-        "version" : "3.54.0"
+        "revision" : "83b1de43fb5bcaec4e19869602def7246229db1a",
+        "version" : "3.60.1"
       }
     },
     {

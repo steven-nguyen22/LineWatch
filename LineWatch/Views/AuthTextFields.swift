@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PostHog
 
 // MARK: - Auth Text Field
 
@@ -36,6 +37,10 @@ struct AuthTextField: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(.white.opacity(0.15), lineWidth: 1)
                 )
+                // Guarantee the entered value (e.g. email) is masked in session
+                // replay even if screenshot-mode input detection misses this
+                // custom-styled field.
+                .postHogMask()
         }
     }
 }
@@ -67,6 +72,9 @@ struct AuthSecureField: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(.white.opacity(0.15), lineWidth: 1)
                 )
+                // Belt-and-suspenders: SecureField content is always masked, but
+                // pin it explicitly so the password is never captured in replay.
+                .postHogMask()
         }
     }
 }

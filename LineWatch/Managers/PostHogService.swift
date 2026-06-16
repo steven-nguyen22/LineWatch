@@ -21,7 +21,22 @@ enum PostHogService {
         config.captureApplicationLifecycleEvents = true
         // We fire our own $screen events with readable names, so disable auto-capture.
         config.captureScreenViews = false
-        // Session replay + autocapture stay off — cleaner data, safer on the free tier.
+
+        // Session replay (mobile). Free tier = 2,500 mobile recordings/month;
+        // a $0 billing limit on Mobile Session Replay in the PostHog dashboard
+        // guarantees we never leave the free tier.
+        config.sessionReplay = true
+        // REQUIRED for SwiftUI — without screenshot mode, replays render blank.
+        config.sessionReplayConfig.screenshotMode = true
+        // Mask all text inputs (email/password fields, search box). Passwords are
+        // always masked regardless. PII in SecureField/TextField never leaves the device.
+        config.sessionReplayConfig.maskAllTextInputs = true
+        // Team logos / player headshots are public, not PII — keep them visible so
+        // replays are actually useful for spotting where users get stuck.
+        config.sessionReplayConfig.maskAllImages = false
+        // Autocapture stays off; our explicit $screen + custom events are unchanged
+        // and replays attach to them automatically.
+
         PostHogSDK.shared.setup(config)
     }
 
