@@ -466,11 +466,21 @@ class SupabaseService {
         ])
 
         let (_, response) = try await URLSession.shared.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200..<300).contains(httpResponse.statusCode) else {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw GHError.invalidResponse
+        }
+        if httpResponse.statusCode == 429 {
+            throw FeedbackError.rateLimited
+        }
+        guard (200..<300).contains(httpResponse.statusCode) else {
             throw GHError.invalidResponse
         }
     }
+}
+
+/// Errors specific to feedback submission so the UI can show tailored copy.
+enum FeedbackError: Error {
+    case rateLimited
 }
 
 /// One graded row from `player_game_results`. The fields beyond `hit` are
