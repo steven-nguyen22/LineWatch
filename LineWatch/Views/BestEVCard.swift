@@ -11,6 +11,9 @@ import NukeUI
 struct BestEVCard: View {
     let bet: BestEVBet
     var sportLabel: String? = nil
+    /// 1 / 2 / 3 → gold / silver / bronze medal on the card's left edge.
+    /// `nil` hides the medal column entirely.
+    var rank: Int? = nil
 
     @Environment(OddsDataService.self) private var dataService
 
@@ -51,7 +54,14 @@ struct BestEVCard: View {
             searchPrefill,
             bet.propType
         )) {
-            VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .center, spacing: 12) {
+                // Rank medal column (gold / silver / bronze) — omitted when no rank.
+                if let rank {
+                    RankMedal(rank: rank)
+                        .frame(width: 32)
+                }
+
+                VStack(alignment: .leading, spacing: 12) {
                 // Top row: badge + EV%
                 HStack {
                     HStack(spacing: 5) {
@@ -189,6 +199,7 @@ struct BestEVCard: View {
                     Text(" — \(edge, specifier: "%.1f")% edge")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(AppColors.primaryGreen)
+                }
                 }
             }
             .padding(16)

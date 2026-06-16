@@ -13,8 +13,9 @@ struct BestEVPage: View {
     @State private var isLoadingProps = false
     @State private var hasLoadedProps = false
 
-    private var bestBets: [BestEVBet] {
-        EVCalculator.findBestEVPerSport(
+    /// Top 3 EV bets per in-season sport, grouped for section rendering.
+    private var topBySport: [(sport: SportCategory, bets: [BestEVBet])] {
+        EVCalculator.findTopEVPerSport(
             eventsBySport: dataService.eventsBySport,
             playerPropsByEvent: dataService.playerPropsByEvent
         )
@@ -34,7 +35,7 @@ struct BestEVPage: View {
                     .padding(.top, 40)
                 }
 
-                if bestBets.isEmpty && !isLoadingProps {
+                if topBySport.isEmpty && !isLoadingProps {
                     // Empty state
                     VStack(spacing: 16) {
                         Image(systemName: "chart.line.downtrend.xyaxis")
@@ -53,8 +54,8 @@ struct BestEVPage: View {
                     .padding(.top, 80)
                     .padding(.horizontal, 40)
                 } else {
-                    ForEach(bestBets) { bet in
-                        BestEVCard(bet: bet, sportLabel: bet.sport.displayName)
+                    ForEach(topBySport, id: \.sport) { entry in
+                        sportSection(sport: entry.sport, bets: entry.bets)
                     }
                 }
             }
@@ -91,6 +92,32 @@ struct BestEVPage: View {
             }
         }
         .trackScreen("best_ev")
+    }
+
+    // MARK: - Sections
+
+    /// A per-sport section: header (icon + name) followed by up to 3 ranked
+    /// Best EV cards. Mirrors HotStreaksPage.sportSection for visual parity.
+    @ViewBuilder
+    private func sportSection(sport: SportCategory, bets: [BestEVBet]) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: sport.iconName)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(AppColors.primaryGreen)
+
+                Text(sport.displayName)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppColors.textPrimary)
+            }
+            .padding(.leading, 4)
+
+            VStack(spacing: 12) {
+                ForEach(Array(bets.enumerated()), id: \.element.id) { idx, bet in
+                    BestEVCard(bet: bet, sportLabel: nil, rank: idx + 1)
+                }
+            }
+        }
     }
 }
 

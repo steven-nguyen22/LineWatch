@@ -413,9 +413,7 @@ struct MockHotStreaksCard: View {
     ) -> some View {
         HStack(spacing: 10) {
             // Medal
-            Image(systemName: "medal.fill")
-                .font(.system(size: 18))
-                .foregroundStyle(medalColor(for: rank))
+            RankMedal(rank: rank, size: 18)
                 .frame(width: 22)
 
             // Avatar — circular headshot for players, square logo for teams
@@ -459,15 +457,6 @@ struct MockHotStreaksCard: View {
         )
     }
 
-    /// Same gold/silver/bronze palette as StreakCard.
-    private func medalColor(for rank: Int) -> Color {
-        switch rank {
-        case 1: return Color(red: 1.0, green: 0.84, blue: 0.0)
-        case 2: return Color(white: 0.75)
-        case 3: return Color(red: 0.80, green: 0.50, blue: 0.20)
-        default: return AppColors.textSecondary
-        }
-    }
 
     /// Player headshots get a circular crop (matches StreakCard);
     /// team logos render as transparent PNGs and don't need clipping.

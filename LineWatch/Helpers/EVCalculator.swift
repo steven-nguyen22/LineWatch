@@ -89,10 +89,23 @@ enum EVCalculator {
         events: [ResponseBody],
         playerPropsByEvent: [String: ResponseBody] = [:]
     ) -> BestEVBet? {
-        var best: BestEVBet?
+        findTopEV(for: sport, events: events, playerPropsByEvent: playerPropsByEvent, limit: 1).first
+    }
+
+    /// Top N positive-EV bets for a single sport, across all events and market
+    /// types, sorted by EV descending. Returns fewer than `limit` if fewer
+    /// positive-EV opportunities exist (empty if none).
+    static func findTopEV(
+        for sport: SportCategory,
+        events: [ResponseBody],
+        playerPropsByEvent: [String: ResponseBody] = [:],
+        limit: Int = 3
+    ) -> [BestEVBet] {
+        var candidates: [BestEVBet] = []
 
         for event in events {
-            // Evaluate each available market type for this sport
+            // Evaluate each available market type for this sport. Each market
+            // contributes at most one (best) candidate per event.
             for marketType in sport.availableMarkets {
                 let candidate: BestEVBet?
 
@@ -113,13 +126,11 @@ enum EVCalculator {
                     }
                 }
 
-                if let candidate, candidate.evPercent > (best?.evPercent ?? 0) {
-                    best = candidate
-                }
+                if let candidate { candidates.append(candidate) }
             }
         }
 
-        return best
+        return Array(candidates.sorted { $0.evPercent > $1.evPercent }.prefix(limit))
     }
 
     /// Find best EV bet for each in-season sport (one per sport, ordered by sport).
@@ -133,6 +144,27 @@ enum EVCalculator {
             if let best = findBestEV(for: sport, events: events, playerPropsByEvent: playerPropsByEvent) {
                 results.append(best)
             }
+        }
+        return results
+    }
+
+    /// Top N EV bets for each in-season sport, in `SportCategory.inSeason`
+    /// order. Sports with no positive-EV bets are omitted entirely.
+    static func findTopEVPerSport(
+        eventsBySport: [SportCategory: [ResponseBody]],
+        playerPropsByEvent: [String: ResponseBody] = [:],
+        limit: Int = 3
+    ) -> [(sport: SportCategory, bets: [BestEVBet])] {
+        var results: [(sport: SportCategory, bets: [BestEVBet])] = []
+        for sport in SportCategory.inSeason {
+            guard let events = eventsBySport[sport] else { continue }
+            let bets = findTopEV(
+                for: sport,
+                events: events,
+                playerPropsByEvent: playerPropsByEvent,
+                limit: limit
+            )
+            if !bets.isEmpty { results.append((sport, bets)) }
         }
         return results
     }
