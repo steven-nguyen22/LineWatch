@@ -436,6 +436,41 @@ class SupabaseService {
         }
         return try JSONDecoder().decode([Streak].self, from: data)
     }
+
+    /// Sends user feedback (bug report / feature request) to the developers.
+    /// POSTs to the `submit-feedback` edge function, which emails it to the
+    /// LineWatch inbox via Resend. Uses the signed-in user's session JWT when
+    /// available (falls back to the anon key) so the gateway's `verify_jwt`
+    /// check passes. `userEmail` is attached so replies can reach the user.
+    func submitFeedback(subject: String, body: String) async throws {
+        let endpoint = "https://voxokcdwctpvzbqigklw.supabase.co/functions/v1/submit-feedback"
+        guard let url = URL(string: endpoint) else { throw GHError.invalidURL }
+
+        // Prefer the user's session token; fall back to the anon key.
+        let session = try? await SupabaseManager.shared.auth.session
+        let bearer = session?.accessToken ?? apiKey
+        let userEmail = session?.user.email ?? ""
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "unknown"
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(bearer)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode([
+            "subject": subject,
+            "body": body,
+            "userEmail": userEmail,
+            "appVersion": appVersion,
+            "platform": "iOS"
+        ])
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200..<300).contains(httpResponse.statusCode) else {
+            throw GHError.invalidResponse
+        }
+    }
 }
 
 /// One graded row from `player_game_results`. The fields beyond `hit` are
