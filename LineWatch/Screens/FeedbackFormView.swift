@@ -65,7 +65,7 @@ struct FeedbackFormView: View {
             }
             .padding(24)
         }
-        .frame(maxHeight: 560)
+        .frame(maxHeight: 680)
         .fixedSize(horizontal: false, vertical: true)
         .background(AppColors.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 20))
