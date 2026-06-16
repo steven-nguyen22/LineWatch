@@ -15,7 +15,13 @@ import SwiftUI
 struct DisclaimerCardView: View {
     @Environment(\.dismiss) private var dismiss
 
-    private let disclaimerText = "Sports betting availability varies by state. Not all sportsbooks are available in all states. Please check your local regulations before placing any bets. You must be 21+ to participate in sports betting. LineWatch is for informational purposes only. We are not liable for any financial losses from reliance on information displayed in this app."
+    private let bulletPoints: [String] = [
+        "Sports betting availability varies by state. Not all sportsbooks are available in all states.",
+        "Please check your local regulations before placing any bets.",
+        "You must be 21+ to participate in sports betting.",
+        "LineWatch is for informational purposes only.",
+        "We are not liable for any financial losses from reliance on information displayed in this app."
+    ]
 
     var body: some View {
         ZStack {
@@ -54,9 +60,20 @@ struct DisclaimerCardView: View {
                     .foregroundStyle(AppColors.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .center)
 
-                Text(disclaimerText)
-                    .font(AppFonts.body)
-                    .foregroundStyle(AppColors.textSecondary)
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(bulletPoints, id: \.self) { point in
+                        HStack(alignment: .top, spacing: 10) {
+                            Circle()
+                                .fill(AppColors.primaryGreen)
+                                .frame(width: 6, height: 6)
+                                .padding(.top, 6)
+                            Text(point)
+                                .font(AppFonts.body)
+                                .foregroundStyle(AppColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
 
                 // Got It button
                 Button { dismiss() } label: {

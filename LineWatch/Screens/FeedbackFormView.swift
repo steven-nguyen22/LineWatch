@@ -61,11 +61,13 @@ struct FeedbackFormView: View {
                             .frame(maxWidth: .infinity, alignment: .center)
                             .multilineTextAlignment(.center)
                     }
+
+                    featuresInProgress
                 }
             }
             .padding(24)
         }
-        .frame(maxHeight: 680)
+        .frame(maxHeight: 760)
         .fixedSize(horizontal: false, vertical: true)
         .background(AppColors.backgroundCard)
         .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -127,7 +129,7 @@ struct FeedbackFormView: View {
 
                 FeedbackTextEditor(text: $details)
 
-                Text("Describe the bug or the feature you'd like in as much detail as you want.")
+                Text("Describe the bug, feature, or change you'd like in as much detail as you want.")
                     .font(AppFonts.caption)
                     .foregroundStyle(AppColors.textSecondary)
             }
@@ -154,6 +156,28 @@ struct FeedbackFormView: View {
         }
         .disabled(!canSubmit || isSending)
         .opacity(canSubmit && !isSending ? 1.0 : 0.6)
+    }
+
+    private var featuresInProgress: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Divider()
+                .foregroundStyle(AppColors.divider)
+
+            Text("Features In-Progress")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundStyle(AppColors.textPrimary)
+
+            HStack(alignment: .top, spacing: 10) {
+                Circle()
+                    .fill(AppColors.primaryGreen)
+                    .frame(width: 6, height: 6)
+                    .padding(.top, 6)
+                Text("Machine Learning MLB Prediction Algorithm")
+                    .font(AppFonts.caption)
+                    .foregroundStyle(AppColors.textSecondary)
+            }
+        }
     }
 
     private var successState: some View {
