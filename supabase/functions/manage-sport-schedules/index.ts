@@ -25,10 +25,10 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 // `LineWatch/Managers/LinesManager.swift`. Sports omitted from this map
 // (fighting, golf, kalshi) are year-round.
 const SEASON_RANGES: Record<string, [number, number, number, number]> = {
-  basketball_nba:            [9, 17, 7, 14], // NBA: Oct 1 – Jun 30 ±14d
-  americanfootball_nfl:      [8, 18, 3, 1],  // NFL: Sep 1 – Feb 15 ±14d
-  baseball_mlb:              [3, 6, 11, 19], // MLB: Mar 20 – Nov 5 ±14d
-  icehockey_nhl:             [9, 17, 7, 14], // NHL: Oct 1 – Jun 30 ±14d
+  basketball_nba:            [10, 10, 6, 27], // Oct 10 – Jun 27
+  americanfootball_nfl:      [8, 30, 2, 19],  // Aug 30 – Feb 19
+  baseball_mlb:              [3, 20, 11, 10], // Mar 20 – Nov 10
+  icehockey_nhl:             [9, 29, 6, 30],  // Sep 29 – Jun 30
   soccer_uefa_champs_league: [8, 18, 6, 29], // UEFA CL: Sep 1 – Jun 15 ±14d
   soccer_fifa_world_cup:     [5, 28, 8, 2],  // FIFA WC 2026: Jun 11 – Jul 19 ±14d
 };

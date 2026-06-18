@@ -73,10 +73,10 @@ enum SportCategory: String, CaseIterable, Identifiable, Hashable {
     /// the same in-season decision, just at different layers.
     private var seasonRange: (startMonth: Int, startDay: Int, endMonth: Int, endDay: Int)? {
         switch self {
-        case .basketball: return (9, 17, 7, 14)   // Sep 17 – Jul 14 (NBA: Oct 1 – Jun 30 ±14d)
-        case .football:   return (8, 18, 3, 1)    // Aug 18 – Mar 1  (NFL: Sep 1 – Feb 15 ±14d)
-        case .baseball:   return (3, 6, 11, 19)   // Mar 6  – Nov 19 (MLB: Mar 20 – Nov 5 ±14d)
-        case .hockey:     return (9, 17, 7, 14)   // Sep 17 – Jul 14 (NHL: Oct 1 – Jun 30 ±14d)
+        case .basketball: return (10, 10, 6, 27)   // Oct 10 – Jun 27
+        case .football:   return (8, 30, 2, 19)   // Aug 30 – Feb 19
+        case .baseball:   return (3, 20, 11, 10)  // Mar 20 – Nov 10
+        case .hockey:     return (9, 29, 6, 30)   // Sep 29 – Jun 30
         case .soccer:     return (8, 18, 8, 2)    // Aug 18 – Aug 2 (UEFA CL Sep–Jun + FIFA WC 2026 Jun 11 – Jul 19 ±14d)
         case .fighting:   return nil               // Year-round
         case .golf:       return nil               // Year-round
