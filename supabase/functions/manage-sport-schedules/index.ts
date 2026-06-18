@@ -55,10 +55,9 @@ const SPORT_MAP: Record<string, { jobName: string; oddsFn: string; propsFn?: str
   icehockey_nhl:             { jobName: "refresh-nhl",    oddsFn: "fetch-hockey-odds",   propsFn: "fetch-hockey-player-props" },
   americanfootball_nfl:      { jobName: "refresh-nfl",    oddsFn: "fetch-football-odds", propsFn: "fetch-football-player-props" },
   soccer_uefa_champs_league: { jobName: "refresh-soccer", oddsFn: "fetch-soccer-odds",   propsFn: "fetch-soccer-player-props" },
-  // World Cup odds only (no props this pass). Own entry/cron so it schedules
-  // independently of Champions League — CL is off in July while the WC
-  // knockouts run.
-  soccer_fifa_world_cup:     { jobName: "refresh-worldcup", oddsFn: "fetch-worldcup-odds" },
+  // Own entry/cron so it schedules independently of Champions League — CL is
+  // off in July while the WC knockouts run.
+  soccer_fifa_world_cup:     { jobName: "refresh-worldcup", oddsFn: "fetch-worldcup-odds", propsFn: "fetch-worldcup-player-props" },
 };
 
 // Hit-rate snapshot + post-game grader pairs. Adding a sport is one line
