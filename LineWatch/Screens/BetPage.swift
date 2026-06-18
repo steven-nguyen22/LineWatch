@@ -63,9 +63,18 @@ struct BetPage: View {
     @State private var showPaywallForStats = false
     @FocusState private var focusedBet: Int?
 
-    /// Resolve the sport category from the event's sport key
+    /// Resolve the sport category from the event's sport key.
+    ///
+    /// Matches against `sportKeys` (not `rawValue`) because some categories
+    /// span multiple API keys: Soccer covers both `soccer_uefa_champs_league`
+    /// and `soccer_fifa_world_cup`, and Fighting covers MMA + boxing. Matching
+    /// on `rawValue` alone silently fell back to `.basketball` for World Cup
+    /// events — showing basketball prop tabs (Points/Rebounds/Assists) on
+    /// soccer matches. The prefix fallback covers Golf (`golf_*` tournaments).
     private var sportCategory: SportCategory {
-        SportCategory.allCases.first { $0.rawValue == event.sportKey } ?? .basketball
+        SportCategory.allCases.first { $0.sportKeys.contains(event.sportKey) }
+            ?? SportCategory.allCases.first { event.sportKey.hasPrefix($0.rawValue) }
+            ?? .basketball
     }
 
     /// Whether this sport supports team/player stats modals
